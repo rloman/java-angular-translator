@@ -5,6 +5,8 @@ import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import eu.allego.angularbuilder.domain.Component;
 
@@ -30,7 +32,20 @@ public class Angular2GeneratingVisitor implements Visitor {
 		if(component.getTitle()!=null && !component.getTitle().isEmpty()) {
 			System.out.print("\t\t{{ title }}");
 		}
-		// render subcomponents his selectors
+		Map<String, List<Object>> listMap = component.getListMap();
+		if(listMap != null && !listMap.isEmpty()) {
+			StringBuilder builder = new StringBuilder();
+			
+			for(Entry<String, List<Object>> o : listMap.entrySet()) {
+				builder.append("<ul>");
+				builder.append("<li *ngFor='#element of "+o.getKey()+"'>");
+				builder.append("{{ element }}");
+				builder.append("</li>");
+				builder.append("</ul>");
+			}
+			System.out.println(builder.toString());
+		}
+		// render subcomponents his selectors in the template
 		for (Component child : component.getChildren()) {
 			System.out.print("<" + child.getSelector() + "></" + child.getSelector() + ">");
 		}
@@ -54,8 +69,21 @@ public class Angular2GeneratingVisitor implements Visitor {
 		System.out.println("export class " + component.getName() + "Component {");
 		System.out.println();
 		
+		//render the title if applicable
 		if(component.getTitle() != null && !component.getTitle().isEmpty()) {
-			System.out.printf("title: string = '%s'%n", component.getTitle());
+			System.out.printf("\ttitle: string = '%s'%n", component.getTitle());
+		}
+		
+		// render the collection (as part of the training) if applicable
+		for(Entry<String, List<Object>> element : component.getListMap().entrySet()) {
+			System.out.print("\t"+element.getKey()+" = ");
+			System.out.print("[");
+			List<String> names = new ArrayList<>();
+			for(Object o : element.getValue() ){
+				names.add("'"+o.toString()+"'");
+			}
+			System.out.print(String.join(", ", names));
+			System.out.println("]");
 		}
 	
 
