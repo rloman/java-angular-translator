@@ -24,11 +24,11 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 		System.out.println();
 		// render selector and template
-		System.out.print("@Component({\n"
+		System.out.println("@Component({\n"
 				+ "\tselector: '" + component.getSelector() + "', \n"
 				+ "\ttemplate: `\n\t\t" + component.getTemplate());
 		if(component.getTitle()!=null && !component.getTitle().isEmpty()) {
-			System.out.print("{{ title }}");
+			System.out.print("\t\t{{ title }}");
 		}
 		// render subcomponents his selectors
 		for (Component child : component.getChildren()) {
