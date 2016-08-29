@@ -1,4 +1,4 @@
-package eu.allego;
+package eu.allego.angularbuilder;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
