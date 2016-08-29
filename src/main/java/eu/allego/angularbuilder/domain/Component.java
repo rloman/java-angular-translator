@@ -6,25 +6,31 @@ import java.util.List;
 import eu.allego.angularbuilder.visitor.Visitor;
 
 public class Component implements Node {
-	
+
 	private String name;
-	
+
 	private String selector;
 	private String template;
-	
+
 	private List<Component> children = new ArrayList<>();
-	
+
+	/**
+	 * 
+	 * @param name = the name of the component (e.g. CoursesComponent has name "Courses"
+	 * @param selector = the html selector of the component (e.g. <courses></courses> is "courses"
+	 * @param template = the to be rendered html of this component
+	 */
 	public Component(String name, String selector, String template) {
 		this.name = name;
 		this.selector = selector;
 		this.template = template;
 	}
-	
+
 	public void addChildComponent(Component component) {
 		this.children.add(component);
-		
+
 	}
-	
+
 	public void accept(Visitor visitor) {
 		visitor.visit(this);
 	}
@@ -44,5 +50,4 @@ public class Component implements Node {
 	public List<Component> getChildren() {
 		return children;
 	}
-
 }
