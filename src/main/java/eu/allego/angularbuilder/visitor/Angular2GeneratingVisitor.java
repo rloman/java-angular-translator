@@ -25,6 +25,10 @@ public class Angular2GeneratingVisitor implements Visitor {
 			System.out.println("import {" + child.getName() + "Component} from './" + child.getName().toLowerCase()
 					+ ".component'");
 		}
+		
+		for(Service service : component.getServices()) {
+			System.out.println("import {"+service.getName()+"Service} from './"+service.getName().toLowerCase()+".service'");
+		}
 
 		System.out.println();
 		// render selector and template
@@ -52,6 +56,17 @@ public class Angular2GeneratingVisitor implements Visitor {
 			System.out.print("<" + child.getSelector() + "></" + child.getSelector() + ">");
 		}
 		System.out.print("\n\t\t`");
+		
+		if(!component.getServices().isEmpty()) {
+			System.out.println(", ");
+			System.out.print("\tproviders: [");
+			List<String> names = new ArrayList<>();
+			for(Service service : component.getServices()) {
+				names.add(service.getName()+"Service");
+				System.out.print(String.join(", ", names));
+				System.out.println("]");
+			}
+		}
 		// render subcomponent directives
 		if (!component.getChildren().isEmpty()) {
 			System.out.println(", ");
@@ -76,7 +91,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 			System.out.printf("\ttitle: string = '%s'%n", component.getTitle());
 		}
 
-		// render the collection (as part of the training) if applicable
+		// render the collection if applicable (as part of the training) if applicable
 		for (Entry<String, List<Object>> element : component.getListMap().entrySet()) {
 			System.out.print("\t" + element.getKey() + " = ");
 			System.out.print("[");
@@ -87,10 +102,28 @@ public class Angular2GeneratingVisitor implements Visitor {
 			System.out.print(String.join(", ", names));
 			System.out.println("]");
 		}
+		
+		//render the constructor (for now render the services and their call)
+		if(!component.getServices().isEmpty()) {
+			System.out.print("\n\tconstructor(");
+			
+			List<String> names = new ArrayList<>();
+			for(Service service : component.getServices()) {
+				names.add(service.getName().toLowerCase()+"Service: "+service.getName()+"Service");
+			}
+			System.out.print(String.join(", ", names));
+			
+			System.out.println(") {");
+			
+			System.out.print("\t\tthis.courses=courseService.getCourses();");
+			
+			System.out.println("\n\t}");
+		}
+		
 
 		System.out.println("}");
 
-		// render the (files) of the childer
+		// render the (FILES) of the children
 		for (Component child : component.getChildren()) {
 			child.accept(this);
 		}

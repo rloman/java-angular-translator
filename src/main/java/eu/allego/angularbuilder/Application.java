@@ -16,14 +16,11 @@ public class Application {
 
 		{
 			ServiceMethod method = new ServiceMethod("getCourses()", "string[]", "return ['aaa', 'bbb']");
-			Service courseService = new Service("course", method);
+			Service courseService = new Service("Course", method);
 			
 			Component coursesComponent = new Component("Courses", "Overview of Courses", "courses", "<h2>Courses</h2>");
 			coursesComponent.addService(courseService);
 			List<Object> courses = new ArrayList<>();
-			courses.add("English");
-			courses.add("Programming");
-			courses.add("Prolog");
 			coursesComponent.addCollection("courses", courses);
 			appComponent.addChildComponent(coursesComponent);
 		}
