@@ -23,14 +23,18 @@ public class Angular2GeneratingVisitor implements Visitor {
 		}
 
 		System.out.println();
+		// render selector and template
 		System.out.print("@Component({\n"
 				+ "\tselector: '" + component.getSelector() + "', \n"
-				+ "\ttemplate: '" + component.getTemplate());
+				+ "\ttemplate: `\n\t\t" + component.getTemplate());
+		if(component.getTitle()!=null && !component.getTitle().isEmpty()) {
+			System.out.print("{{ title }}");
+		}
 		// render subcomponents his selectors
 		for (Component child : component.getChildren()) {
 			System.out.print("<" + child.getSelector() + "></" + child.getSelector() + ">");
 		}
-		System.out.print("'");
+		System.out.print("\n\t\t`");
 		// render subcomponent directives
 		if (!component.getChildren().isEmpty()) {
 			System.out.println(", ");
@@ -49,6 +53,11 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 		System.out.println("export class " + component.getName() + "Component {");
 		System.out.println();
+		
+		if(component.getTitle() != null && !component.getTitle().isEmpty()) {
+			System.out.printf("title: string = '%s'%n", component.getTitle());
+		}
+	
 
 		System.out.println("}");
 		
