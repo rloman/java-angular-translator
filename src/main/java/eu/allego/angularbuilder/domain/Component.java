@@ -17,6 +17,8 @@ public class Component implements Node {
 	private String template;
 
 	private List<Component> children = new ArrayList<>();
+	
+	private List<Service> services = new ArrayList<>();
 
 	// application specific properties
 	private String title; // mostly all component do have a title (will add more
@@ -42,6 +44,11 @@ public class Component implements Node {
 		this.title = title;
 		this.selector = selector;
 		this.template = template;
+	}
+	
+	
+	public void addService(Service service) {
+		this.services.add(service);
 	}
 
 	public void addChildComponent(Component component) {
@@ -79,6 +86,11 @@ public class Component implements Node {
 
 	public Map<String, List<Object>> getListMap() {
 		return listMap;
+	}
+
+
+	public List<Service> getServices() {
+		return services;
 	}
 
 }
