@@ -120,8 +120,6 @@ public class Angular2GeneratingVisitor implements Visitor {
 				component.getConstructor().accept(this);
 			}
 			
-
-			
 			System.out.println("\n\t}");
 		}
 		

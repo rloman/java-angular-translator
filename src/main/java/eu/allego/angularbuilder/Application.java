@@ -29,6 +29,17 @@ public class Application {
 			
 			appComponent.addChildComponent(coursesComponent);
 		}
+		
+		{
+			ServiceMethod method = new ServiceMethod("getAuthors()", "string[]", "return ['Andrew Hunt', 'Dave Thomas', 'Donald Knuth']");
+			Service authorService = new Service("Author", method);
+			
+			Component authorsComponent = new Component("Authors", "Overview of Authors", "authors", "<h2>Authors</h2>");
+			authorsComponent.addService(authorService);
+			List<Object> authors = new ArrayList<>();
+			authorsComponent.addCollection("authors", authors);
+			appComponent.addChildComponent(authorsComponent);
+		}
 
 		Visitor visitor = new Angular2GeneratingVisitor();
 
