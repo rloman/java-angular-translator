@@ -54,9 +54,9 @@ public class Angular2GeneratingVisitor implements Visitor {
 		}
 		// render subcomponents his selectors in the template
 		for (Component child : component.getChildren()) {
-			System.out.print("<" + child.getSelector() + "></" + child.getSelector() + ">");
+			System.out.println("\t\t<" + child.getSelector() + "></" + child.getSelector() + ">");
 		}
-		System.out.print("\n\t\t`");
+		System.out.print("\t\t`");
 		
 		if(!component.getServices().isEmpty()) {
 			System.out.println(", ");
@@ -119,8 +119,6 @@ public class Angular2GeneratingVisitor implements Visitor {
 			if(component.getConstructor() != null) {
 				component.getConstructor().accept(this);
 			}
-			
-
 			
 			System.out.println("\n\t}");
 		}
