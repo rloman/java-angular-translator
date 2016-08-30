@@ -20,6 +20,8 @@ public class Component extends Node {
 	
 	private List<Service> services = new ArrayList<>();
 	
+	private List<Directive> directives = new ArrayList<>();
+	
 	private Constructor constructor;
 
 	// application specific properties
@@ -46,6 +48,10 @@ public class Component extends Node {
 		this.title = title;
 		this.selector = selector;
 		this.template = template;
+	}
+	
+	public void addDirective(Directive directive) {
+		this.directives.add(directive);
 	}
 	
 	public void setConstructor(Constructor constructor) {
@@ -101,6 +107,10 @@ public class Component extends Node {
 
 	public List<Service> getServices() {
 		return services;
+	}
+
+	public List<Directive> getDirectives() {
+		return directives;
 	}
 
 }

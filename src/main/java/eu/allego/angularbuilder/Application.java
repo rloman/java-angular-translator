@@ -5,6 +5,8 @@ import java.util.List;
 
 import eu.allego.angularbuilder.domain.Component;
 import eu.allego.angularbuilder.domain.Constructor;
+import eu.allego.angularbuilder.domain.Directive;
+import eu.allego.angularbuilder.domain.Event;
 import eu.allego.angularbuilder.domain.Service;
 import eu.allego.angularbuilder.domain.ServiceMethod;
 import eu.allego.angularbuilder.visitor.Angular2GeneratingVisitor;
@@ -19,10 +21,12 @@ public class Application {
 			ServiceMethod method = new ServiceMethod("getCourses()", "string[]", "return ['aaa', 'bbb']");
 			Service courseService = new Service("Course", method);
 			
-			Component coursesComponent = new Component("Courses", "Overview of Courses", "courses", "<h2>Courses</h2>");
+			Component coursesComponent = new Component("Courses", "Overview of Courses", "courses", "<h2>Courses</h2> 	<input type='text' autoGrow />");
 			coursesComponent.addService(courseService);
 			List<Object> courses = new ArrayList<>();
 			coursesComponent.addCollection("courses", courses);
+			Directive autoGrowDirective = new Directive("AutoGrow", Event.FOCUS, Event.BLUR);
+			coursesComponent.addDirective(autoGrowDirective);
 			
 			Constructor c = new Constructor("\t\tthis.courses = courseService.getCourses();");
 			coursesComponent.setConstructor(c);
@@ -46,10 +50,7 @@ public class Application {
 		}
 
 		Visitor visitor = new Angular2GeneratingVisitor();
-
+		
 		appComponent.accept(visitor);
-
-		// System.out.println("Done");
-
 	}
 }
