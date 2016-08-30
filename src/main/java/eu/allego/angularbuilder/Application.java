@@ -38,6 +38,10 @@ public class Application {
 			authorsComponent.addService(authorService);
 			List<Object> authors = new ArrayList<>();
 			authorsComponent.addCollection("authors", authors);
+			
+			Constructor c = new Constructor("\t\tthis.authors = authorService.getAuthors();");
+			authorsComponent.setConstructor(c);
+			
 			appComponent.addChildComponent(authorsComponent);
 		}
 
