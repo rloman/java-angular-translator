@@ -10,6 +10,8 @@ import java.util.Map.Entry;
 
 import eu.allego.angularbuilder.domain.Component;
 import eu.allego.angularbuilder.domain.Constructor;
+import eu.allego.angularbuilder.domain.Directive;
+import eu.allego.angularbuilder.domain.Event;
 import eu.allego.angularbuilder.domain.Service;
 import eu.allego.angularbuilder.domain.ServiceMethod;
 
@@ -26,9 +28,14 @@ public class Angular2GeneratingVisitor implements Visitor {
 			System.out.println("import {" + child.getName() + "Component} from './" + child.getName().toLowerCase()
 					+ ".component'");
 		}
-		
-		for(Service service : component.getServices()) {
-			System.out.println("import {"+service.getName()+"Service} from './"+service.getName().toLowerCase()+".service'");
+
+		for (Service service : component.getServices()) {
+			System.out.println("import {" + service.getName() + "Service} from './" + service.getName().toLowerCase()
+					+ ".service'");
+		}
+		for(Directive directive : component.getDirectives()) {
+			System.out.println("import {" + directive.getName() + "Directive} from './" + directive.getName().toLowerCase()
+					+ ".directive'");
 		}
 
 		System.out.println();
@@ -57,31 +64,45 @@ public class Angular2GeneratingVisitor implements Visitor {
 			System.out.println("\t\t<" + child.getSelector() + "></" + child.getSelector() + ">");
 		}
 		System.out.print("\t\t`");
-		
-		if(!component.getServices().isEmpty()) {
+
+		if (!component.getServices().isEmpty()) {
 			System.out.println(", ");
 			System.out.print("\tproviders: [");
 			List<String> names = new ArrayList<>();
-			for(Service service : component.getServices()) {
-				names.add(service.getName()+"Service");
+			for (Service service : component.getServices()) {
+				names.add(service.getName() + "Service");
 				System.out.print(String.join(", ", names));
-				System.out.println("]");
+				System.out.print("]");
 			}
 		}
+		List<String> names = new ArrayList<>();
 		// render subcomponent directives
 		if (!component.getChildren().isEmpty()) {
 			System.out.println(", ");
 			System.out.print("\tdirectives: [");
 
 			// refactor to llambda later
-			List<String> names = new ArrayList<>();
+
 			for (Component child : component.getChildren()) {
 				names.add(child.getName() + "Component");
 			}
 			System.out.print(String.join(", ", names));
 
+			System.out.print("]");
+		}
+
+		if (!component.getDirectives().isEmpty()) {
+			System.out.println(", ");
+			System.out.print("\tdirectives: [");
+
+			for (Directive directive : component.getDirectives()) {
+				names.add(directive.getName() + "Directive");
+			}
+			System.out.print(String.join(", ", names));
+
 			System.out.println("]");
 		}
+
 		System.out.println("\n" + "})");
 
 		System.out.println("export class " + component.getName() + "Component {");
@@ -92,41 +113,45 @@ public class Angular2GeneratingVisitor implements Visitor {
 			System.out.printf("\ttitle: string = '%s'%n", component.getTitle());
 		}
 
-		// render the collection if applicable (as part of the training) if applicable
+		// render the collection if applicable (as part of the training) if
+		// applicable
 		for (Entry<String, List<Object>> element : component.getListMap().entrySet()) {
 			System.out.print("\t" + element.getKey() + " = ");
 			System.out.print("[");
-			List<String> names = new ArrayList<>();
-			for (Object o : element.getValue()) {
-				names.add("'" + o.toString() + "'");
+			{
+				names = new ArrayList<>();
+				for (Object o : element.getValue()) {
+					names.add("'" + o.toString() + "'");
+				}
+				System.out.print(String.join(", ", names));
 			}
-			System.out.print(String.join(", ", names));
+
 			System.out.println("]");
 		}
-		
-		//render the constructor (for now render the services and their call)
-		if(!component.getServices().isEmpty()) {
+
+		// render the constructor (for now render the services and their call)
+		if (!component.getServices().isEmpty()) {
 			System.out.print("\n\tconstructor(");
-			
-			List<String> names = new ArrayList<>();
-			for(Service service : component.getServices()) {
-				names.add(service.getName().toLowerCase()+"Service: "+service.getName()+"Service");
+
+			names = new ArrayList<>();
+			for (Service service : component.getServices()) {
+				names.add(service.getName().toLowerCase() + "Service: " + service.getName() + "Service");
 			}
 			System.out.print(String.join(", ", names));
-			
+
 			System.out.println(") {");
-			
-			if(component.getConstructor() != null) {
+
+			if (component.getConstructor() != null) {
 				component.getConstructor().accept(this);
 			}
-			
+
 			System.out.println("\n\t}");
 		}
-		
 
 		System.out.println("}");
 
 		// render the (FILES) of the children
+		// rloman might refactor all those component like component, service and directive to one common base class
 		for (Component child : component.getChildren()) {
 			child.accept(this);
 		}
@@ -134,6 +159,11 @@ public class Angular2GeneratingVisitor implements Visitor {
 		for (Service service : component.getServices()) {
 			service.accept(this);
 		}
+		
+		for(Directive directive : component.getDirectives()){
+			directive.accept(this);
+		}
+		
 
 		resetOutputStream();
 	}
@@ -163,11 +193,59 @@ public class Angular2GeneratingVisitor implements Visitor {
 		System.out.println("\t}");
 
 	}
-	
+
 	@Override
 	public void visit(Constructor constructor) {
-		
+
 		System.out.print(constructor.getCode());
+	}
+
+	@Override
+	public void visit(Directive directive) {
+
+		setOutputStream(directive);
+
+		System.out.println("import {Directive, ElementRef, Renderer} from 'angular2/core'");
+		System.out.println();
+		System.out.print("@Directive ({");
+		System.out.println("selector: '[" + this.convertFirstCharacterToLowercase(directive.getName()) + "]',");
+		System.out.println("\thost: {");
+		List<String> names = new ArrayList<>();
+		for (Event event : directive.getEvents()) {
+			names.add("\t\t'(" + event.toString().toLowerCase() + ")'" + " : " + "'on"
+					+ this.convertFirstCharacterToUppercase(event.toString().toLowerCase()) + "()'");
+
+		}
+		System.out.println(String.join(",\n", names));
+		System.out.println("\t}");
+
+		System.out.println();
+		System.out.println("})");
+		System.out.println("export class " + directive.getName() + "Directive {");
+
+		// render the constructor for now using the Angular2 default settings
+		// from Udemy
+		System.out.println();
+		System.out.println("\tconstructor(private el: ElementRef, private renderer: Renderer) {");
+		System.out.println("\t}");
+		System.out.println();
+
+		for (Event event : directive.getEvents()) {
+			int randomWidth = 100 + Double.valueOf((Math.random()* 100)).intValue();
+			System.out.println("\ton" + this.convertFirstCharacterToUppercase(event.toString().toLowerCase()) + "(){");
+			System.out.println("\t\t// Implement your event handling code here!");
+			System.out.println("\t\t // Which might be something like this");
+			System.out.printf("\t\tthis.renderer.setElementStyle(this.el.nativeElement, 'width', '%d');%n", randomWidth);
+
+			System.out.print("\t}");
+			System.out.println();
+			System.out.println();
+		}
+
+		System.out.print("}");
+
+		resetOutputStream();
+
 	}
 
 	private void setOutputStream(Service service) {
@@ -185,6 +263,38 @@ public class Angular2GeneratingVisitor implements Visitor {
 			e.printStackTrace();
 		}
 
+	}
+
+	private void setOutputStream(Directive directive) {
+		currentOutputStream = System.out;
+
+		try {
+			FileOutputStream outputStream = new FileOutputStream(
+					"app/" + directive.getName().toLowerCase() + ".directive.ts");
+			PrintStream ps = new PrintStream(outputStream);
+			System.setOut(ps);
+
+		}
+		catch (FileNotFoundException e) {
+			// rloman nog try with resources doen.
+			e.printStackTrace();
+		}
+
+	}
+
+	private String convertFirstCharacterToLowercase(String input) {
+		String output = Character.toLowerCase(input.charAt(0)) +
+				(input.length() > 1 ? input.substring(1) : "");
+
+		return output;
+
+	}
+
+	private String convertFirstCharacterToUppercase(String input) {
+		String output = Character.toUpperCase(input.charAt(0)) +
+				(input.length() > 1 ? input.substring(1) : "");
+
+		return output;
 	}
 
 	// this methods set the output to the files where it should be
