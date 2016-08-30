@@ -2,7 +2,7 @@ package eu.allego.angularbuilder.domain;
 
 import eu.allego.angularbuilder.visitor.Visitor;
 
-public class ServiceMethod implements Node {
+public class ServiceMethod extends Node {
 
 	private String name;
 	private String returnType;

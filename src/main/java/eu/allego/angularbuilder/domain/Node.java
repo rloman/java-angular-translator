@@ -2,8 +2,8 @@ package eu.allego.angularbuilder.domain;
 
 import eu.allego.angularbuilder.visitor.Visitor;
 
-public interface Node {
+public abstract class Node {
 
-	void accept(Visitor visitor);
+	public abstract void accept(Visitor visitor);
 
 }

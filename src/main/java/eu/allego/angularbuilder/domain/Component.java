@@ -7,7 +7,7 @@ import java.util.Map;
 
 import eu.allego.angularbuilder.visitor.Visitor;
 
-public class Component implements Node {
+public class Component extends Node {
 
 	// angular2 api properties
 

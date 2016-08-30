@@ -2,7 +2,7 @@ package eu.allego.angularbuilder.domain;
 
 import eu.allego.angularbuilder.visitor.Visitor;
 
-public class Service implements Node {
+public class Service extends Node {
 
 	private String name = "Course";
 	

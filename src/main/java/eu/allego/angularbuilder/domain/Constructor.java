@@ -2,7 +2,7 @@ package eu.allego.angularbuilder.domain;
 
 import eu.allego.angularbuilder.visitor.Visitor;
 
-public class Constructor implements Node {
+public class Constructor extends Node {
 
 	private String code;
 
