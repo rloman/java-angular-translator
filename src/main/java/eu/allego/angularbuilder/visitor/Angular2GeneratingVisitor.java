@@ -34,8 +34,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 					+ ".service'");
 		}
 		for(Directive directive : component.getDirectives()) {
-			System.out.println("import {" + directive.getName() + "Directive} from './" + directive.getName().toLowerCase()
-					+ ".directive'");
+			System.out.println("import {" + directive.getName() + "Directive} from './" + this.convertUpperCamelCaseToAngularString(directive.getName())	+ ".directive'");
 		}
 
 		System.out.println();
@@ -270,7 +269,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 		try {
 			FileOutputStream outputStream = new FileOutputStream(
-					"app/" + directive.getName().toLowerCase() + ".directive.ts");
+					"app/" + this.convertUpperCamelCaseToAngularString(directive.getName()) + ".directive.ts");
 			PrintStream ps = new PrintStream(outputStream);
 			System.setOut(ps);
 
@@ -282,7 +281,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 	}
 
-	private String convertFirstCharacterToLowercase(String input) {
+	 String convertFirstCharacterToLowercase(String input) {
 		String output = Character.toLowerCase(input.charAt(0)) +
 				(input.length() > 1 ? input.substring(1) : "");
 
@@ -290,11 +289,20 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 	}
 
-	private String convertFirstCharacterToUppercase(String input) {
+	String convertFirstCharacterToUppercase(String input) {
 		String output = Character.toUpperCase(input.charAt(0)) +
 				(input.length() > 1 ? input.substring(1) : "");
 
 		return output;
+	}
+	
+	
+	//e.g. convert AutoGrow to auto-grow
+	String convertUpperCamelCaseToAngularString(String input) {
+		
+		
+		return this.convertFirstCharacterToLowercase(input).replaceAll("([A-Z])", "-$1").toLowerCase();
+		
 	}
 
 	// this methods set the output to the files where it should be
