@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import eu.allego.angularbuilder.domain.Component;
+import eu.allego.angularbuilder.domain.Constructor;
 import eu.allego.angularbuilder.domain.Service;
 import eu.allego.angularbuilder.domain.ServiceMethod;
 import eu.allego.angularbuilder.visitor.Angular2GeneratingVisitor;
@@ -22,6 +23,10 @@ public class Application {
 			coursesComponent.addService(courseService);
 			List<Object> courses = new ArrayList<>();
 			coursesComponent.addCollection("courses", courses);
+			
+			Constructor c = new Constructor("\t\tthis.courses = courseService.getCourses();");
+			coursesComponent.setConstructor(c);
+			
 			appComponent.addChildComponent(coursesComponent);
 		}
 

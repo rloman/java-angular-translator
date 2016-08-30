@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import eu.allego.angularbuilder.domain.Component;
+import eu.allego.angularbuilder.domain.Constructor;
 import eu.allego.angularbuilder.domain.Service;
 import eu.allego.angularbuilder.domain.ServiceMethod;
 
@@ -115,7 +116,11 @@ public class Angular2GeneratingVisitor implements Visitor {
 			
 			System.out.println(") {");
 			
-			System.out.print("\t\tthis.courses=courseService.getCourses();");
+			if(component.getConstructor() != null) {
+				component.getConstructor().accept(this);
+			}
+			
+
 			
 			System.out.println("\n\t}");
 		}
@@ -159,6 +164,12 @@ public class Angular2GeneratingVisitor implements Visitor {
 		System.out.println("\t\t" + serviceMethod.getBody() + ";");
 		System.out.println("\t}");
 
+	}
+	
+	@Override
+	public void visit(Constructor constructor) {
+		
+		System.out.print(constructor.getCode());
 	}
 
 	private void setOutputStream(Service service) {

@@ -19,6 +19,8 @@ public class Component implements Node {
 	private List<Component> children = new ArrayList<>();
 	
 	private List<Service> services = new ArrayList<>();
+	
+	private Constructor constructor;
 
 	// application specific properties
 	private String title; // mostly all component do have a title (will add more
@@ -44,6 +46,14 @@ public class Component implements Node {
 		this.title = title;
 		this.selector = selector;
 		this.template = template;
+	}
+	
+	public void setConstructor(Constructor constructor) {
+		this.constructor = constructor;
+	}
+	
+	public Constructor getConstructor() {
+		return this.constructor;
 	}
 	
 	
