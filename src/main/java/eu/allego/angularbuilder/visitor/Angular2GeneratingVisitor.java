@@ -212,7 +212,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 		System.out.println("\thost: {");
 		List<String> names = new ArrayList<>();
 		for (Event event : directive.getEvents()) {
-			names.add("\t\t'(" + event.toString().toLowerCase() + ")'" + " : " + "'on"
+			names.add("\t\t'(" + event.toString().toLowerCase() + ")'" + ": " + "'on"
 					+ this.convertFirstCharacterToUppercase(event.toString().toLowerCase()) + "()'");
 
 		}
