@@ -7,10 +7,18 @@ public abstract class Widget extends Node  {
 	
 	private String label;
 	
+	private List<Event> events = new ArrayList<>();
+	
 	private List<Widget> children = new ArrayList<>();
 	
 	public Widget() {
 		
+	}
+	
+	public void addEvent(Event ...events) {
+		for(Event event : events) {
+			this.events.add(event);
+		}
 	}
 	
 	public Widget(String label) {
@@ -27,6 +35,10 @@ public abstract class Widget extends Node  {
 
 	public List<Widget> getChildren() {
 		return children;
+	}
+
+	public List<Event> getEvents() {
+		return events;
 	}
 	
 

@@ -37,8 +37,9 @@ public class Angular2GeneratingVisitor implements Visitor {
 			System.out.println("import {" + service.getName() + "Service} from './" + service.getName().toLowerCase()
 					+ ".service'");
 		}
-		for(Directive directive : component.getDirectives()) {
-			System.out.println("import {" + directive.getName() + "Directive} from './" + this.convertUpperCamelCaseToAngularString(directive.getName())	+ ".directive'");
+		for (Directive directive : component.getDirectives()) {
+			System.out.println("import {" + directive.getName() + "Directive} from './"
+					+ this.convertUpperCamelCaseToAngularString(directive.getName()) + ".directive'");
 		}
 
 		System.out.println();
@@ -152,10 +153,15 @@ public class Angular2GeneratingVisitor implements Visitor {
 			System.out.println("\n\t}");
 		}
 
+		for (Widget widget : component.getTemplate().getWidgets()) {
+			recursiveRenderEventHandlersForWidget(widget);
+		}
+
 		System.out.println("}");
 
 		// render the (FILES) of the children
-		// rloman might refactor all those component like component, service and directive to one common base class
+		// rloman might refactor all those component like component, service and
+		// directive to one common base class
 		for (Component child : component.getChildren()) {
 			child.accept(this);
 		}
@@ -163,11 +169,10 @@ public class Angular2GeneratingVisitor implements Visitor {
 		for (Service service : component.getServices()) {
 			service.accept(this);
 		}
-		
-		for(Directive directive : component.getDirectives()){
+
+		for (Directive directive : component.getDirectives()) {
 			directive.accept(this);
 		}
-		
 
 		resetOutputStream();
 	}
@@ -186,6 +191,20 @@ public class Angular2GeneratingVisitor implements Visitor {
 		System.out.println("}");
 
 		resetOutputStream();
+
+	}
+
+	private void recursiveRenderEventHandlersForWidget(Widget widget) {
+		// render the template his event handling if applicable
+		for (Event event : widget.getEvents()) {
+			System.out.printf("on%s() {%n", this.convertFirstCharacterToUppercase(event.toString().toLowerCase()));
+			System.out.println("console.log('you hurt me');");
+			System.out.println("}");
+		}
+		System.out.println();
+		for(Widget child : widget.getChildren()) {
+			recursiveRenderEventHandlersForWidget(child);
+		}
 
 	}
 
@@ -235,11 +254,12 @@ public class Angular2GeneratingVisitor implements Visitor {
 		System.out.println();
 
 		for (Event event : directive.getEvents()) {
-			int randomWidth = 100 + Double.valueOf((Math.random()* 100)).intValue();
+			int randomWidth = 100 + Double.valueOf((Math.random() * 100)).intValue();
 			System.out.println("\ton" + this.convertFirstCharacterToUppercase(event.toString().toLowerCase()) + "(){");
 			System.out.println("\t\t// Implement your event handling code here!");
 			System.out.println("\t\t // Which might be something like this");
-			System.out.printf("\t\tthis.renderer.setElementStyle(this.el.nativeElement, 'width', '%d');%n", randomWidth);
+			System.out.printf("\t\tthis.renderer.setElementStyle(this.el.nativeElement, 'width', '%d');%n",
+					randomWidth);
 
 			System.out.print("\t}");
 			System.out.println();
@@ -251,37 +271,56 @@ public class Angular2GeneratingVisitor implements Visitor {
 		resetOutputStream();
 
 	}
-	
+
 	@Override
 	public void visit(Template template) {
-		if(template.getTemplateString() != null) {
+		if (template.getTemplateString() != null) {
 			System.out.println(template.getTemplateString());
 		}
 		else {
-			for(Widget widget : template.getWidgets()) {
+			for (Widget widget : template.getWidgets()) {
 				widget.accept(this);
 			}
 		}
-		
+
 	}
-	
+
+	@Override
+	public void visit(Widget widget) {
+		for (Widget child : widget.getChildren()) {
+			child.accept(this);
+		}
+	}
+
+	// en alsl het meer dan 1 event is / wordt?
+	private void renderEvents(Widget widget) {
+		for (Event e : widget.getEvents()) {
+			System.out.printf("(%s)='on%s();'", e.toString().toLowerCase(),
+					this.convertFirstCharacterToUppercase(e.toString().toLowerCase()));
+			// System.out.println(e.toString().toLowerCase());
+		}
+		// (click)='onClick()'
+	}
+
 	@Override
 	public void visit(Button button) {
-		System.out.println("<button (click)='onClick()'>Click me");
-		for(Widget child : button.getChildren()) {
-			child.accept(this);
-		}
-		System.out.println("</button>");
+		System.out.println();
+		System.out.print("\t<button ");
+		renderEvents(button);
+		System.out.println(">" + button.getLabel());
+		visit((Widget) button);
+		System.out.println("\t</button>");
 	}
-	
+
 	@Override
 	public void visit(Div div) {
-		System.out.println("<div (click)='onClick()'>Click me I am a lonesome div");
-		for(Widget child : div.getChildren()) {
-			child.accept(this);
-		}
+		System.out.println();
+		System.out.print("<div ");
+		renderEvents(div);
+		System.out.println(">");
+		visit((Widget) div);
 		System.out.println("</div>");
-		
+
 	}
 
 	private void setOutputStream(Service service) {
@@ -318,7 +357,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 	}
 
-	 String convertFirstCharacterToLowercase(String input) {
+	String convertFirstCharacterToLowercase(String input) {
 		String output = Character.toLowerCase(input.charAt(0)) +
 				(input.length() > 1 ? input.substring(1) : "");
 
@@ -332,14 +371,12 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 		return output;
 	}
-	
-	
-	//e.g. convert AutoGrow to auto-grow
+
+	// e.g. convert AutoGrow to auto-grow
 	String convertUpperCamelCaseToAngularString(String input) {
-		
-		
+
 		return this.convertFirstCharacterToLowercase(input).replaceAll("([A-Z])", "-$1").toLowerCase();
-		
+
 	}
 
 	// this methods set the output to the files where it should be

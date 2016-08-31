@@ -56,7 +56,8 @@ public class Application {
 		{
 			Div div = new Div();
 			
-			Widget button = new Button();
+			Widget button = new Button("click me");
+			button.addEvent(Event.CLICK);
 			div.addChild(button);
 			
 			Template template = new Template();

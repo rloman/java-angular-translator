@@ -8,6 +8,7 @@ import eu.allego.angularbuilder.domain.Div;
 import eu.allego.angularbuilder.domain.Service;
 import eu.allego.angularbuilder.domain.ServiceMethod;
 import eu.allego.angularbuilder.domain.Template;
+import eu.allego.angularbuilder.domain.Widget;
 
 public interface Visitor {
 
@@ -26,5 +27,7 @@ public interface Visitor {
 	void visit(Button widget);
 
 	void visit(Div div);
+
+	void visit(Widget widget);
 
 }
