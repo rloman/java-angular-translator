@@ -55,6 +55,7 @@ public class Application {
 		
 		{
 			Div div = new Div();
+			div.addEvent(Event.CLICK);
 			
 			Widget button = new Button("click me");
 			button.addEvent(Event.CLICK);
