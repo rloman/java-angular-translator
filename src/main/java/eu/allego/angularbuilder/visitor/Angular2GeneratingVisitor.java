@@ -199,8 +199,8 @@ public class Angular2GeneratingVisitor implements Visitor {
 	private void recursiveRenderEventHandlersForWidget(Widget widget) {
 		// render the template his event handling if applicable
 		for (Event event : widget.getEvents()) {
-			System.out.printf("\ton%s() {%n", this.convertFirstCharacterToUppercase(event.toString().toLowerCase()));
-			System.out.println("\t\tconsole.log('you hurt me');");
+			System.out.printf("\ton%s($event) {%n", this.convertFirstCharacterToUppercase(event.toString().toLowerCase()));
+			System.out.println("\t\tconsole.log('you hurt me', $event);");
 			System.out.println("\t}");
 		}
 		System.out.println();
@@ -300,7 +300,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 	 */
 	private void renderEvents(Widget widget) {
 		for (Event e : widget.getEvents()) {
-			System.out.printf("(%s)='on%s();'", e.toString().toLowerCase(),
+			System.out.printf("(%s)='on%s($event);'", e.toString().toLowerCase(),
 					this.convertFirstCharacterToUppercase(e.toString().toLowerCase()));
 		}
 	}
