@@ -153,6 +153,8 @@ public class Angular2GeneratingVisitor implements Visitor {
 			System.out.println("\n\t}");
 		}
 
+		
+		// render the event handlers
 		for (Widget widget : component.getTemplate().getWidgets()) {
 			recursiveRenderEventHandlersForWidget(widget);
 		}
@@ -197,9 +199,9 @@ public class Angular2GeneratingVisitor implements Visitor {
 	private void recursiveRenderEventHandlersForWidget(Widget widget) {
 		// render the template his event handling if applicable
 		for (Event event : widget.getEvents()) {
-			System.out.printf("on%s() {%n", this.convertFirstCharacterToUppercase(event.toString().toLowerCase()));
-			System.out.println("console.log('you hurt me');");
-			System.out.println("}");
+			System.out.printf("\ton%s() {%n", this.convertFirstCharacterToUppercase(event.toString().toLowerCase()));
+			System.out.println("\t\tconsole.log('you hurt me');");
+			System.out.println("\t}");
 		}
 		System.out.println();
 		for(Widget child : widget.getChildren()) {
@@ -306,21 +308,21 @@ public class Angular2GeneratingVisitor implements Visitor {
 	@Override
 	public void visit(Button button) {
 		System.out.println();
-		System.out.print("\t<button ");
+		System.out.print("\t\t\t<button ");
 		renderEvents(button);
 		System.out.println(">" + button.getLabel());
 		visit((Widget) button);
-		System.out.println("\t</button>");
+		System.out.println("\t\t\t</button>");
 	}
 
 	@Override
 	public void visit(Div div) {
 		System.out.println();
-		System.out.print("<div ");
+		System.out.print("\t\t<div ");
 		renderEvents(div);
-		System.out.println(">");
+		System.out.print(">");
 		visit((Widget) div);
-		System.out.println("</div>");
+		System.out.println("\t\t</div>");
 
 	}
 
