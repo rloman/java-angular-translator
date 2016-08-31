@@ -8,12 +8,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import eu.allego.angularbuilder.domain.Button;
 import eu.allego.angularbuilder.domain.Component;
 import eu.allego.angularbuilder.domain.Constructor;
 import eu.allego.angularbuilder.domain.Directive;
 import eu.allego.angularbuilder.domain.Event;
 import eu.allego.angularbuilder.domain.Service;
 import eu.allego.angularbuilder.domain.ServiceMethod;
+import eu.allego.angularbuilder.domain.Template;
+import eu.allego.angularbuilder.domain.Widget;
 
 public class Angular2GeneratingVisitor implements Visitor {
 
@@ -41,10 +44,11 @@ public class Angular2GeneratingVisitor implements Visitor {
 		// render selector and template
 		System.out.println("@Component({\n"
 				+ "\tselector: '" + component.getSelector() + "', \n"
-				+ "\ttemplate: `\n\t\t" + component.getTemplate());
+				+ "\ttemplate: `\n\t\t");
 		if (component.getTitle() != null && !component.getTitle().isEmpty()) {
 			System.out.print("\t\t{{ title }}");
 		}
+		component.getTemplate().accept(this);
 		Map<String, List<Object>> listMap = component.getListMap();
 		if (listMap != null && !listMap.isEmpty()) {
 			StringBuilder builder = new StringBuilder();
@@ -245,6 +249,24 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 		resetOutputStream();
 
+	}
+	
+	@Override
+	public void visit(Template template) {
+		if(template.getTemplateString() != null) {
+			System.out.println(template.getTemplateString());
+		}
+		else {
+			for(Widget widget : template.getWidgets()) {
+				widget.accept(this);
+			}
+		}
+		
+	}
+	
+	@Override
+	public void visit(Button button) {
+		System.out.println("<button (click)='onClick()'>Click me</button>");
 	}
 
 	private void setOutputStream(Service service) {

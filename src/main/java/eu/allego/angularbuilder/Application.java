@@ -3,12 +3,15 @@ package eu.allego.angularbuilder;
 import java.util.ArrayList;
 import java.util.List;
 
+import eu.allego.angularbuilder.domain.Button;
 import eu.allego.angularbuilder.domain.Component;
 import eu.allego.angularbuilder.domain.Constructor;
 import eu.allego.angularbuilder.domain.Directive;
 import eu.allego.angularbuilder.domain.Event;
 import eu.allego.angularbuilder.domain.Service;
 import eu.allego.angularbuilder.domain.ServiceMethod;
+import eu.allego.angularbuilder.domain.Template;
+import eu.allego.angularbuilder.domain.Widget;
 import eu.allego.angularbuilder.visitor.Angular2GeneratingVisitor;
 import eu.allego.angularbuilder.visitor.Visitor;
 
@@ -35,7 +38,7 @@ public class Application {
 		}
 		
 		{
-			ServiceMethod method = new ServiceMethod("getAuthors()", "string[]", "return ['Andrew Hunt', 'Dave Thomas', 'Donald Knuth']");
+			ServiceMethod method = new ServiceMethod("getAuthors()", "string[]", "return ['Andrew Hunt', 'Dave Thomas', 'Donald Knuthhhh']");
 			Service authorService = new Service("Author", method);
 			
 			Component authorsComponent = new Component("Authors", "Overview of Authors", "authors", "<h2>Authors</h2>");
@@ -47,6 +50,18 @@ public class Application {
 			authorsComponent.setConstructor(c);
 			
 			appComponent.addChildComponent(authorsComponent);
+		}
+		
+		{
+			
+			Widget button = new Button();
+			
+			Template template = new Template();
+			template.add(button);
+			
+			Component coursesComponent = new Component("Buttons", "Overview of buttons", "buttons",  template);
+			
+			appComponent.addChildComponent(coursesComponent);
 		}
 
 		Visitor visitor = new Angular2GeneratingVisitor();
