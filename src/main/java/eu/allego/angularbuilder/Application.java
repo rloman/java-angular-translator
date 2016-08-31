@@ -7,6 +7,7 @@ import eu.allego.angularbuilder.domain.Button;
 import eu.allego.angularbuilder.domain.Component;
 import eu.allego.angularbuilder.domain.Constructor;
 import eu.allego.angularbuilder.domain.Directive;
+import eu.allego.angularbuilder.domain.Div;
 import eu.allego.angularbuilder.domain.Event;
 import eu.allego.angularbuilder.domain.Service;
 import eu.allego.angularbuilder.domain.ServiceMethod;
@@ -53,11 +54,13 @@ public class Application {
 		}
 		
 		{
+			Div div = new Div();
 			
 			Widget button = new Button();
+			div.addChild(button);
 			
 			Template template = new Template();
-			template.add(button);
+			template.add(div);
 			
 			Component coursesComponent = new Component("Buttons", "Overview of buttons", "buttons",  template);
 			

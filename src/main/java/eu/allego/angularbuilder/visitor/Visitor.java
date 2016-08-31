@@ -4,6 +4,7 @@ import eu.allego.angularbuilder.domain.Button;
 import eu.allego.angularbuilder.domain.Component;
 import eu.allego.angularbuilder.domain.Constructor;
 import eu.allego.angularbuilder.domain.Directive;
+import eu.allego.angularbuilder.domain.Div;
 import eu.allego.angularbuilder.domain.Service;
 import eu.allego.angularbuilder.domain.ServiceMethod;
 import eu.allego.angularbuilder.domain.Template;
@@ -23,5 +24,7 @@ public interface Visitor {
 	void visit(Template template);
 
 	void visit(Button widget);
+
+	void visit(Div div);
 
 }

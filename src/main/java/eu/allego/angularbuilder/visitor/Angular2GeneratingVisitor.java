@@ -12,6 +12,7 @@ import eu.allego.angularbuilder.domain.Button;
 import eu.allego.angularbuilder.domain.Component;
 import eu.allego.angularbuilder.domain.Constructor;
 import eu.allego.angularbuilder.domain.Directive;
+import eu.allego.angularbuilder.domain.Div;
 import eu.allego.angularbuilder.domain.Event;
 import eu.allego.angularbuilder.domain.Service;
 import eu.allego.angularbuilder.domain.ServiceMethod;
@@ -266,7 +267,21 @@ public class Angular2GeneratingVisitor implements Visitor {
 	
 	@Override
 	public void visit(Button button) {
-		System.out.println("<button (click)='onClick()'>Click me</button>");
+		System.out.println("<button (click)='onClick()'>Click me");
+		for(Widget child : button.getChildren()) {
+			child.accept(this);
+		}
+		System.out.println("</button>");
+	}
+	
+	@Override
+	public void visit(Div div) {
+		System.out.println("<div (click)='onClick()'>Click me I am a lonesome div");
+		for(Widget child : div.getChildren()) {
+			child.accept(this);
+		}
+		System.out.println("</div>");
+		
 	}
 
 	private void setOutputStream(Service service) {
