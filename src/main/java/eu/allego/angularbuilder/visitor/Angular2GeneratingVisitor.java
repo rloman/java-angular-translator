@@ -293,13 +293,14 @@ public class Angular2GeneratingVisitor implements Visitor {
 	}
 
 	// en alsl het meer dan 1 event is / wordt?
+	/*
+	 * This method renders the (click)='onClick' part of the event of the widget. NOt to be confused with the latter implementation of the onClick event handler
+	 */
 	private void renderEvents(Widget widget) {
 		for (Event e : widget.getEvents()) {
 			System.out.printf("(%s)='on%s();'", e.toString().toLowerCase(),
 					this.convertFirstCharacterToUppercase(e.toString().toLowerCase()));
-			// System.out.println(e.toString().toLowerCase());
 		}
-		// (click)='onClick()'
 	}
 
 	@Override
