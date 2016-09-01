@@ -14,7 +14,7 @@ public class Component extends Node {
 	private String name;
 
 	private String selector;
-	private String template;
+	private Template template;
 
 	private List<Component> children = new ArrayList<>();
 	
@@ -44,6 +44,13 @@ public class Component extends Node {
 	 *            = the to be rendered html of this component
 	 */
 	public Component(String name, String title, String selector, String template) {
+		this.name = name;
+		this.title = title;
+		this.selector = selector;
+		this.template = new Template(template);
+	}
+	
+	public Component(String name, String title, String selector, Template template) {
 		this.name = name;
 		this.title = title;
 		this.selector = selector;
@@ -88,7 +95,7 @@ public class Component extends Node {
 		return selector;
 	}
 
-	public String getTemplate() {
+	public Template getTemplate() {
 		return template;
 	}
 
