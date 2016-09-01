@@ -40,7 +40,7 @@ public class Application {
 		}
 		
 		{
-			ServiceMethod method = new ServiceMethod("getAuthors()", "string[]", "return ['Andrew Hunt', 'Dave Thomas', 'Donald Knuthhhh']");
+			ServiceMethod method = new ServiceMethod("getAuthors()", "string[]", "return ['Andrew Hunt', 'Dave Thomas', 'Donald Knuth']");
 			Service authorService = new Service("Author", method);
 			
 			Component authorsComponent = new Component("Authors", "Overview of Authors", "authors", "<h2>Authors</h2>");
