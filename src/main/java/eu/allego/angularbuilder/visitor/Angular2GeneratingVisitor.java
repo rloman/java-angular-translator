@@ -11,6 +11,7 @@ import java.util.Map.Entry;
 import eu.allego.angularbuilder.domain.Button;
 import eu.allego.angularbuilder.domain.Component;
 import eu.allego.angularbuilder.domain.Constructor;
+import eu.allego.angularbuilder.domain.Css;
 import eu.allego.angularbuilder.domain.Directive;
 import eu.allego.angularbuilder.domain.Div;
 import eu.allego.angularbuilder.domain.Event;
@@ -116,6 +117,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 		// render the title if applicable
 		if (component.getTitle() != null && !component.getTitle().isEmpty()) {
 			System.out.printf("\ttitle: string = '%s'%n", component.getTitle());
+			System.out.println();
 		}
 
 		// render the collection if applicable (as part of the training) if
@@ -153,8 +155,14 @@ public class Angular2GeneratingVisitor implements Visitor {
 			System.out.println("\n\t}");
 		}
 
-		
-		// render the event handlers
+		// // render the properties of the conditional css of the widgets of
+		// this
+		// component if applicable recursively
+		for (Widget widget : component.getTemplate().getWidgets()) {
+			recursiveRenderConditionCssStylesForWidget(widget);
+		}
+
+		// render the event handlers recursively
 		for (Widget widget : component.getTemplate().getWidgets()) {
 			recursiveRenderEventHandlersForWidget(widget);
 		}
@@ -179,6 +187,16 @@ public class Angular2GeneratingVisitor implements Visitor {
 		resetOutputStream();
 	}
 
+	private void recursiveRenderConditionCssStylesForWidget(Widget widget) {
+		for (Entry<Css, String> cssConditional : widget.getConditionalCssStyles().entrySet()) {
+			System.out.println("\t" + cssConditional.getValue() + " = true; // amend if necessary");
+		}
+		System.out.println();
+		for (Widget child : widget.getChildren()) {
+			recursiveRenderConditionCssStylesForWidget(child);
+		}
+	}
+
 	@Override
 	public void visit(Service service) {
 		setOutputStream(service);
@@ -199,13 +217,16 @@ public class Angular2GeneratingVisitor implements Visitor {
 	private void recursiveRenderEventHandlersForWidget(Widget widget) {
 		// render the template his event handling if applicable
 		for (Event event : widget.getEvents()) {
-			System.out.printf("\ton%s($event) {%n", widget.getClass().getSimpleName()+this.convertFirstCharacterToUppercase(event.toString().toLowerCase()));
-			// TODO rloman je zou hier ook nog iets kunne doen zodat $event.stopPropagation(); // werkt. later.
-			System.out.println("\t\tconsole.log('You clicked a "+widget.getClass().getSimpleName()+" widget', $event);");
+			System.out.printf("\ton%s($event) {%n", widget.getClass().getSimpleName()
+					+ this.convertFirstCharacterToUppercase(event.toString().toLowerCase()));
+			// TODO rloman je zou hier ook nog iets kunne doen zodat
+			// $event.stopPropagation(); // werkt. later.
+			System.out.println(
+					"\t\tconsole.log('You clicked a " + widget.getClass().getSimpleName() + " widget', $event);");
 			System.out.println("\t}");
 		}
 		System.out.println();
-		for(Widget child : widget.getChildren()) {
+		for (Widget child : widget.getChildren()) {
 			recursiveRenderEventHandlersForWidget(child);
 		}
 
@@ -297,20 +318,51 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 	// en alsl het meer dan 1 event is / wordt?
 	/*
-	 * This method renders the (click)='onClick' part of the event of the widget. NOt to be confused with the latter implementation of the onClick event handler
+	 * This method renders the (click)='onClick' part of the event of the
+	 * widget. NOt to be confused with the latter implementation of the onClick
+	 * event handler
 	 */
 	private void renderEvents(Widget widget) {
 		for (Event e : widget.getEvents()) {
-			System.out.printf("(%s)='on%s($event);'", e.toString().toLowerCase(), widget.getClass().getSimpleName()+
+			System.out.printf("(%s)='on%s($event);'", e.toString().toLowerCase(), widget.getClass().getSimpleName() +
 					this.convertFirstCharacterToUppercase(e.toString().toLowerCase()));
 		}
+	}
+
+	private void renderCss(Widget widget) {
+		if (!widget.getCssStyles().isEmpty()) {
+			System.out.print(" class='");
+			List<String> names = new ArrayList<>();
+
+			for (Css css : widget.getCssStyles()) {
+				names.add(this.convertUpperCamelCaseToAngularString(css.toString()));
+			}
+			System.out.print(String.join(" ", names));
+			System.out.print("' ");
+		}
+	}
+
+	private void renderConditionalCss(Widget widget) {
+		if (!widget.getConditionalCssStyles().isEmpty()) {
+
+			for (Entry<Css, String> cssConditionalEntry : widget.getConditionalCssStyles().entrySet()) {
+				System.out.printf(" [class.%s]='%s' ",
+						this.convertUpperCamelCaseToAngularString(cssConditionalEntry.getKey().toString()),
+						cssConditionalEntry.getValue());
+			}
+		}
+
 	}
 
 	@Override
 	public void visit(Button button) {
 		System.out.println();
 		System.out.print("\t\t\t<button ");
+
+		renderCss(button);
+		renderConditionalCss(button);
 		renderEvents(button);
+
 		System.out.println(">" + button.getLabel());
 		visit((Widget) button);
 		System.out.println("\t\t\t</button>");
@@ -320,7 +372,13 @@ public class Angular2GeneratingVisitor implements Visitor {
 	public void visit(Div div) {
 		System.out.println();
 		System.out.print("\t\t<div ");
+
+		// this is too much repeating code since every concrete widget class
+		// must render this... :-(
+		renderCss(div);
+		renderConditionalCss(div);
 		renderEvents(div);
+
 		System.out.print(">");
 		visit((Widget) div);
 		System.out.println("\t\t</div>");

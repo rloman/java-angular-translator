@@ -6,6 +6,7 @@ import java.util.List;
 import eu.allego.angularbuilder.domain.Button;
 import eu.allego.angularbuilder.domain.Component;
 import eu.allego.angularbuilder.domain.Constructor;
+import eu.allego.angularbuilder.domain.Css;
 import eu.allego.angularbuilder.domain.Directive;
 import eu.allego.angularbuilder.domain.Div;
 import eu.allego.angularbuilder.domain.Event;
@@ -59,6 +60,9 @@ public class Application {
 			
 			Widget button = new Button("click me");
 			button.addEvent(Event.CLICK);
+			button.addCss(Css.btn);
+			button.addCss(Css.btnPrimary);
+			button.addConditionalCssStyle(Css.active, "isActive");
 			div.addChild(button);
 			
 			Template template = new Template();
