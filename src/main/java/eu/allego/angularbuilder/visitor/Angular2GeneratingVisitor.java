@@ -200,6 +200,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 		// render the template his event handling if applicable
 		for (Event event : widget.getEvents()) {
 			System.out.printf("\ton%s($event) {%n", widget.getClass().getSimpleName()+this.convertFirstCharacterToUppercase(event.toString().toLowerCase()));
+			// TODO rloman je zou hier ook nog iets kunne doen zodat $event.stopPropagation(); // werkt. later.
 			System.out.println("\t\tconsole.log('You clicked a "+widget.getClass().getSimpleName()+" widget', $event);");
 			System.out.println("\t}");
 		}
