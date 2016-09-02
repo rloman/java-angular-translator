@@ -1,0 +1,22 @@
+v0.2.0     
+      prepare for the next development release
+      Add some code which convert Upper camelcase to angular case
+      remove some obsolete test
+      Add Widget, Button and change template to contains Widget(s) or String
+      Add Div widget and test it by adding Button widget to it. for now it is ok
+      Add / finish the widgets (Div and Button) are now working including their event handlers
+      some more comments
+      Some more tabbing which might be fixed later
+      Add  to the event attribute and event handler
+      Distinguist between separate widget elements so you have two separate method for a div and a button which both listen to mouse click events
+      Make note for action for later
+      Add CSS and Condtional CSS in the Widget
+      Set normal name back from Knuth
+      Add ngModel paradigm to the compiler
+      Add TextField widget and add constructor for ComponentAttribute
+      some shuffling and add br in front of every rendered widget
+----------------------------
+
+v0.1.0
+      This is the first, initial release so everything is new here
+

@@ -14,13 +14,15 @@ public class Component extends Node {
 	private String name;
 
 	private String selector;
-	private String template;
+	private Template template;
 
 	private List<Component> children = new ArrayList<>();
 	
 	private List<Service> services = new ArrayList<>();
 	
 	private List<Directive> directives = new ArrayList<>();
+	
+	private List<ComponentAttribute> attributes = new ArrayList<>();
 	
 	private Constructor constructor;
 
@@ -31,7 +33,7 @@ public class Component extends Node {
 	// list of some collections which must be rendered by the component (and
 	// later will be refactored to a service when we get to that section)
 	private Map<String, List<Object>> listMap = new HashMap<>();
-
+	
 	/**
 	 * 
 	 * @param name
@@ -44,6 +46,13 @@ public class Component extends Node {
 	 *            = the to be rendered html of this component
 	 */
 	public Component(String name, String title, String selector, String template) {
+		this.name = name;
+		this.title = title;
+		this.selector = selector;
+		this.template = new Template(template);
+	}
+	
+	public Component(String name, String title, String selector, Template template) {
 		this.name = name;
 		this.title = title;
 		this.selector = selector;
@@ -88,7 +97,7 @@ public class Component extends Node {
 		return selector;
 	}
 
-	public String getTemplate() {
+	public Template getTemplate() {
 		return template;
 	}
 
@@ -111,6 +120,14 @@ public class Component extends Node {
 
 	public List<Directive> getDirectives() {
 		return directives;
+	}
+
+	public void addAttribute(ComponentAttribute componentAttribute) {
+		this.attributes.add(componentAttribute);
+	}
+
+	public List<ComponentAttribute> getAttributes() {
+		return attributes;
 	}
 
 }

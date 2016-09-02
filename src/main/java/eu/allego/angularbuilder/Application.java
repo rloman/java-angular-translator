@@ -3,12 +3,20 @@ package eu.allego.angularbuilder;
 import java.util.ArrayList;
 import java.util.List;
 
+import eu.allego.angularbuilder.domain.Button;
 import eu.allego.angularbuilder.domain.Component;
+import eu.allego.angularbuilder.domain.ComponentAttribute;
 import eu.allego.angularbuilder.domain.Constructor;
+import eu.allego.angularbuilder.domain.Css;
 import eu.allego.angularbuilder.domain.Directive;
+import eu.allego.angularbuilder.domain.Div;
 import eu.allego.angularbuilder.domain.Event;
+import eu.allego.angularbuilder.domain.InputField;
 import eu.allego.angularbuilder.domain.Service;
 import eu.allego.angularbuilder.domain.ServiceMethod;
+import eu.allego.angularbuilder.domain.Template;
+import eu.allego.angularbuilder.domain.TextField;
+import eu.allego.angularbuilder.domain.Widget;
 import eu.allego.angularbuilder.visitor.Angular2GeneratingVisitor;
 import eu.allego.angularbuilder.visitor.Visitor;
 
@@ -47,6 +55,39 @@ public class Application {
 			authorsComponent.setConstructor(c);
 			
 			appComponent.addChildComponent(authorsComponent);
+		}
+		
+		{
+			Div div = new Div();
+			div.addEvent(Event.CLICK);
+			
+			ComponentAttribute firstNameComponentAttribute = new ComponentAttribute("firstName", "string", "Raymie");
+			
+			InputField input = new InputField();
+			input.setNgModel(firstNameComponentAttribute);
+			
+			Widget textField = new TextField("Voornaam", firstNameComponentAttribute);
+			
+			div.addChild(textField);
+			div.addChild(input);
+			
+			
+			Widget button = new Button("click me");
+			button.addEvent(Event.CLICK);
+			button.addCss(Css.btn);
+			button.addCss(Css.btnPrimary);
+			button.addConditionalCssStyle(Css.active, "isActive");
+			div.addChild(button);
+			
+			Template template = new Template();
+			template.add(div);
+			
+			Component coursesComponent = new Component("Buttons", "Overview of buttons", "buttons",  template);
+			
+		
+			coursesComponent.addAttribute(firstNameComponentAttribute);
+			
+			appComponent.addChildComponent(coursesComponent);
 		}
 
 		Visitor visitor = new Angular2GeneratingVisitor();

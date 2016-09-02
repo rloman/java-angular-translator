@@ -1,7 +1,7 @@
 package eu.allego.angularbuilder.domain;
 
-public enum Event {
+public enum Css {
 	
-	FOCUS, BLUR, CLICK
+	btn, btnPrimary, active
 
 }
