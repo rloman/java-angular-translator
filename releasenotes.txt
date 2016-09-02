@@ -1,5 +1,4 @@
 v0.2.0     
-      prepare for the next development release
       Add some code which convert Upper camelcase to angular case
       remove some obsolete test
       Add Widget, Button and change template to contains Widget(s) or String
