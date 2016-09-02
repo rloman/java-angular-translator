@@ -10,11 +10,13 @@ import java.util.Map.Entry;
 
 import eu.allego.angularbuilder.domain.Button;
 import eu.allego.angularbuilder.domain.Component;
+import eu.allego.angularbuilder.domain.ComponentAttribute;
 import eu.allego.angularbuilder.domain.Constructor;
 import eu.allego.angularbuilder.domain.Css;
 import eu.allego.angularbuilder.domain.Directive;
 import eu.allego.angularbuilder.domain.Div;
 import eu.allego.angularbuilder.domain.Event;
+import eu.allego.angularbuilder.domain.InputField;
 import eu.allego.angularbuilder.domain.Service;
 import eu.allego.angularbuilder.domain.ServiceMethod;
 import eu.allego.angularbuilder.domain.Template;
@@ -119,6 +121,11 @@ public class Angular2GeneratingVisitor implements Visitor {
 			System.out.printf("\ttitle: string = '%s'%n", component.getTitle());
 			System.out.println();
 		}
+		
+		//render the real attributes (will remove the code above with title later)
+		for(ComponentAttribute attribute : component.getAttributes()){
+			attribute.accept(this);
+		}
 
 		// render the collection if applicable (as part of the training) if
 		// applicable
@@ -195,6 +202,14 @@ public class Angular2GeneratingVisitor implements Visitor {
 		for (Widget child : widget.getChildren()) {
 			recursiveRenderConditionCssStylesForWidget(child);
 		}
+	}
+	
+	@Override
+	public void visit(InputField inputField) {
+		System.out.println();
+		
+		System.out.println("\t\t\t<input type='text' [(ngModel)]='"+inputField.getNgModel().getName()+"' />");
+		
 	}
 
 	@Override
@@ -384,6 +399,13 @@ public class Angular2GeneratingVisitor implements Visitor {
 		System.out.println("\t\t</div>");
 
 	}
+	
+	// render the attributes (and maybe title may be removed now directly) from the compnent
+	@Override
+	public void visit(ComponentAttribute componentAttribute) {
+		System.out.println();
+		System.out.printf("\t%s: %s;%n", componentAttribute.getName(), componentAttribute.getType());
+	}
 
 	private void setOutputStream(Service service) {
 		currentOutputStream = System.out;
@@ -463,4 +485,6 @@ public class Angular2GeneratingVisitor implements Visitor {
 	private void resetOutputStream() {
 		System.setOut(currentOutputStream);
 	}
+
+	
 }

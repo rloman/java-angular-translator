@@ -2,9 +2,11 @@ package eu.allego.angularbuilder.visitor;
 
 import eu.allego.angularbuilder.domain.Button;
 import eu.allego.angularbuilder.domain.Component;
+import eu.allego.angularbuilder.domain.ComponentAttribute;
 import eu.allego.angularbuilder.domain.Constructor;
 import eu.allego.angularbuilder.domain.Directive;
 import eu.allego.angularbuilder.domain.Div;
+import eu.allego.angularbuilder.domain.InputField;
 import eu.allego.angularbuilder.domain.Service;
 import eu.allego.angularbuilder.domain.ServiceMethod;
 import eu.allego.angularbuilder.domain.Template;
@@ -29,5 +31,9 @@ public interface Visitor {
 	void visit(Div div);
 
 	void visit(Widget widget);
+
+	void visit(InputField inputField);
+
+	void visit(ComponentAttribute componentAttribute);
 
 }

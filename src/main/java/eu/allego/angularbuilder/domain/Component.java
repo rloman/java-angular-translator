@@ -22,6 +22,8 @@ public class Component extends Node {
 	
 	private List<Directive> directives = new ArrayList<>();
 	
+	private List<ComponentAttribute> attributes = new ArrayList<>();
+	
 	private Constructor constructor;
 
 	// application specific properties
@@ -31,7 +33,7 @@ public class Component extends Node {
 	// list of some collections which must be rendered by the component (and
 	// later will be refactored to a service when we get to that section)
 	private Map<String, List<Object>> listMap = new HashMap<>();
-
+	
 	/**
 	 * 
 	 * @param name
@@ -118,6 +120,14 @@ public class Component extends Node {
 
 	public List<Directive> getDirectives() {
 		return directives;
+	}
+
+	public void addAttribute(ComponentAttribute componentAttribute) {
+		this.attributes.add(componentAttribute);
+	}
+
+	public List<ComponentAttribute> getAttributes() {
+		return attributes;
 	}
 
 }

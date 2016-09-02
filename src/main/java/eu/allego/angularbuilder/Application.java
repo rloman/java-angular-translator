@@ -5,11 +5,13 @@ import java.util.List;
 
 import eu.allego.angularbuilder.domain.Button;
 import eu.allego.angularbuilder.domain.Component;
+import eu.allego.angularbuilder.domain.ComponentAttribute;
 import eu.allego.angularbuilder.domain.Constructor;
 import eu.allego.angularbuilder.domain.Css;
 import eu.allego.angularbuilder.domain.Directive;
 import eu.allego.angularbuilder.domain.Div;
 import eu.allego.angularbuilder.domain.Event;
+import eu.allego.angularbuilder.domain.InputField;
 import eu.allego.angularbuilder.domain.Service;
 import eu.allego.angularbuilder.domain.ServiceMethod;
 import eu.allego.angularbuilder.domain.Template;
@@ -58,6 +60,13 @@ public class Application {
 			Div div = new Div();
 			div.addEvent(Event.CLICK);
 			
+			ComponentAttribute inputComponent = new ComponentAttribute("firstName", "string");
+			
+			InputField input = new InputField();
+			input.setNgModel(inputComponent);
+			
+			div.addChild(input);
+			
 			Widget button = new Button("click me");
 			button.addEvent(Event.CLICK);
 			button.addCss(Css.btn);
@@ -69,6 +78,9 @@ public class Application {
 			template.add(div);
 			
 			Component coursesComponent = new Component("Buttons", "Overview of buttons", "buttons",  template);
+			
+		
+			coursesComponent.addAttribute(inputComponent);
 			
 			appComponent.addChildComponent(coursesComponent);
 		}
