@@ -68,8 +68,9 @@ public class Application {
 			
 			Widget textField = new TextField("Voornaam", firstNameComponentAttribute);
 			
-			div.addChild(input);
 			div.addChild(textField);
+			div.addChild(input);
+			
 			
 			Widget button = new Button("click me");
 			button.addEvent(Event.CLICK);
