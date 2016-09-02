@@ -10,6 +10,7 @@ import eu.allego.angularbuilder.domain.InputField;
 import eu.allego.angularbuilder.domain.Service;
 import eu.allego.angularbuilder.domain.ServiceMethod;
 import eu.allego.angularbuilder.domain.Template;
+import eu.allego.angularbuilder.domain.TextField;
 import eu.allego.angularbuilder.domain.Widget;
 
 public interface Visitor {
@@ -35,5 +36,7 @@ public interface Visitor {
 	void visit(InputField inputField);
 
 	void visit(ComponentAttribute componentAttribute);
+
+	void visit(TextField textField);
 
 }
