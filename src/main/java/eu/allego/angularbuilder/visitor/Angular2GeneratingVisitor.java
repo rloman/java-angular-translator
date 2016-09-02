@@ -20,6 +20,7 @@ import eu.allego.angularbuilder.domain.InputField;
 import eu.allego.angularbuilder.domain.Service;
 import eu.allego.angularbuilder.domain.ServiceMethod;
 import eu.allego.angularbuilder.domain.Template;
+import eu.allego.angularbuilder.domain.TextField;
 import eu.allego.angularbuilder.domain.Widget;
 
 public class Angular2GeneratingVisitor implements Visitor {
@@ -206,7 +207,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 	
 	@Override
 	public void visit(InputField inputField) {
-		System.out.println();
+		System.out.println("<br/>");
 		
 		System.out.println("\t\t\t<input type='text' [(ngModel)]='"+inputField.getNgModel().getName()+"' />");
 		
@@ -371,7 +372,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 	@Override
 	public void visit(Button button) {
-		System.out.println();
+		System.out.println("<br/>");
 		System.out.print("\t\t\t<button ");
 
 		renderCss(button);
@@ -385,7 +386,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 	@Override
 	public void visit(Div div) {
-		System.out.println();
+		System.out.println("<br/>");
 		System.out.print("\t\t<div ");
 
 		// this is too much repeating code since every concrete widget class
@@ -404,7 +405,15 @@ public class Angular2GeneratingVisitor implements Visitor {
 	@Override
 	public void visit(ComponentAttribute componentAttribute) {
 		System.out.println();
-		System.out.printf("\t%s: %s;%n", componentAttribute.getName(), componentAttribute.getType());
+		System.out.printf("\t%s: %s = '%s';%n", componentAttribute.getName(), componentAttribute.getType(), componentAttribute.getValue() != null ? componentAttribute.getValue() : "");
+	}
+	
+	@Override
+	public void visit(TextField textField) {
+		
+		System.out.println("<br/>");
+		System.out.println(textField.getLabel()+": {{"+textField.getNgModel().getName()+"}}");
+		
 	}
 
 	private void setOutputStream(Service service) {

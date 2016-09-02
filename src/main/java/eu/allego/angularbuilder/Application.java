@@ -15,6 +15,7 @@ import eu.allego.angularbuilder.domain.InputField;
 import eu.allego.angularbuilder.domain.Service;
 import eu.allego.angularbuilder.domain.ServiceMethod;
 import eu.allego.angularbuilder.domain.Template;
+import eu.allego.angularbuilder.domain.TextField;
 import eu.allego.angularbuilder.domain.Widget;
 import eu.allego.angularbuilder.visitor.Angular2GeneratingVisitor;
 import eu.allego.angularbuilder.visitor.Visitor;
@@ -60,12 +61,16 @@ public class Application {
 			Div div = new Div();
 			div.addEvent(Event.CLICK);
 			
-			ComponentAttribute inputComponent = new ComponentAttribute("firstName", "string");
+			ComponentAttribute firstNameComponentAttribute = new ComponentAttribute("firstName", "string", "Raymie");
 			
 			InputField input = new InputField();
-			input.setNgModel(inputComponent);
+			input.setNgModel(firstNameComponentAttribute);
 			
+			Widget textField = new TextField("Voornaam", firstNameComponentAttribute);
+			
+			div.addChild(textField);
 			div.addChild(input);
+			
 			
 			Widget button = new Button("click me");
 			button.addEvent(Event.CLICK);
@@ -80,7 +85,7 @@ public class Application {
 			Component coursesComponent = new Component("Buttons", "Overview of buttons", "buttons",  template);
 			
 		
-			coursesComponent.addAttribute(inputComponent);
+			coursesComponent.addAttribute(firstNameComponentAttribute);
 			
 			appComponent.addChildComponent(coursesComponent);
 		}
