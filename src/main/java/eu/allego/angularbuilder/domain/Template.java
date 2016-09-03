@@ -15,7 +15,6 @@ public class Template extends Node {
 		
 	}
 	
-	
 	public Template(String templateString) {
 		this.templateString = templateString;
 	}

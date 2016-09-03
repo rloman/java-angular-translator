@@ -2,6 +2,6 @@ package eu.allego.angularbuilder.domain;
 
 public enum Css {
 	
-	btn, btnPrimary, active
+	btn, btnPrimary, active, glyphicon, glyphiconStarEmpty, glyphiconStar
 
 }

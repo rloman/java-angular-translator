@@ -1,9 +1,7 @@
 package eu.allego.angularbuilder.domain;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import eu.allego.angularbuilder.visitor.Visitor;
 
@@ -26,14 +24,6 @@ public class Component extends Node {
 	
 	private Constructor constructor;
 
-	// application specific properties
-	private String title; // mostly all component do have a title (will add more
-							// later)
-
-	// list of some collections which must be rendered by the component (and
-	// later will be refactored to a service when we get to that section)
-	private Map<String, List<Object>> listMap = new HashMap<>();
-	
 	/**
 	 * 
 	 * @param name
@@ -45,16 +35,14 @@ public class Component extends Node {
 	 * @param template
 	 *            = the to be rendered html of this component
 	 */
-	public Component(String name, String title, String selector, String template) {
+	public Component(String name, String selector, String template) {
 		this.name = name;
-		this.title = title;
 		this.selector = selector;
 		this.template = new Template(template);
 	}
 	
-	public Component(String name, String title, String selector, Template template) {
+	public Component(String name, String selector, Template template) {
 		this.name = name;
-		this.title = title;
 		this.selector = selector;
 		this.template = template;
 	}
@@ -81,10 +69,6 @@ public class Component extends Node {
 
 	}
 
-	public void addCollection(String name, List<Object> list) {
-		this.listMap.put(name, list);
-	}
-
 	public void accept(Visitor visitor) {
 		visitor.visit(this);
 	}
@@ -103,14 +87,6 @@ public class Component extends Node {
 
 	public List<Component> getChildren() {
 		return children;
-	}
-
-	public String getTitle() {
-		return title;
-	}
-
-	public Map<String, List<Object>> getListMap() {
-		return listMap;
 	}
 
 

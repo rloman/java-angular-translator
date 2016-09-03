@@ -5,8 +5,8 @@ import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import eu.allego.angularbuilder.domain.Button;
 import eu.allego.angularbuilder.domain.Component;
@@ -16,6 +16,7 @@ import eu.allego.angularbuilder.domain.Css;
 import eu.allego.angularbuilder.domain.Directive;
 import eu.allego.angularbuilder.domain.Div;
 import eu.allego.angularbuilder.domain.Event;
+import eu.allego.angularbuilder.domain.ITag;
 import eu.allego.angularbuilder.domain.InputField;
 import eu.allego.angularbuilder.domain.Service;
 import eu.allego.angularbuilder.domain.ServiceMethod;
@@ -51,64 +52,71 @@ public class Angular2GeneratingVisitor implements Visitor {
 		System.out.println("@Component({\n"
 				+ "\tselector: '" + component.getSelector() + "', \n"
 				+ "\ttemplate: `\n\t\t");
-		if (component.getTitle() != null && !component.getTitle().isEmpty()) {
-			System.out.print("\t\t{{ title }}");
-		}
-		component.getTemplate().accept(this);
-		Map<String, List<Object>> listMap = component.getListMap();
-		if (listMap != null && !listMap.isEmpty()) {
-			StringBuilder builder = new StringBuilder();
 
-			for (Entry<String, List<Object>> o : listMap.entrySet()) {
+		component.getTemplate().accept(this);
+
+		// since this entire project! is a learning project. here I will inspect
+		// if it is a string[] for now
+		for (ComponentAttribute attr : component.getAttributes()) {
+			if ("string[]".equals(attr.getType().trim())) {
+				StringBuilder builder = new StringBuilder();
+
 				builder.append("<ul>");
-				builder.append("<li *ngFor='#element of " + o.getKey() + "'>");
-				builder.append("{{ element }}");
+				builder.append(String.format("<li *ngFor='#%s of %s'>",
+						attr.getName().substring(0, attr.getName().length() - 1), attr.getName()));
+				builder.append(String.format("{{ %s }}", attr.getName().substring(0, attr.getName().length() - 1)));
 				builder.append("</li>");
 				builder.append("</ul>");
+				System.out.println(builder.toString());
 			}
-			System.out.println(builder.toString());
+
 		}
 		// render subcomponents his selectors in the template
 		for (Component child : component.getChildren()) {
-			System.out.println("\t\t<" + child.getSelector() + "></" + child.getSelector() + ">");
+			System.out.printf("\t\t<%s></%s>%n", child.getSelector(), child.getSelector());
 		}
 		System.out.print("\t\t`");
 
 		if (!component.getServices().isEmpty()) {
 			System.out.println(", ");
 			System.out.print("\tproviders: [");
-			List<String> names = new ArrayList<>();
-			for (Service service : component.getServices()) {
-				names.add(service.getName() + "Service");
-				System.out.print(String.join(", ", names));
-				System.out.print("]");
-			}
+			System.out.print(String.join(", ", component.getServices().stream().map(e -> {
+				return e.getName() + "Service";
+			}).collect(Collectors.toList())));
+			System.out.print("]");
 		}
-		List<String> names = new ArrayList<>();
+
 		// render subcomponent directives
-		if (!component.getChildren().isEmpty()) {
+		if (!component.getChildren().isEmpty())
+
+		{
 			System.out.println(", ");
 			System.out.print("\tdirectives: [");
 
-			// refactor to llambda later
-
-			for (Component child : component.getChildren()) {
-				names.add(child.getName() + "Component");
-			}
-			System.out.print(String.join(", ", names));
+			System.out.print(String.join(", ", component
+					.getChildren()
+					.stream()
+					.map(e -> {
+						return e.getName() + "Component";
+					})
+					.collect(Collectors.toList())));
 
 			System.out.print("]");
 		}
 
-		if (!component.getDirectives().isEmpty()) {
+		if (!component.getDirectives().isEmpty())
+
+		{
 			System.out.println(", ");
 			System.out.print("\tdirectives: [");
 
-			for (Directive directive : component.getDirectives()) {
-				names.add(directive.getName() + "Directive");
-			}
-			System.out.print(String.join(", ", names));
-
+			System.out.print(String.join(", ", component
+					.getDirectives()
+					.stream()
+					.map(e -> {
+						return e.getName() + "Directive";
+					})
+					.collect(Collectors.toList())));
 			System.out.println("]");
 		}
 
@@ -117,42 +125,23 @@ public class Angular2GeneratingVisitor implements Visitor {
 		System.out.println("export class " + component.getName() + "Component {");
 		System.out.println();
 
-		// render the title if applicable
-		if (component.getTitle() != null && !component.getTitle().isEmpty()) {
-			System.out.printf("\ttitle: string = '%s'%n", component.getTitle());
-			System.out.println();
-		}
-		
-		//render the real attributes (will remove the code above with title later)
-		for(ComponentAttribute attribute : component.getAttributes()){
+		for (ComponentAttribute attribute : component.getAttributes()) {
 			attribute.accept(this);
 		}
 
-		// render the collection if applicable (as part of the training) if
-		// applicable
-		for (Entry<String, List<Object>> element : component.getListMap().entrySet()) {
-			System.out.print("\t" + element.getKey() + " = ");
-			System.out.print("[");
-			{
-				names = new ArrayList<>();
-				for (Object o : element.getValue()) {
-					names.add("'" + o.toString() + "'");
-				}
-				System.out.print(String.join(", ", names));
-			}
-
-			System.out.println("]");
-		}
-
 		// render the constructor (for now render the services and their call)
-		if (!component.getServices().isEmpty()) {
+		if (!component.getServices().isEmpty())
+
+		{
 			System.out.print("\n\tconstructor(");
 
-			names = new ArrayList<>();
-			for (Service service : component.getServices()) {
-				names.add(service.getName().toLowerCase() + "Service: " + service.getName() + "Service");
-			}
-			System.out.print(String.join(", ", names));
+			System.out.print(String.join(", ", component
+					.getServices()
+					.stream()
+					.map(e -> {
+						return e.getName().toLowerCase() + "Service: " + e.getName() + "Service";
+					})
+					.collect(Collectors.toList())));
 
 			System.out.println(") {");
 
@@ -166,12 +155,20 @@ public class Angular2GeneratingVisitor implements Visitor {
 		// // render the properties of the conditional css of the widgets of
 		// this
 		// component if applicable recursively
-		for (Widget widget : component.getTemplate().getWidgets()) {
+		for (
+
+		Widget widget : component.getTemplate().getWidgets())
+
+		{
 			recursiveRenderConditionCssStylesForWidget(widget);
 		}
 
 		// render the event handlers recursively
-		for (Widget widget : component.getTemplate().getWidgets()) {
+		for (
+
+		Widget widget : component.getTemplate().getWidgets())
+
+		{
 			recursiveRenderEventHandlersForWidget(widget);
 		}
 
@@ -180,19 +177,32 @@ public class Angular2GeneratingVisitor implements Visitor {
 		// render the (FILES) of the children
 		// rloman might refactor all those component like component, service and
 		// directive to one common base class
-		for (Component child : component.getChildren()) {
+		for (
+
+		Component child : component.getChildren())
+
+		{
 			child.accept(this);
 		}
 
-		for (Service service : component.getServices()) {
+		for (
+
+		Service service : component.getServices())
+
+		{
 			service.accept(this);
 		}
 
-		for (Directive directive : component.getDirectives()) {
+		for (
+
+		Directive directive : component.getDirectives())
+
+		{
 			directive.accept(this);
 		}
 
 		resetOutputStream();
+
 	}
 
 	private void recursiveRenderConditionCssStylesForWidget(Widget widget) {
@@ -204,13 +214,13 @@ public class Angular2GeneratingVisitor implements Visitor {
 			recursiveRenderConditionCssStylesForWidget(child);
 		}
 	}
-	
+
 	@Override
 	public void visit(InputField inputField) {
 		System.out.println("<br/>");
-		
-		System.out.println("\t\t\t<input type='text' [(ngModel)]='"+inputField.getNgModel().getName()+"' />");
-		
+
+		System.out.println("\t\t\t<input type='text' [(ngModel)]='" + inputField.getNgModel().getName() + "' />");
+
 	}
 
 	@Override
@@ -238,7 +248,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 			// TODO rloman je zou hier ook nog iets kunne doen zodat
 			// $event.stopPropagation(); // werkt. later.
 			System.out.println(
-					"\t\tconsole.log('You clicked a " + widget.getClass().getSimpleName() + " widget', $event);");
+					"\t\tconsole.log('You "+event.toString().toLowerCase()+"ed a " + widget.getClass().getSimpleName() + " widget', $event);");
 			System.out.println("\t}");
 		}
 		System.out.println();
@@ -340,7 +350,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 	 */
 	private void renderEvents(Widget widget) {
 		for (Event e : widget.getEvents()) {
-			System.out.printf("(%s)='on%s($event);'", e.toString().toLowerCase(), widget.getClass().getSimpleName() +
+			System.out.printf("(%s)='on%s($event);' ", e.toString().toLowerCase(), widget.getClass().getSimpleName() +
 					this.convertFirstCharacterToUppercase(e.toString().toLowerCase()));
 		}
 	}
@@ -370,6 +380,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 	}
 
+	// perhaps refactor later to one Widget class with tagName (div, button) to render in one visit method
 	@Override
 	public void visit(Button button) {
 		System.out.println("<br/>");
@@ -400,20 +411,39 @@ public class Angular2GeneratingVisitor implements Visitor {
 		System.out.println("\t\t</div>");
 
 	}
-	
-	// render the attributes (and maybe title may be removed now directly) from the compnent
+
+	@Override
+	public void visit(ITag itag) {
+		System.out.println("<br/>");
+		System.out.print("\t\t<i ");
+		// this is too much repeating code since every concrete widget class
+		// must render this... :-(
+		renderCss(itag);
+		renderConditionalCss(itag);
+		renderEvents(itag);
+
+		System.out.print(">");
+
+		visit((Widget) itag);
+		System.out.println("\t\t</i>");
+
+	}
+
+	// render the attributes (and maybe title may be removed now directly) from
+	// the compnent
 	@Override
 	public void visit(ComponentAttribute componentAttribute) {
 		System.out.println();
-		System.out.printf("\t%s: %s = '%s';%n", componentAttribute.getName(), componentAttribute.getType(), componentAttribute.getValue() != null ? componentAttribute.getValue() : "");
+		System.out.printf("\t%s: %s %s ;%n", componentAttribute.getName(), componentAttribute.getType(),
+				componentAttribute.getValue() != null ? String.format("= '%s'", componentAttribute.getValue()) : "");
 	}
-	
+
 	@Override
 	public void visit(TextField textField) {
-		
+
 		System.out.println("<br/>");
-		System.out.println(textField.getLabel()+": {{"+textField.getNgModel().getName()+"}}");
-		
+		System.out.println(textField.getLabel() + ": {{" + textField.getNgModel().getName() + "}}");
+
 	}
 
 	private void setOutputStream(Service service) {
@@ -495,5 +525,4 @@ public class Angular2GeneratingVisitor implements Visitor {
 		System.setOut(currentOutputStream);
 	}
 
-	
 }

@@ -36,6 +36,5 @@ public class TextField extends Widget {
 	@Override
 	public void accept(Visitor visitor) {
 		visitor.visit(this);
-
 	}
 }
