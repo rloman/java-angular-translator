@@ -92,9 +92,10 @@ public class Application {
 			Div div = new Div();
 			div.addEvent(Event.CLICK);
 
-			ComponentAttribute firstNameComponentAttribute = new ComponentAttribute("firstName", "string", "Raymie");
+			ComponentAttribute firstNameComponentAttribute = new ComponentAttribute("firstName", "string", "inputpropery value");
 			ComponentAttribute titleComponentAttribute = new ComponentAttribute("title", "string",
 					"Overview of buttons");
+			firstNameComponentAttribute.setInputProperty(true);
 
 			InputField input = new InputField();
 			input.setNgModel(firstNameComponentAttribute);

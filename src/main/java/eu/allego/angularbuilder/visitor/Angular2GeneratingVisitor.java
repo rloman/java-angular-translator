@@ -31,7 +31,9 @@ public class Angular2GeneratingVisitor implements Visitor {
 	public void visit(Component component) {
 		setOutputStream(component);
 
-		System.out.println("import {Component} from 'angular2/core'");
+		
+		//beetje exotisch maar wel een keer lekker / leuk :-)
+		System.out.printf("import {Component%s} from 'angular2/core'%n", component.containsInputProperty() ? ", Input" : "");
 
 		for (Component child : component.getChildren()) {
 			System.out.println("import {" + child.getName() + "Component} from './" + child.getName().toLowerCase()
@@ -73,7 +75,15 @@ public class Angular2GeneratingVisitor implements Visitor {
 		}
 		// render subcomponents his selectors in the template
 		for (Component child : component.getChildren()) {
-			System.out.printf("\t\t<%s></%s>%n", child.getSelector(), child.getSelector());
+			// eigen methnode???
+			List<String> names = new ArrayList<>();
+			for(ComponentAttribute attr : child.getAttributes()) {
+				if(attr.isInputProperty()) {
+					names.add(String.format("%s='%s'", attr.getName(), attr.getValue() != null ? attr.getValue() : ""));
+				}
+				
+			}
+			System.out.printf("\t\t<%s %s></%s>%n", child.getSelector(), String.join(", ", names), child.getSelector());
 		}
 		System.out.print("\t\t`");
 
@@ -434,8 +444,8 @@ public class Angular2GeneratingVisitor implements Visitor {
 	@Override
 	public void visit(ComponentAttribute componentAttribute) {
 		System.out.println();
-		System.out.printf("\t%s: %s %s ;%n", componentAttribute.getName(), componentAttribute.getType(),
-				componentAttribute.getValue() != null ? String.format("= '%s'", componentAttribute.getValue()) : "");
+		System.out.printf("\t%s%s: %s %s ;%n", componentAttribute.isInputProperty() ? "@Input()\n\t" : "", componentAttribute.getName(), componentAttribute.getType(),
+				componentAttribute.getValue() != null && !componentAttribute.isInputProperty() ? String.format("= '%s'", componentAttribute.getValue()) : "");
 	}
 
 	@Override
