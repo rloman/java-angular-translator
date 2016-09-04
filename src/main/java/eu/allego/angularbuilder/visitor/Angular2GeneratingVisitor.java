@@ -18,6 +18,8 @@ import eu.allego.angularbuilder.domain.Div;
 import eu.allego.angularbuilder.domain.Event;
 import eu.allego.angularbuilder.domain.ITag;
 import eu.allego.angularbuilder.domain.InputField;
+import eu.allego.angularbuilder.domain.InputProperty;
+import eu.allego.angularbuilder.domain.OutputProperty;
 import eu.allego.angularbuilder.domain.Service;
 import eu.allego.angularbuilder.domain.ServiceMethod;
 import eu.allego.angularbuilder.domain.Template;
@@ -31,9 +33,10 @@ public class Angular2GeneratingVisitor implements Visitor {
 	public void visit(Component component) {
 		setOutputStream(component);
 
-		
-		//beetje exotisch maar wel een keer lekker / leuk :-)
-		System.out.printf("import {Component%s%s} from 'angular2/core'%n", component.containsInputProperty() ? ", Input" : "", component.containsOutputProperty() ? ", Output, EventEmitter" : "" );
+		// beetje exotisch maar wel een keer lekker / leuk :-)
+		System.out.printf("import {Component%s%s} from 'angular2/core'%n",
+				component.containsInputProperty() ? ", Input" : "",
+				component.containsOutputProperty() ? ", Output, EventEmitter" : "");
 
 		for (Component child : component.getChildren()) {
 			System.out.println("import {" + child.getName() + "Component} from './" + child.getName().toLowerCase()
@@ -78,17 +81,21 @@ public class Angular2GeneratingVisitor implements Visitor {
 			// eigen methnode???
 			List<String> namesOfInputProperties = new ArrayList<>();
 			List<String> namesOfOutputProperties = new ArrayList<>();
-			for(ComponentAttribute attr : child.getAttributes()) {
-				if(attr.isInputProperty()) {
-					namesOfInputProperties.add(String.format("%s='%s'", attr.getName(), attr.getValue() != null ? attr.getValue() : ""));
+			for (ComponentAttribute attr : child.getAttributes()) {
+				if (attr instanceof InputProperty) {
+					namesOfInputProperties.add(
+							String.format("%s='%s'", attr.getName(), attr.getValue() != null ? attr.getValue() : ""));
 				}
-				if(attr.isOutputProperty()) {
-					// refactor to class with event handling in code (e.g. change onFavouriteChange to a variable
-					namesOfOutputProperties.add(String.format("(%s)='%s'", attr.getName(), "onFavouriteChange($event)"));
+				if (attr instanceof OutputProperty) {
+					// refactor to class with event handling in code (e.g.
+					// change onFavouriteChange to a variable
+					namesOfOutputProperties
+							.add(String.format("(%s)='%s'", attr.getName(), ((OutputProperty)attr).getEventHandlerInJavascriptCode()));
 				}
-				
+
 			}
-			System.out.printf("\t\t<%s %s %s></%s>%n", child.getSelector(), String.join(", ", namesOfInputProperties), String.join(", ", namesOfOutputProperties), child.getSelector());
+			System.out.printf("\t\t<%s %s %s></%s>%n", child.getSelector(), String.join(", ", namesOfInputProperties),
+					String.join(", ", namesOfOutputProperties), child.getSelector());
 		}
 		System.out.print("\t\t`");
 
@@ -263,7 +270,8 @@ public class Angular2GeneratingVisitor implements Visitor {
 			// TODO rloman je zou hier ook nog iets kunne doen zodat
 			// $event.stopPropagation(); // werkt. later.
 			System.out.println(
-					"\t\tconsole.log('You "+event.toString().toLowerCase()+"ed a " + widget.getClass().getSimpleName() + " widget', $event);");
+					"\t\tconsole.log('You " + event.toString().toLowerCase() + "ed a "
+							+ widget.getClass().getSimpleName() + " widget', $event);");
 			System.out.println("\t}");
 		}
 		System.out.println();
@@ -395,7 +403,8 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 	}
 
-	// perhaps refactor later to one Widget class with tagName (div, button) to render in one visit method
+	// perhaps refactor later to one Widget class with tagName (div, button) to
+	// render in one visit method
 	@Override
 	public void visit(Button button) {
 		System.out.println("<br/>");
@@ -449,25 +458,31 @@ public class Angular2GeneratingVisitor implements Visitor {
 	@Override
 	public void visit(ComponentAttribute componentAttribute) {
 		System.out.println();
-		if(componentAttribute.isInputProperty()) {
-			System.out.printf("\t@Input()\n\t%s: %s;%n", componentAttribute.getName(), componentAttribute.getType());
-		}
-		else {
-			if(componentAttribute.isOutputProperty()){
-				// refactor to be inpout and output property be a subtype of componentAttibute 
-				System.out.printf("\t@Output()\n\t%s %s;%n", componentAttribute.getName(), "= new EventEmitter()");
-				
-				// Add some code for the dummy implementation regarding the event handler for this event emitter
-				System.out.println();
-				System.out.println("\t// Add the emitting of the event somewhere. Perhaps here or in some other event handler (e.g. onClick)");
-				System.out.println("\tonSomeEvent() {");
-				System.out.println("\t\tthis."+componentAttribute.getName()+".emit({newValue: 'some attribute of this component e.g.: \"this.isFavourite\" ' });");
-				System.out.println("\t}");
-			}
-			else {
-				System.out.printf("\t%s%s: %s %s ;%n", componentAttribute.getName(), componentAttribute.getType(), componentAttribute.getValue() != null ? String.format("= '%s'", componentAttribute.getValue()) : "");
-			}
-		}
+		System.out.printf("\t%s: %s %s ;%n", componentAttribute.getName(), componentAttribute.getType(), componentAttribute.getValue() != null ? String.format("= '%s'", componentAttribute.getValue()) : "");
+	}
+
+	@Override
+	public void visit(InputProperty inputComponentAttribute) {
+		System.out.println();
+		System.out.printf("\t@Input()\n\t%s: %s;%n", inputComponentAttribute.getName(),
+				inputComponentAttribute.getType());
+	}
+
+	@Override
+	public void visit(OutputProperty outputComponentAttribute) {
+		System.out.println();
+		System.out.printf("\t@Output()\n\t%s %s;%n", outputComponentAttribute.getName(), "= new "+outputComponentAttribute.getType()+"()");
+
+		// Add some code for the dummy implementation regarding the event
+		// handler for this event emitter
+		System.out.println();
+		System.out.println(
+				"\t// Add the emitting of the event somewhere. Perhaps here or in some other event handler (e.g. onClick)");
+		System.out.println("\tonSomeEvent() {");
+		System.out.println("\t\tthis." + outputComponentAttribute.getName()
+				+ ".emit({newValue: 'some attribute of this component e.g.: \"this.isFavourite\" ' });");
+		System.out.println("\t}");
+
 	}
 
 	@Override

@@ -108,7 +108,7 @@ public class Component extends Node {
 	
 	public boolean containsInputProperty() {
 		for(ComponentAttribute attr : this.attributes) {
-			if(attr.isInputProperty()) {
+			if(attr instanceof InputProperty) {
 				return true;
 			}
 		}
@@ -117,7 +117,7 @@ public class Component extends Node {
 
 	public boolean containsOutputProperty() {
 		for(ComponentAttribute attr : this.attributes) {
-			if(attr.isOutputProperty()) {
+			if(attr instanceof OutputProperty) {
 				return true;
 			}
 		}

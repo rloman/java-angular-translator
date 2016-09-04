@@ -8,6 +8,8 @@ import eu.allego.angularbuilder.domain.Directive;
 import eu.allego.angularbuilder.domain.Div;
 import eu.allego.angularbuilder.domain.ITag;
 import eu.allego.angularbuilder.domain.InputField;
+import eu.allego.angularbuilder.domain.InputProperty;
+import eu.allego.angularbuilder.domain.OutputProperty;
 import eu.allego.angularbuilder.domain.Service;
 import eu.allego.angularbuilder.domain.ServiceMethod;
 import eu.allego.angularbuilder.domain.Template;
@@ -41,5 +43,9 @@ public interface Visitor {
 	void visit(TextField textField);
 
 	void visit(ITag itag);
+
+	void visit(InputProperty inputProperty);
+
+	void visit(OutputProperty outputComponentAttribute);
 
 }

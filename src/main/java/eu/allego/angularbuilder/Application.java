@@ -10,6 +10,8 @@ import eu.allego.angularbuilder.domain.Div;
 import eu.allego.angularbuilder.domain.Event;
 import eu.allego.angularbuilder.domain.ITag;
 import eu.allego.angularbuilder.domain.InputField;
+import eu.allego.angularbuilder.domain.InputProperty;
+import eu.allego.angularbuilder.domain.OutputProperty;
 import eu.allego.angularbuilder.domain.Service;
 import eu.allego.angularbuilder.domain.ServiceMethod;
 import eu.allego.angularbuilder.domain.Template;
@@ -32,13 +34,11 @@ public class Application {
 		itag.addEvent(Event.CLICK);
 		template.add(itag);
 		Component favouriteComponent = new Component("Favourite", "favourite", template);
-		ComponentAttribute attr = new ComponentAttribute("isFavourite", "boolean");
-		attr.setInputProperty(true);
+		ComponentAttribute input = new InputProperty("isFavourite", "boolean");
 		
-		ComponentAttribute output = new ComponentAttribute("change", "testje");
-		output.setOutputProperty(true);
+		ComponentAttribute output = new OutputProperty("change");
 		
-		favouriteComponent.addAttribute(attr);
+		favouriteComponent.addAttribute(input);
 		favouriteComponent.addAttribute(output);
 		
 		appComponent.addChildComponent(favouriteComponent);
@@ -99,10 +99,9 @@ public class Application {
 			Div div = new Div();
 			div.addEvent(Event.CLICK);
 
-			ComponentAttribute firstNameComponentAttribute = new ComponentAttribute("firstName", "string", "inputpropery value");
+			ComponentAttribute firstNameComponentAttribute = new InputProperty("firstName", "string");
 			ComponentAttribute titleComponentAttribute = new ComponentAttribute("title", "string",
 					"Overview of buttons");
-			firstNameComponentAttribute.setInputProperty(true);
 
 			InputField input = new InputField();
 			input.setNgModel(firstNameComponentAttribute);
