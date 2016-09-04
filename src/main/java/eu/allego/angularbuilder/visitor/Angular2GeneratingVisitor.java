@@ -33,7 +33,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 		
 		//beetje exotisch maar wel een keer lekker / leuk :-)
-		System.out.printf("import {Component%s} from 'angular2/core'%n", component.containsInputProperty() ? ", Input" : "");
+		System.out.printf("import {Component%s%s} from 'angular2/core'%n", component.containsInputProperty() ? ", Input" : "", component.containsOutputProperty() ? ", Output, EventEmitter" : "" );
 
 		for (Component child : component.getChildren()) {
 			System.out.println("import {" + child.getName() + "Component} from './" + child.getName().toLowerCase()
@@ -76,14 +76,19 @@ public class Angular2GeneratingVisitor implements Visitor {
 		// render subcomponents his selectors in the template
 		for (Component child : component.getChildren()) {
 			// eigen methnode???
-			List<String> names = new ArrayList<>();
+			List<String> namesOfInputProperties = new ArrayList<>();
+			List<String> namesOfOutputProperties = new ArrayList<>();
 			for(ComponentAttribute attr : child.getAttributes()) {
 				if(attr.isInputProperty()) {
-					names.add(String.format("%s='%s'", attr.getName(), attr.getValue() != null ? attr.getValue() : ""));
+					namesOfInputProperties.add(String.format("%s='%s'", attr.getName(), attr.getValue() != null ? attr.getValue() : ""));
+				}
+				if(attr.isOutputProperty()) {
+					// refactor to class with event handling in code (e.g. change onFavouriteChange to a variable
+					namesOfOutputProperties.add(String.format("(%s)='%s'", attr.getName(), "onFavouriteChange($event)"));
 				}
 				
 			}
-			System.out.printf("\t\t<%s %s></%s>%n", child.getSelector(), String.join(", ", names), child.getSelector());
+			System.out.printf("\t\t<%s %s %s></%s>%n", child.getSelector(), String.join(", ", namesOfInputProperties), String.join(", ", namesOfOutputProperties), child.getSelector());
 		}
 		System.out.print("\t\t`");
 
@@ -217,7 +222,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 	private void recursiveRenderConditionCssStylesForWidget(Widget widget) {
 		for (Entry<Css, String> cssConditional : widget.getConditionalCssStyles().entrySet()) {
-			System.out.println("\t" + cssConditional.getValue() + " = true; // amend if necessary");
+			System.out.println("\t// " + cssConditional.getValue() + " = true; // amend or remove if necessary");
 		}
 		System.out.println();
 		for (Widget child : widget.getChildren()) {
@@ -444,8 +449,25 @@ public class Angular2GeneratingVisitor implements Visitor {
 	@Override
 	public void visit(ComponentAttribute componentAttribute) {
 		System.out.println();
-		System.out.printf("\t%s%s: %s %s ;%n", componentAttribute.isInputProperty() ? "@Input()\n\t" : "", componentAttribute.getName(), componentAttribute.getType(),
-				componentAttribute.getValue() != null && !componentAttribute.isInputProperty() ? String.format("= '%s'", componentAttribute.getValue()) : "");
+		if(componentAttribute.isInputProperty()) {
+			System.out.printf("\t@Input()\n\t%s: %s;%n", componentAttribute.getName(), componentAttribute.getType());
+		}
+		else {
+			if(componentAttribute.isOutputProperty()){
+				// refactor to be inpout and output property be a subtype of componentAttibute 
+				System.out.printf("\t@Output()\n\t%s %s;%n", componentAttribute.getName(), "= new EventEmitter()");
+				
+				// Add some code for the dummy implementation regarding the event handler for this event emitter
+				System.out.println();
+				System.out.println("\t// Add the emitting of the event somewhere. Perhaps here or in some other event handler (e.g. onClick)");
+				System.out.println("\tonSomeEvent() {");
+				System.out.println("\t\tthis."+componentAttribute.getName()+".emit({newValue: 'some attribute of this component e.g.: \"this.isFavourite\" ' });");
+				System.out.println("\t}");
+			}
+			else {
+				System.out.printf("\t%s%s: %s %s ;%n", componentAttribute.getName(), componentAttribute.getType(), componentAttribute.getValue() != null ? String.format("= '%s'", componentAttribute.getValue()) : "");
+			}
+		}
 	}
 
 	@Override

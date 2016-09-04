@@ -27,11 +27,19 @@ public class Application {
 		
 		Widget itag = new ITag();
 		itag.addCss(Css.glyphicon);
-		itag.addConditionalCssStyle(Css.glyphiconStarEmpty, "isFavourite");
+		itag.addConditionalCssStyle(Css.glyphiconStarEmpty, "!isFavourite");
 		itag.addConditionalCssStyle(Css.glyphiconStar, "isFavourite");
 		itag.addEvent(Event.CLICK);
 		template.add(itag);
 		Component favouriteComponent = new Component("Favourite", "favourite", template);
+		ComponentAttribute attr = new ComponentAttribute("isFavourite", "boolean");
+		attr.setInputProperty(true);
+		
+		ComponentAttribute output = new ComponentAttribute("change", "testje");
+		output.setOutputProperty(true);
+		
+		favouriteComponent.addAttribute(attr);
+		favouriteComponent.addAttribute(output);
 		
 		appComponent.addChildComponent(favouriteComponent);
 		
@@ -40,7 +48,6 @@ public class Application {
 
 		appComponent.accept(visitor);
 		
-		foo();
 	}
 
 	public static void foo() {

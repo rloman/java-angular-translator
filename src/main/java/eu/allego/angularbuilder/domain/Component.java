@@ -1,6 +1,5 @@
 package eu.allego.angularbuilder.domain;
 
-import java.awt.image.ComponentSampleModel;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -110,6 +109,15 @@ public class Component extends Node {
 	public boolean containsInputProperty() {
 		for(ComponentAttribute attr : this.attributes) {
 			if(attr.isInputProperty()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean containsOutputProperty() {
+		for(ComponentAttribute attr : this.attributes) {
+			if(attr.isOutputProperty()) {
 				return true;
 			}
 		}

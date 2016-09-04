@@ -9,6 +9,7 @@ public class ComponentAttribute extends Node {
 	private String value;
 	
 	private boolean inputProperty = false;
+	private boolean outputProperty = false;
 
 	public ComponentAttribute(String name, String type) {
 		this.name = name;
@@ -23,9 +24,17 @@ public class ComponentAttribute extends Node {
 	public boolean isInputProperty() {
 		return inputProperty;
 	}
+	
+	public boolean isOutputProperty() {
+		return this.outputProperty;
+	}
 
 	public void setInputProperty(boolean inputProperty) {
 		this.inputProperty = inputProperty;
+	}
+	
+	public void setOutputProperty(boolean outputProperty) {
+		this.outputProperty = outputProperty;
 	}
 
 	public String getName() {
