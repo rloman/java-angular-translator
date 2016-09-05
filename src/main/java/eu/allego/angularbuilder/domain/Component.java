@@ -1,8 +1,5 @@
 package eu.allego.angularbuilder.domain;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import eu.allego.angularbuilder.visitor.Visitor;
 
 public class Component extends Node {
@@ -14,13 +11,13 @@ public class Component extends Node {
 	private String selector;
 	private Template template;
 	
-	private List<Component> children = new ArrayList<>();
+	private ComponentList children = new ComponentList();
 	
-	private List<Service> services = new ArrayList<>();
+	private ServicesList services = new ServicesList();
 	
-	private List<Directive> directives = new ArrayList<>();
+	private DirectiveList directives = new DirectiveList();
 	
-	private List<ComponentAttribute> attributes = new ArrayList<>();
+	private ComponentAttributeList attributes = new ComponentAttributeList();
 	
 	private Constructor constructor;
 
@@ -79,16 +76,16 @@ public class Component extends Node {
 		return template;
 	}
 
-	public List<Component> getChildren() {
+	public ComponentList getChildren() {
 		return children;
 	}
 
 
-	public List<Service> getServices() {
+	public ServicesList getServices() {
 		return services;
 	}
 
-	public List<Directive> getDirectives() {
+	public DirectiveList getDirectives() {
 		return directives;
 	}
 
@@ -96,7 +93,7 @@ public class Component extends Node {
 		this.attributes.add(componentAttribute);
 	}
 
-	public List<ComponentAttribute> getAttributes() {
+	public ComponentAttributeList getAttributes() {
 		return attributes;
 	}
 	

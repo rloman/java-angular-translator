@@ -9,6 +9,7 @@ public class Template extends Node {
 	
 	private String templateString;
 	
+	// might refactor to WidgetList
 	private List<Widget> widgets = new ArrayList<Widget>();
 
 	private boolean renderTemplateFile;

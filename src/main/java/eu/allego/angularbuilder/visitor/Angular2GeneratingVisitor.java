@@ -11,9 +11,12 @@ import java.util.stream.Collectors;
 import eu.allego.angularbuilder.domain.Button;
 import eu.allego.angularbuilder.domain.Component;
 import eu.allego.angularbuilder.domain.ComponentAttribute;
+import eu.allego.angularbuilder.domain.ComponentAttributeList;
+import eu.allego.angularbuilder.domain.ComponentList;
 import eu.allego.angularbuilder.domain.Constructor;
 import eu.allego.angularbuilder.domain.Css;
 import eu.allego.angularbuilder.domain.Directive;
+import eu.allego.angularbuilder.domain.DirectiveList;
 import eu.allego.angularbuilder.domain.Div;
 import eu.allego.angularbuilder.domain.Event;
 import eu.allego.angularbuilder.domain.ITag;
@@ -22,6 +25,7 @@ import eu.allego.angularbuilder.domain.InputProperty;
 import eu.allego.angularbuilder.domain.OutputProperty;
 import eu.allego.angularbuilder.domain.Service;
 import eu.allego.angularbuilder.domain.ServiceMethod;
+import eu.allego.angularbuilder.domain.ServicesList;
 import eu.allego.angularbuilder.domain.Template;
 import eu.allego.angularbuilder.domain.TextField;
 import eu.allego.angularbuilder.domain.Widget;
@@ -29,6 +33,40 @@ import eu.allego.angularbuilder.domain.Widget;
 public class Angular2GeneratingVisitor implements Visitor {
 
 	private PrintStream currentOutputStream = System.out;
+
+	@Override
+	public void visit(ComponentList componentList) {
+		for (Component child : componentList) {
+			System.out.println("import {" + child.getName() + "Component} from './" + child.getName().toLowerCase()
+					+ ".component'");
+		}
+	}
+
+	@Override
+	public void visit(ServicesList servicesList) {
+
+		for (Service service : servicesList) {
+			System.out.println("import {" + service.getName() + "Service} from './" + service.getName().toLowerCase()
+					+ ".service'");
+		}
+	}
+
+	@Override
+	public void visit(DirectiveList directiveList) {
+
+		for (Directive directive : directiveList) {
+			System.out.println("import {" + directive.getName() + "Directive} from './"
+					+ this.convertUpperCamelCaseToAngularString(directive.getName()) + ".directive'");
+		}
+	}
+
+	@Override
+	public void visit(ComponentAttributeList componentAttributeList) {
+
+		for (ComponentAttribute attribute : componentAttributeList) {
+			attribute.accept(this);
+		}
+	}
 
 	public void visit(Component component) {
 		setOutputStream(component);
@@ -38,19 +76,11 @@ public class Angular2GeneratingVisitor implements Visitor {
 				component.containsInputProperty() ? ", Input" : "",
 				component.containsOutputProperty() ? ", Output, EventEmitter" : "");
 
-		for (Component child : component.getChildren()) {
-			System.out.println("import {" + child.getName() + "Component} from './" + child.getName().toLowerCase()
-					+ ".component'");
-		}
+		component.getChildren().accept(this);
 
-		for (Service service : component.getServices()) {
-			System.out.println("import {" + service.getName() + "Service} from './" + service.getName().toLowerCase()
-					+ ".service'");
-		}
-		for (Directive directive : component.getDirectives()) {
-			System.out.println("import {" + directive.getName() + "Directive} from './"
-					+ this.convertUpperCamelCaseToAngularString(directive.getName()) + ".directive'");
-		}
+		component.getServices().accept(this);
+
+		component.getDirectives().accept(this);
 
 		System.out.println();
 		// render header and selector
@@ -107,9 +137,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 		System.out.println("export class " + component.getName() + "Component {");
 		System.out.println();
 
-		for (ComponentAttribute attribute : component.getAttributes()) {
-			attribute.accept(this);
-		}
+		component.getAttributes().accept(this);
 
 		// render the constructor (for now render the services and their call)
 		if (!component.getServices().isEmpty())
@@ -605,5 +633,4 @@ public class Angular2GeneratingVisitor implements Visitor {
 	private void resetOutputStream() {
 		System.setOut(currentOutputStream);
 	}
-
 }
