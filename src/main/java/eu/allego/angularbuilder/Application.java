@@ -23,7 +23,42 @@ import eu.allego.angularbuilder.visitor.Visitor;
 public class Application {
 	public static void main(String[] args) {
 		
-		Template template = new Template("<h1>My First Angular Application</h1>", true);
+		Template template = new Template("<h1>Like application</h1>", false);
+
+		Component appComponent = new Component("App", "my-app",	template);
+	
+		Template likeTemplate = new Template(false);
+		
+		Widget itag = new ITag();
+		itag.addCss(Css.glyphicon);
+		itag.addCss(Css.glyphiconHeart);
+		itag.addConditionalCssStyle(Css.highlighted, "highlighted");
+		itag.addEvent(Event.CLICK);
+		
+		
+		likeTemplate.add(itag);
+		Component likesComponent = new Component("likeme", "likes", likeTemplate);
+		ComponentAttribute input = new InputProperty("likes", "number");
+		
+		TextField textField = new TextField();
+		textField.setLabel("Likes");
+		textField.setNgModel(input);
+		
+		likesComponent.addAttribute(input);
+		likeTemplate.add(textField);
+		
+		appComponent.addChildComponent(likesComponent);
+		
+
+		Visitor visitor = new Angular2GeneratingVisitor();
+
+		appComponent.accept(visitor);
+		
+		
+	}
+	
+	public static void foo1() {
+		Template template = new Template("<h1>Like application</h1>", true);
 
 		Component appComponent = new Component("App", "my-app",	template);
 	
@@ -49,8 +84,6 @@ public class Application {
 		Visitor visitor = new Angular2GeneratingVisitor();
 
 		appComponent.accept(visitor);
-		
-		foo(appComponent);
 		
 	}
 
