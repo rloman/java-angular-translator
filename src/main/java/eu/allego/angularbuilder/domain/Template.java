@@ -10,13 +10,16 @@ public class Template extends Node {
 	private String templateString;
 	
 	private List<Widget> widgets = new ArrayList<Widget>();
+
+	private boolean renderTemplateFile;
 	
-	public Template() {
-		
+	public Template(String templateString, boolean renderTemplateFile) {
+		this(renderTemplateFile);
+		this.templateString = templateString;
 	}
 	
-	public Template(String templateString) {
-		this.templateString = templateString;
+	public Template(boolean renderTemplateFile) {
+		this.renderTemplateFile = renderTemplateFile;
 	}
 	
 	public void add(Widget widget) {
@@ -35,6 +38,10 @@ public class Template extends Node {
 
 	public List<Widget> getWidgets() {
 		return widgets;
+	}
+
+	public boolean isRenderTemplateFile() {
+		return renderTemplateFile;
 	}
 
 }

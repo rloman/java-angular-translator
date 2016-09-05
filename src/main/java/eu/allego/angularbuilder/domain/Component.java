@@ -35,12 +35,6 @@ public class Component extends Node {
 	 * @param template
 	 *            = the to be rendered html of this component
 	 */
-	public Component(String name, String selector, String template) {
-		this.name = name;
-		this.selector = selector;
-		this.template = new Template(template);
-	}
-	
 	public Component(String name, String selector, Template template) {
 		this.name = name;
 		this.selector = selector;

@@ -53,51 +53,11 @@ public class Angular2GeneratingVisitor implements Visitor {
 		}
 
 		System.out.println();
-		// render selector and template
-		System.out.println("@Component({\n"
-				+ "\tselector: '" + component.getSelector() + "', \n"
-				+ "\ttemplate: `\n\t\t");
+		// render header and selector
+		System.out.println("@Component({");
+		System.out.println("\tselector: '" + component.getSelector() + "', ");
 
-		component.getTemplate().accept(this);
-
-		// since this entire project! is a learning project. here I will inspect
-		// if it is a string[] for now
-		for (ComponentAttribute attr : component.getAttributes()) {
-			if ("string[]".equals(attr.getType().trim())) {
-				StringBuilder builder = new StringBuilder();
-
-				builder.append("<ul>");
-				builder.append(String.format("<li *ngFor='#%s of %s'>",
-						attr.getName().substring(0, attr.getName().length() - 1), attr.getName()));
-				builder.append(String.format("{{ %s }}", attr.getName().substring(0, attr.getName().length() - 1)));
-				builder.append("</li>");
-				builder.append("</ul>");
-				System.out.println(builder.toString());
-			}
-
-		}
-		// render subcomponents his selectors in the template
-		for (Component child : component.getChildren()) {
-			// eigen methnode???
-			List<String> namesOfInputProperties = new ArrayList<>();
-			List<String> namesOfOutputProperties = new ArrayList<>();
-			for (ComponentAttribute attr : child.getAttributes()) {
-				if (attr instanceof InputProperty) {
-					namesOfInputProperties.add(
-							String.format("%s='%s'", attr.getName(), attr.getValue() != null ? attr.getValue() : ""));
-				}
-				if (attr instanceof OutputProperty) {
-					// refactor to class with event handling in code (e.g.
-					// change onFavouriteChange to a variable
-					namesOfOutputProperties
-							.add(String.format("(%s)='%s'", attr.getName(), ((OutputProperty)attr).getEventHandlerInJavascriptCode()));
-				}
-
-			}
-			System.out.printf("\t\t<%s %s %s></%s>%n", child.getSelector(), String.join(", ", namesOfInputProperties),
-					String.join(", ", namesOfOutputProperties), child.getSelector());
-		}
-		System.out.print("\t\t`");
+		renderTemplate(component);
 
 		if (!component.getServices().isEmpty()) {
 			System.out.println(", ");
@@ -225,6 +185,62 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 		resetOutputStream();
 
+	}
+
+	private void renderTemplate(Component component) {
+		if (component.getTemplate().isRenderTemplateFile()) {
+			System.out.printf("\ttemplateUrl: '%s' %n",
+					"app/" + this.convertUpperCamelCaseToAngularString(component.getName()) + ".template.html");
+			setOutputStreamForExternalTemplate(component.getName());
+		}
+		else {
+			System.out.println("\ttemplate: `\n\t\t");
+		}
+
+		component.getTemplate().accept(this);
+
+		// since this entire project! is a learning project. here I will inspect
+		// if it is a string[] for now
+		for (ComponentAttribute attr : component.getAttributes()) {
+			if ("string[]".equals(attr.getType().trim())) {
+				StringBuilder builder = new StringBuilder();
+
+				builder.append("<ul>");
+				builder.append(String.format("<li *ngFor='#%s of %s'>",
+						attr.getName().substring(0, attr.getName().length() - 1), attr.getName()));
+				builder.append(String.format("{{ %s }}", attr.getName().substring(0, attr.getName().length() - 1)));
+				builder.append("</li>");
+				builder.append("</ul>");
+				System.out.println(builder.toString());
+			}
+
+		}
+		// render subcomponents his selectors in the template
+		for (Component child : component.getChildren()) {
+			List<String> namesOfInputProperties = new ArrayList<>();
+			List<String> namesOfOutputProperties = new ArrayList<>();
+			for (ComponentAttribute attr : child.getAttributes()) {
+				if (attr instanceof InputProperty) {
+					namesOfInputProperties.add(
+							String.format("%s='%s'", attr.getName(), attr.getValue() != null ? attr.getValue() : ""));
+				}
+				if (attr instanceof OutputProperty) {
+					namesOfOutputProperties
+							.add(String.format("(%s)='%s'", attr.getName(),
+									((OutputProperty) attr).getEventHandlerInJavascriptCode()));
+				}
+
+			}
+			System.out.printf("\t\t<%s %s %s></%s>%n", child.getSelector(), String.join(", ", namesOfInputProperties),
+					String.join(", ", namesOfOutputProperties), child.getSelector());
+		}
+
+		if (component.getTemplate().isRenderTemplateFile()) {
+			resetOutputStream();
+		}
+		else {
+			System.out.print("\t\t`");
+		}
 	}
 
 	private void recursiveRenderConditionCssStylesForWidget(Widget widget) {
@@ -458,7 +474,8 @@ public class Angular2GeneratingVisitor implements Visitor {
 	@Override
 	public void visit(ComponentAttribute componentAttribute) {
 		System.out.println();
-		System.out.printf("\t%s: %s %s ;%n", componentAttribute.getName(), componentAttribute.getType(), componentAttribute.getValue() != null ? String.format("= '%s'", componentAttribute.getValue()) : "");
+		System.out.printf("\t%s: %s %s ;%n", componentAttribute.getName(), componentAttribute.getType(),
+				componentAttribute.getValue() != null ? String.format("= '%s'", componentAttribute.getValue()) : "");
 	}
 
 	@Override
@@ -471,7 +488,8 @@ public class Angular2GeneratingVisitor implements Visitor {
 	@Override
 	public void visit(OutputProperty outputComponentAttribute) {
 		System.out.println();
-		System.out.printf("\t@Output()\n\t%s %s;%n", outputComponentAttribute.getName(), "= new "+outputComponentAttribute.getType()+"()");
+		System.out.printf("\t@Output()\n\t%s %s;%n", outputComponentAttribute.getName(),
+				"= new " + outputComponentAttribute.getType() + "()");
 
 		// Add some code for the dummy implementation regarding the event
 		// handler for this event emitter
@@ -508,6 +526,22 @@ public class Angular2GeneratingVisitor implements Visitor {
 			e.printStackTrace();
 		}
 
+	}
+
+	private void setOutputStreamForExternalTemplate(String componentName) {
+		currentOutputStream = System.out;
+
+		try {
+			FileOutputStream outputStream = new FileOutputStream(
+					"app/" + this.convertUpperCamelCaseToAngularString(componentName) + ".template.html");
+			PrintStream ps = new PrintStream(outputStream);
+			System.setOut(ps);
+
+		}
+		catch (FileNotFoundException e) {
+			// rloman nog try with resources doen.
+			e.printStackTrace();
+		}
 	}
 
 	private void setOutputStream(Directive directive) {
