@@ -22,48 +22,76 @@ import eu.allego.angularbuilder.visitor.Visitor;
 
 public class Application {
 	public static void main(String[] args) {
-		
+
 		Template template = new Template("<h1>Like application</h1>", false);
 
-		Component appComponent = new Component("App", "my-app",	template);
-	
+		Component appComponent = new Component("App", "my-app", template);
+
+		{
+			ServiceMethod method = new ServiceMethod("getCourses()", "string[]", "return ['aaa', 'bbb']");
+			Service courseService = new Service("Course", method);
+
+			Template coursesComponentTemplate = new Template(
+					"<h2>Courses</h2> Title: {{title}}	<input type='text' autoGrow />", true);
+
+			Component coursesComponent = new Component("Courses", "courses", coursesComponentTemplate);
+			ComponentAttribute title = new ComponentAttribute("title", "string", "Overview of Courses");
+			coursesComponent.addAttribute(title);
+
+			ComponentAttribute courses = new ComponentAttribute("courses", "string[]");
+			coursesComponent.addAttribute(courses);
+
+			coursesComponent.addService(courseService);
+			Directive autoGrowDirective = new Directive("AutoGrow", Event.FOCUS, Event.BLUR);
+			coursesComponent.addDirective(autoGrowDirective);
+
+			Constructor c = new Constructor("\t\tthis.courses = courseService.getCourses();");
+			coursesComponent.setConstructor(c);
+
+			appComponent.addChildComponent(coursesComponent);
+		}
+
+		Visitor visitor = new Angular2GeneratingVisitor();
+
+		appComponent.accept(visitor);
+
+	}
+
+	public static void likeTemplate(Component appComponent) {
 		Template likeTemplate = new Template(false);
-		
+
 		Widget itag = new ITag();
 		itag.addCss(Css.glyphicon);
 		itag.addCss(Css.glyphiconHeart);
 		itag.addConditionalCssStyle(Css.highlighted, "highlighted");
 		itag.addEvent(Event.CLICK);
-		
-		
+
 		likeTemplate.add(itag);
 		Component likesComponent = new Component("likeme", "likes", likeTemplate);
 		ComponentAttribute input = new InputProperty("likes", "number");
-		
+
 		TextField textField = new TextField();
 		textField.setLabel("Likes");
 		textField.setNgModel(input);
-		
+
 		likesComponent.addAttribute(input);
 		likeTemplate.add(textField);
-		
+
 		appComponent.addChildComponent(likesComponent);
-		
 
 		Visitor visitor = new Angular2GeneratingVisitor();
 
 		appComponent.accept(visitor);
-		
-		
+
 	}
-	
+
 	public static void foo1() {
 		Template template = new Template("<h1>Like application</h1>", true);
 
-		Component appComponent = new Component("App", "my-app",	template);
-	
+		Component appComponent = new Component("App", "my-app", template);
+
 		Template favouriteComponentTemplate = new Template(true);
-		
+
 		Widget itag = new ITag();
 		itag.addCss(Css.glyphicon);
 		itag.addConditionalCssStyle(Css.glyphiconStarEmpty, "!isFavourite");
@@ -72,31 +100,33 @@ public class Application {
 		favouriteComponentTemplate.add(itag);
 		Component favouriteComponent = new Component("Favourite", "favourite", favouriteComponentTemplate);
 		ComponentAttribute input = new InputProperty("isFavourite", "boolean");
-		
+
 		ComponentAttribute output = new OutputProperty("changeit");
-		
+
 		favouriteComponent.addAttribute(input);
 		favouriteComponent.addAttribute(output);
-		
+
 		appComponent.addChildComponent(favouriteComponent);
-		
 
 		Visitor visitor = new Angular2GeneratingVisitor();
 
 		appComponent.accept(visitor);
-		
+
 	}
 
 	public static void foo(Component appComponent) {
-		
-//		Template appComponentTemplate = new Template("<h1>My First Angular App</h1>", true);
 
-//		Component appComponent = new Component("App", "my-app", appComponentTemplate);
+		// Template appComponentTemplate = new Template("<h1>My First Angular
+		// App</h1>", true);
+
+		// Component appComponent = new Component("App", "my-app",
+		// appComponentTemplate);
 		{
 			ServiceMethod method = new ServiceMethod("getCourses()", "string[]", "return ['aaa', 'bbb']");
 			Service courseService = new Service("Course", method);
-			
-			Template coursesComponentTemplate = new Template("<h2>Courses</h2> Title: {{title}}	<input type='text' autoGrow />", true);
+
+			Template coursesComponentTemplate = new Template(
+					"<h2>Courses</h2> Title: {{title}}	<input type='text' autoGrow />", true);
 
 			Component coursesComponent = new Component("Courses", "courses", coursesComponentTemplate);
 			ComponentAttribute title = new ComponentAttribute("title", "string", "Overview of Courses");
@@ -119,7 +149,7 @@ public class Application {
 			ServiceMethod method = new ServiceMethod("getAuthors()", "string[]",
 					"return ['Andrew Hunt', 'Dave Thomas', 'Donald Knuth']");
 			Service authorService = new Service("Author", method);
-			
+
 			Template authorsTemplate = new Template("<h2>Authors</h2> {{title}}", false);
 
 			Component authorsComponent = new Component("Authors", "authors", authorsTemplate);

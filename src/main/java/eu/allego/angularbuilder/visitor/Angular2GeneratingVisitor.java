@@ -232,13 +232,17 @@ public class Angular2GeneratingVisitor implements Visitor {
 		for (ComponentAttribute attr : component.getAttributes()) {
 			if ("string[]".equals(attr.getType().trim())) {
 				StringBuilder builder = new StringBuilder();
-
+				builder.append(String.format("<div *ngIf='%s.length > 0'>",attr.getName()));
 				builder.append("<ul>");
 				builder.append(String.format("<li *ngFor='#%s of %s'>",
 						attr.getName().substring(0, attr.getName().length() - 1), attr.getName()));
 				builder.append(String.format("{{ %s }}", attr.getName().substring(0, attr.getName().length() - 1)));
 				builder.append("</li>");
 				builder.append("</ul>");
+				builder.append("</div>");
+				builder.append(String.format("<div *ngIf='%s.length == 0'>",attr.getName()));
+				builder.append(String.format("You don't have any %s yet", attr.getName()));
+				builder.append("</div>");
 				System.out.println(builder.toString());
 			}
 
