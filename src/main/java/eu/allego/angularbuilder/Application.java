@@ -8,6 +8,7 @@ import eu.allego.angularbuilder.domain.Css;
 import eu.allego.angularbuilder.domain.Directive;
 import eu.allego.angularbuilder.domain.Div;
 import eu.allego.angularbuilder.domain.Event;
+import eu.allego.angularbuilder.domain.Filter;
 import eu.allego.angularbuilder.domain.ITag;
 import eu.allego.angularbuilder.domain.InlineStyle;
 import eu.allego.angularbuilder.domain.InputField;
@@ -23,7 +24,7 @@ import eu.allego.angularbuilder.visitor.Visitor;
 
 public class Application {
 	public static void main(String[] args) {
-
+		
 		Template template = new Template("<h1>Like application</h1>", false);
 
 		Component appComponent = new Component("App", "my-app", template);
@@ -39,7 +40,7 @@ public class Application {
 
 			likeTemplate.add(itag);
 			Component likesComponent = new Component("LikeMe", "likes", likeTemplate);
-			ComponentAttribute input = new InputProperty("likes", "number");
+			ComponentAttribute input = new InputProperty("likes", "string");
 
 			
 			// styles
@@ -56,7 +57,8 @@ public class Application {
 
 			
 			TextField textField = new TextField();
-			textField.setLabel("Likes");
+			textField.setLabel("Firstname");
+			textField.setFilters(Filter.json, Filter.uppercase, Filter.number);
 			textField.setNgModel(input);
 
 			likesComponent.addAttribute(input);
