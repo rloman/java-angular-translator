@@ -10,6 +10,8 @@ import eu.allego.angularbuilder.domain.Directive;
 import eu.allego.angularbuilder.domain.DirectiveList;
 import eu.allego.angularbuilder.domain.Div;
 import eu.allego.angularbuilder.domain.ITag;
+import eu.allego.angularbuilder.domain.InlineStyle;
+import eu.allego.angularbuilder.domain.InlineStyleList;
 import eu.allego.angularbuilder.domain.InputField;
 import eu.allego.angularbuilder.domain.InputProperty;
 import eu.allego.angularbuilder.domain.OutputProperty;
@@ -59,5 +61,9 @@ public interface Visitor {
 	void visit(DirectiveList directiveList);
 
 	void visit(ComponentAttributeList componentAttributeList);
+
+	void visit(InlineStyleList inlineStyleList);
+
+	void visit(InlineStyle inlineStyle);
 
 }

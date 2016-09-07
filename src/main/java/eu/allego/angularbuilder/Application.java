@@ -9,6 +9,7 @@ import eu.allego.angularbuilder.domain.Directive;
 import eu.allego.angularbuilder.domain.Div;
 import eu.allego.angularbuilder.domain.Event;
 import eu.allego.angularbuilder.domain.ITag;
+import eu.allego.angularbuilder.domain.InlineStyle;
 import eu.allego.angularbuilder.domain.InputField;
 import eu.allego.angularbuilder.domain.InputProperty;
 import eu.allego.angularbuilder.domain.OutputProperty;
@@ -28,27 +29,44 @@ public class Application {
 		Component appComponent = new Component("App", "my-app", template);
 
 		{
-			ServiceMethod method = new ServiceMethod("getCourses()", "string[]", "return ['aaa', 'bbb']");
-			Service courseService = new Service("Course", method);
+			Template likeTemplate = new Template(false);
 
-			Template coursesComponentTemplate = new Template(
-					"<h2>Courses</h2> Title: {{title}}	<input type='text' autoGrow />", true);
+			Widget itag = new ITag();
+			itag.addCss(Css.glyphicon);
+			itag.addCss(Css.glyphiconHeart);
+			itag.addConditionalCssStyle(Css.highlighted, "highlighted");
+			itag.addEvent(Event.CLICK);
 
-			Component coursesComponent = new Component("Courses", "courses", coursesComponentTemplate);
-			ComponentAttribute title = new ComponentAttribute("title", "string", "Overview of Courses");
-			coursesComponent.addAttribute(title);
+			likeTemplate.add(itag);
+			Component likesComponent = new Component("LikeMe", "likes", likeTemplate);
+			ComponentAttribute input = new InputProperty("likes", "number");
 
-			ComponentAttribute courses = new ComponentAttribute("courses", "string[]");
-			coursesComponent.addAttribute(courses);
+			
+			// styles
+			InlineStyle inlineStyle = new InlineStyle("highlighted");
+			inlineStyle.addKeyValue("color", "deeppink");
 
-			coursesComponent.addService(courseService);
-			Directive autoGrowDirective = new Directive("AutoGrow", Event.FOCUS, Event.BLUR);
-			coursesComponent.addDirective(autoGrowDirective);
+			likesComponent.addInlineStyle(inlineStyle);
 
-			Constructor c = new Constructor("\t\tthis.courses = courseService.getCourses();");
-			coursesComponent.setConstructor(c);
+			// styles
+			InlineStyle inlineStyleHover = new InlineStyle(":hover");
+			inlineStyleHover.addKeyValue("color", "gray");
 
-			appComponent.addChildComponent(coursesComponent);
+			likesComponent.addInlineStyle(inlineStyleHover);
+
+			
+			TextField textField = new TextField();
+			textField.setLabel("Likes");
+			textField.setNgModel(input);
+
+			likesComponent.addAttribute(input);
+			likeTemplate.add(textField);
+
+			appComponent.addChildComponent(likesComponent);
+
+			Visitor visitor = new Angular2GeneratingVisitor();
+
+			appComponent.accept(visitor);
 		}
 
 		Visitor visitor = new Angular2GeneratingVisitor();

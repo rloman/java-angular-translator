@@ -20,6 +20,9 @@ import eu.allego.angularbuilder.domain.DirectiveList;
 import eu.allego.angularbuilder.domain.Div;
 import eu.allego.angularbuilder.domain.Event;
 import eu.allego.angularbuilder.domain.ITag;
+import eu.allego.angularbuilder.domain.InlineStyle;
+import eu.allego.angularbuilder.domain.InlineStyle.InlineStyleLine;
+import eu.allego.angularbuilder.domain.InlineStyleList;
 import eu.allego.angularbuilder.domain.InputField;
 import eu.allego.angularbuilder.domain.InputProperty;
 import eu.allego.angularbuilder.domain.OutputProperty;
@@ -66,6 +69,27 @@ public class Angular2GeneratingVisitor implements Visitor {
 		for (ComponentAttribute attribute : componentAttributeList) {
 			attribute.accept(this);
 		}
+	}
+
+	@Override
+	public void visit(InlineStyleList inlineStyleList) {
+		if (!inlineStyleList.isEmpty()) {
+			System.out.println(",");
+			System.out.println("\tstyles: [`");
+			for (InlineStyle inlineStyle : inlineStyleList) {
+				inlineStyle.accept(this);
+			}
+			System.out.println("\t`]");
+		}
+	}
+
+	@Override
+	public void visit(InlineStyle inlineStyle) {
+		System.out.println(String.format("\t\t%s { ", inlineStyle.getStyleName().indexOf(":") == 0 ? inlineStyle.getStyleName() : "."+inlineStyle.getStyleName()));
+		for (InlineStyleLine keyValue : inlineStyle) {
+			System.out.printf("\t\t\t%s : %s;%n", keyValue.key, keyValue.value);
+		}
+		System.out.println("\t\t}");
 	}
 
 	public void visit(Component component) {
@@ -131,6 +155,8 @@ public class Angular2GeneratingVisitor implements Visitor {
 					.collect(Collectors.toList())));
 			System.out.println("]");
 		}
+
+		component.getInlineStyles().accept(this);
 
 		System.out.println("\n" + "})");
 
@@ -232,7 +258,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 		for (ComponentAttribute attr : component.getAttributes()) {
 			if ("string[]".equals(attr.getType().trim())) {
 				StringBuilder builder = new StringBuilder();
-				builder.append(String.format("<div *ngIf='%s.length > 0'>",attr.getName()));
+				builder.append(String.format("<div *ngIf='%s.length > 0'>", attr.getName()));
 				builder.append("<ul>");
 				builder.append(String.format("<li *ngFor='#%s of %s'>",
 						attr.getName().substring(0, attr.getName().length() - 1), attr.getName()));
@@ -240,7 +266,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 				builder.append("</li>");
 				builder.append("</ul>");
 				builder.append("</div>");
-				builder.append(String.format("<div *ngIf='%s.length == 0'>",attr.getName()));
+				builder.append(String.format("<div *ngIf='%s.length == 0'>", attr.getName()));
 				builder.append(String.format("You don't have any %s yet", attr.getName()));
 				builder.append("</div>");
 				System.out.println(builder.toString());
