@@ -15,6 +15,8 @@ import eu.allego.angularbuilder.domain.ComponentAttributeList;
 import eu.allego.angularbuilder.domain.ComponentList;
 import eu.allego.angularbuilder.domain.Constructor;
 import eu.allego.angularbuilder.domain.Css;
+import eu.allego.angularbuilder.domain.CustomPipe;
+import eu.allego.angularbuilder.domain.CustomPipeList;
 import eu.allego.angularbuilder.domain.Directive;
 import eu.allego.angularbuilder.domain.DirectiveList;
 import eu.allego.angularbuilder.domain.Div;
@@ -91,6 +93,41 @@ public class Angular2GeneratingVisitor implements Visitor {
 		}
 		System.out.println("\t\t}");
 	}
+	
+	
+	@Override
+	public void visit(CustomPipeList customPipeList) {
+		for(CustomPipe pipe : customPipeList){
+			pipe.accept(this);
+		}
+	}
+	
+	@Override
+	public void visit(CustomPipe customPipe) {
+		
+		setOutputStream(customPipe);
+		
+		System.out.println("import {Pipe, PipeTransform} from 'angular2/core';");
+		System.out.println();
+		System.out.printf("@Pipe({name: '%s'})%n", customPipe.getName().toLowerCase());
+		
+		System.out.println("export class "+this.convertFirstCharacterToUppercase(customPipe.getName())+"Pipe implements PipeTransform {");
+		
+		System.out.println();
+		System.out.println("\ttransform(value: string, args: string[]) {");
+		
+		System.out.println("\t\t// sample code");
+		System.out.println("\t\tif(value){ ");
+		System.out.println("\t\t\t return value.substring(0,50) + '...';");
+		System.out.println("\t\t}");
+		
+		System.out.println("\t}");
+		
+		System.out.println("}");
+		
+		resetOutputStream();
+		
+	}
 
 	public void visit(Component component) {
 		setOutputStream(component);
@@ -105,6 +142,10 @@ public class Angular2GeneratingVisitor implements Visitor {
 		component.getServices().accept(this);
 
 		component.getDirectives().accept(this);
+		
+		for(CustomPipe pipe : component.getPipes()) {
+			System.out.println("import {"+this.convertFirstCharacterToUppercase(pipe.getName()+"Pipe} from './"+pipe.getName().toLowerCase()+".pipe'"));
+		}
 
 		System.out.println();
 		// render header and selector
@@ -151,6 +192,19 @@ public class Angular2GeneratingVisitor implements Visitor {
 					.stream()
 					.map(e -> {
 						return e.getName() + "Directive";
+					})
+					.collect(Collectors.toList())));
+			System.out.println("]");
+		}
+		
+		if(!component.getPipes().isEmpty()) {
+			System.out.println(", ");
+			System.out.print("\tpipes: [");
+			System.out.print(String.join(", ", component
+					.getPipes()
+					.stream()
+					.map(e -> {
+						return this.convertFirstCharacterToUppercase(e.getName()) + "Pipe";
 					})
 					.collect(Collectors.toList())));
 			System.out.println("]");
@@ -236,6 +290,8 @@ public class Angular2GeneratingVisitor implements Visitor {
 		{
 			directive.accept(this);
 		}
+		
+		component.getPipes().accept(this);
 
 		resetOutputStream();
 
@@ -609,6 +665,22 @@ public class Angular2GeneratingVisitor implements Visitor {
 		try {
 			FileOutputStream outputStream = new FileOutputStream(
 					"app/" + this.convertUpperCamelCaseToAngularString(directive.getName()) + ".directive.ts");
+			PrintStream ps = new PrintStream(outputStream);
+			System.setOut(ps);
+
+		}
+		catch (FileNotFoundException e) {
+			// rloman nog try with resources doen.
+			e.printStackTrace();
+		}
+
+	}
+
+	private void setOutputStream(CustomPipe customPipe) {
+		currentOutputStream = System.out;
+		try {
+			FileOutputStream outputStream = new FileOutputStream(
+					"app/" + this.convertUpperCamelCaseToAngularString(customPipe.getName()) + ".pipe.ts");
 			PrintStream ps = new PrintStream(outputStream);
 			System.setOut(ps);
 

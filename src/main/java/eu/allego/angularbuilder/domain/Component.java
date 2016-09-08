@@ -20,6 +20,8 @@ public class Component extends Node {
 	private InlineStyleList inlineStyles = new InlineStyleList();
 
 	private ComponentAttributeList attributes = new ComponentAttributeList();
+	
+	private CustomPipeList pipes = new CustomPipeList();
 
 	private Constructor constructor;
 
@@ -63,6 +65,10 @@ public class Component extends Node {
 
 	public void addInlineStyle(InlineStyle style) {
 		this.inlineStyles.add(style);
+	}
+	
+	public void addPipe(CustomPipe pipe) {
+		this.pipes.addPipe(pipe);
 	}
 
 	public void accept(Visitor visitor) {
@@ -121,5 +127,9 @@ public class Component extends Node {
 			}
 		}
 		return false;
+	}
+
+	public CustomPipeList getPipes() {
+		return pipes;
 	}
 }

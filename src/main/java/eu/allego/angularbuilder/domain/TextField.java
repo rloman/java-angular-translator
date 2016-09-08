@@ -12,7 +12,7 @@ public class TextField extends Widget {
 
 	private ComponentAttribute ngModel;
 	
-	private List<Filter> filters = new ArrayList<>();
+	private List<Pipe> filters = new ArrayList<>();
 	
 	public TextField() {
 		
@@ -39,16 +39,17 @@ public class TextField extends Widget {
 		this.label = label;
 	}
 	
-	public void setFilters(Filter ... filters) {
+	public void setFilters(Pipe ... filters) {
 		this.filters = Arrays.asList(filters);
 	}
+	
 
 	@Override
 	public void accept(Visitor visitor) {
 		visitor.visit(this);
 	}
 
-	public List<Filter> getFilters() {
+	public List<Pipe> getFilters() {
 		return filters;
 	}
 }
