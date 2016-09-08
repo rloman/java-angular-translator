@@ -622,7 +622,12 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 		System.out.println("<br/>");
 		String filters = String.join("", textField.getFilters().stream().map(filter -> filter.toString()).collect(Collectors.toList()));
-		System.out.printf("<span>%s: {{ %s %s}}</span> %n", textField.getLabel(), textField.getNgModel().getName(), filters);
+		if(!textField.getCustomPipes().isEmpty()) {
+			for(String customPipe : textField.getCustomPipes()){
+				filters += " | "+customPipe;
+			}
+		}
+		System.out.printf("<span>%s: {{ %s %s }}</span> %n", textField.getLabel(), textField.getNgModel().getName(), filters);
 
 	}
 

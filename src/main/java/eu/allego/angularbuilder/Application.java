@@ -37,7 +37,8 @@ public class Application {
 		ComponentAttribute attr = new ComponentAttribute("firstName", "string", "Raymond Loman is lief.");
 		
 		TextField textField = new TextField("Firstname", attr);
-		textField.setFilters(Pipe.summary);
+		textField.setFilters(Pipe.uppercase);
+		textField.addCustomPipe("summary");
 		pipeTemplate.add(textField);
 		
 		CustomPipe pipe = new CustomPipe("Summary");

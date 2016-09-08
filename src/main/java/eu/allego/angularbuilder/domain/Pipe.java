@@ -5,7 +5,7 @@ public enum Pipe {
 	uppercase, lowercase, number("'2.2-2'") {
 	},
 	date("'shortDate'"), // longDate
-	json, summary, // test
+	json, 
 	currency("'AUD':true:'2.2-2'");
 
 	private String attr;
