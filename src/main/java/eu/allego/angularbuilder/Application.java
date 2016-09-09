@@ -38,13 +38,15 @@ public class Application {
 		
 		TextField textField = new TextField("Firstname", attr);
 		textField.setFilters(Pipe.uppercase);
-		textField.addCustomPipe("summary");
+		
 		pipeTemplate.add(textField);
 		
-		CustomPipe pipe = new CustomPipe("Summary");
+		CustomPipe pipe = new CustomPipe("Summary", "5");
 		pipeComponent.addPipe(pipe);
 		pipeComponent.addAttribute(attr);
 		appComponent.addChildComponent(pipeComponent);
+		
+		textField.addCustomPipe(pipe);
 		
 		
 		appComponent.accept(new Angular2GeneratingVisitor());

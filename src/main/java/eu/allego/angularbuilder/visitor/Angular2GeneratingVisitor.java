@@ -118,7 +118,8 @@ public class Angular2GeneratingVisitor implements Visitor {
 		
 		System.out.println("\t\t// sample code");
 		System.out.println("\t\tif(value){ ");
-		System.out.println("\t\t\t return value.substring(0,50) + '...';");
+		System.out.println("\t\t\tvar limit = (args && args[0]) ? parseInt(args[0]) : 50;");
+		System.out.println("\t\t\t return value.substring(0, limit) + '...';");
 		System.out.println("\t\t}");
 		
 		System.out.println("\t}");
@@ -623,8 +624,9 @@ public class Angular2GeneratingVisitor implements Visitor {
 		System.out.println("<br/>");
 		String filters = String.join("", textField.getFilters().stream().map(filter -> filter.toString()).collect(Collectors.toList()));
 		if(!textField.getCustomPipes().isEmpty()) {
-			for(String customPipe : textField.getCustomPipes()){
-				filters += " | "+customPipe;
+			for(CustomPipe customPipe : textField.getCustomPipes()){
+				String attr = customPipe.getAttributes();
+				filters += " | "+customPipe.getName().toLowerCase() + (attr != null ? ":"+attr : "");
 			}
 		}
 		System.out.printf("<span>%s: {{ %s %s }}</span> %n", textField.getLabel(), textField.getNgModel().getName(), filters);

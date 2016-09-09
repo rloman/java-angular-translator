@@ -14,7 +14,7 @@ public class TextField extends Widget {
 	
 	private List<Pipe> filters = new ArrayList<>();
 	
-	private List <String> customPipes = new ArrayList<>();
+	private List <CustomPipe> customPipes = new ArrayList<>();
 	
 	public TextField() {
 		
@@ -45,8 +45,8 @@ public class TextField extends Widget {
 		this.filters = Arrays.asList(filters);
 	}
 	
-	public void addCustomPipe(String pipeName) {
-		this.customPipes.add(pipeName);
+	public void addCustomPipe(CustomPipe pipe) {
+		this.customPipes.add(pipe);
 	}
 	
 
@@ -59,7 +59,7 @@ public class TextField extends Widget {
 		return filters;
 	}
 
-	public List<String> getCustomPipes() {
+	public List<CustomPipe> getCustomPipes() {
 		return customPipes;
 	}
 }
