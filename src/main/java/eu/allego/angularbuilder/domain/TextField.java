@@ -12,7 +12,7 @@ public class TextField extends Widget {
 
 	private ComponentAttribute ngModel;
 	
-	private List<Pipe> filters = new ArrayList<>();
+	private List<Pipe> pipes = new ArrayList<>();
 	
 	private List <CustomPipe> customPipes = new ArrayList<>();
 	
@@ -41,8 +41,8 @@ public class TextField extends Widget {
 		this.label = label;
 	}
 	
-	public void setFilters(Pipe ... filters) {
-		this.filters = Arrays.asList(filters);
+	public void setPipes(Pipe ... pipes) {
+		this.pipes = Arrays.asList(pipes);
 	}
 	
 	public void addCustomPipe(CustomPipe pipe) {
@@ -55,8 +55,8 @@ public class TextField extends Widget {
 		visitor.visit(this);
 	}
 
-	public List<Pipe> getFilters() {
-		return filters;
+	public List<Pipe> getPipes() {
+		return pipes;
 	}
 
 	public List<CustomPipe> getCustomPipes() {

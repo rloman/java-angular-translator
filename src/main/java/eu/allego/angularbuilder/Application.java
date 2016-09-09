@@ -37,11 +37,11 @@ public class Application {
 		ComponentAttribute attr = new ComponentAttribute("firstName", "string", "Raymond Loman is lief.");
 		
 		TextField textField = new TextField("Firstname", attr);
-		textField.setFilters(Pipe.uppercase);
+		textField.setPipes(Pipe.uppercase);
 		
 		pipeTemplate.add(textField);
 		
-		CustomPipe pipe = new CustomPipe("Summary", "5");
+		CustomPipe pipe = new CustomPipe("Summary", "3");
 		pipeComponent.addPipe(pipe);
 		pipeComponent.addAttribute(attr);
 		appComponent.addChildComponent(pipeComponent);
@@ -89,7 +89,7 @@ public class Application {
 			
 			TextField textField = new TextField();
 			textField.setLabel("Firstname");
-			textField.setFilters(Pipe.json, Pipe.uppercase, Pipe.number);
+			textField.setPipes(Pipe.json, Pipe.uppercase, Pipe.number);
 			textField.setNgModel(input);
 
 			likesComponent.addAttribute(input);
