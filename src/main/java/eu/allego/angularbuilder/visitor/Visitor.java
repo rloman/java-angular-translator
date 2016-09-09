@@ -6,6 +6,8 @@ import eu.allego.angularbuilder.domain.ComponentAttribute;
 import eu.allego.angularbuilder.domain.ComponentAttributeList;
 import eu.allego.angularbuilder.domain.ComponentList;
 import eu.allego.angularbuilder.domain.Constructor;
+import eu.allego.angularbuilder.domain.CustomPipe;
+import eu.allego.angularbuilder.domain.CustomPipeList;
 import eu.allego.angularbuilder.domain.Directive;
 import eu.allego.angularbuilder.domain.DirectiveList;
 import eu.allego.angularbuilder.domain.Div;
@@ -65,5 +67,9 @@ public interface Visitor {
 	void visit(InlineStyleList inlineStyleList);
 
 	void visit(InlineStyle inlineStyle);
+
+	void visit(CustomPipe customPipe);
+
+	void visit(CustomPipeList customPipeList);
 
 }

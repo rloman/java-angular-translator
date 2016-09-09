@@ -5,10 +5,11 @@ import eu.allego.angularbuilder.domain.Component;
 import eu.allego.angularbuilder.domain.ComponentAttribute;
 import eu.allego.angularbuilder.domain.Constructor;
 import eu.allego.angularbuilder.domain.Css;
+import eu.allego.angularbuilder.domain.CustomPipe;
 import eu.allego.angularbuilder.domain.Directive;
 import eu.allego.angularbuilder.domain.Div;
 import eu.allego.angularbuilder.domain.Event;
-import eu.allego.angularbuilder.domain.Filter;
+import eu.allego.angularbuilder.domain.Pipe;
 import eu.allego.angularbuilder.domain.ITag;
 import eu.allego.angularbuilder.domain.InlineStyle;
 import eu.allego.angularbuilder.domain.InputField;
@@ -24,6 +25,36 @@ import eu.allego.angularbuilder.visitor.Visitor;
 
 public class Application {
 	public static void main(String[] args) {
+		
+		Template template = new Template("<h1>Like application</h1>", false);
+
+		Component appComponent = new Component("App", "my-app", template);
+		
+		Template pipeTemplate = new Template(false);
+		
+		Component pipeComponent = 	new Component("Samenvatting", "samenvatting", pipeTemplate);
+		
+		ComponentAttribute attr = new ComponentAttribute("firstName", "string", "Raymond Loman is lief.");
+		
+		TextField textField = new TextField("Firstname", attr);
+		textField.setPipes(Pipe.uppercase);
+		
+		pipeTemplate.add(textField);
+		
+		CustomPipe pipe = new CustomPipe("Summary", "3");
+		pipeComponent.addPipe(pipe);
+		pipeComponent.addAttribute(attr);
+		appComponent.addChildComponent(pipeComponent);
+		
+		textField.addCustomPipe(pipe);
+		
+		
+		appComponent.accept(new Angular2GeneratingVisitor());
+		
+		
+	}
+	
+	public static void renderLikeApplication() {
 		
 		Template template = new Template("<h1>Like application</h1>", false);
 
@@ -58,7 +89,7 @@ public class Application {
 			
 			TextField textField = new TextField();
 			textField.setLabel("Firstname");
-			textField.setFilters(Filter.json, Filter.uppercase, Filter.number);
+			textField.setPipes(Pipe.json, Pipe.uppercase, Pipe.number);
 			textField.setNgModel(input);
 
 			likesComponent.addAttribute(input);
