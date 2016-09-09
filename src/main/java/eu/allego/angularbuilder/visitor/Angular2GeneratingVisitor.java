@@ -524,12 +524,19 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 	private void renderConditionalCss(Widget widget) {
 		if (!widget.getConditionalCssStyles().isEmpty()) {
-
-			for (Entry<Css, String> cssConditionalEntry : widget.getConditionalCssStyles().entrySet()) {
-				System.out.printf(" [class.%s]='%s' ",
-						this.convertUpperCamelCaseToAngularString(cssConditionalEntry.getKey().toString()),
-						cssConditionalEntry.getValue());
-			}
+			System.out.println();
+			System.out.println("\t\t\t[ngClass]=\"{");
+			System.out.println(String.join(",\n", 
+					widget.conditionalCssStyles.entrySet()
+					.stream()
+					.map( entry -> {
+						return String.format("\t\t\t\t'%s': %s",
+							this.convertUpperCamelCaseToAngularString(entry.getKey().toString()),
+							entry.getValue());
+					})
+					.collect(Collectors.toList())));
+			
+			System.out.println("\t\t\t}\"");
 		}
 
 	}

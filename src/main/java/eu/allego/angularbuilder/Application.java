@@ -26,7 +26,13 @@ import eu.allego.angularbuilder.visitor.Visitor;
 public class Application {
 	public static void main(String[] args) {
 		
-		Template template = new Template("<h1>Like application</h1>", false);
+		renderLikeApplication();
+	}
+	
+	public static void renderPipesAndCustomPipes() {
+		
+		
+		Template template = new Template("<h1>Firstname test with pipes and custom pipes</h1>", false);
 
 		Component appComponent = new Component("App", "my-app", template);
 		
@@ -67,6 +73,7 @@ public class Application {
 			itag.addCss(Css.glyphicon);
 			itag.addCss(Css.glyphiconHeart);
 			itag.addConditionalCssStyle(Css.highlighted, "highlighted");
+			itag.addConditionalCssStyle(Css.glyphiconStarEmpty, "!highlighted");
 			itag.addEvent(Event.CLICK);
 
 			likeTemplate.add(itag);
@@ -89,7 +96,7 @@ public class Application {
 			
 			TextField textField = new TextField();
 			textField.setLabel("Firstname");
-			textField.setPipes(Pipe.json, Pipe.uppercase, Pipe.number);
+			textField.setPipes(Pipe.uppercase);
 			textField.setNgModel(input);
 
 			likesComponent.addAttribute(input);
