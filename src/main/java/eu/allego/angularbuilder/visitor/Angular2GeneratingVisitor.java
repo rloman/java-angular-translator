@@ -20,6 +20,8 @@ import eu.allego.angularbuilder.domain.CustomPipeList;
 import eu.allego.angularbuilder.domain.Directive;
 import eu.allego.angularbuilder.domain.DirectiveList;
 import eu.allego.angularbuilder.domain.Div;
+import eu.allego.angularbuilder.domain.DomainInterface;
+import eu.allego.angularbuilder.domain.DomainService;
 import eu.allego.angularbuilder.domain.Event;
 import eu.allego.angularbuilder.domain.ITag;
 import eu.allego.angularbuilder.domain.InlineStyle;
@@ -38,6 +40,61 @@ import eu.allego.angularbuilder.domain.Widget;
 public class Angular2GeneratingVisitor implements Visitor {
 
 	private PrintStream currentOutputStream = System.out;
+	
+	@Override
+	public void visit(DomainService service){
+		setOutputStream(service);
+
+		DomainInterface domain = service.getDomainInterface();
+		String name = this.convertFirstCharacterToUppercase(domain.getName());
+		
+		// imports
+		// rloman: refactor to StatementImport.java for later
+		System.out.printf("import {%s} from './%s';%n", name, this.convertFirstCharacterToLowercase(name));
+		
+		System.out.println();
+
+		System.out.println("export class " + service.getName() + "Service {");
+		System.out.println();
+		
+		
+		
+		
+		System.out.printf("\tget%ss() : %s[] {%n", name, name);
+		
+		System.out.println("\t\t// Implement your code here");
+		
+		System.out.println("\t\treturn [{id:3, title:'aap'},{id:4, title:'noot'}, {id:5, title:'mies'}]");
+		System.out.println("\t}");
+		
+		System.out.printf("\tcreate%s(post:Post) {%n", name, name);
+		
+		System.out.println("\t\t// Implement your code here");
+		System.out.println("\t}");
+		
+		System.out.println("}");
+
+		resetOutputStream();
+		
+		service.getDomainInterface().accept(this);
+		
+	}
+	
+	@Override
+	public void visit(DomainInterface domainInterface) {
+		setOutputStream(domainInterface);
+		
+		System.out.printf("export interface %s {%n", domainInterface.getName());
+		String attributes = String.join("", domainInterface.getAttributes().stream().map( e -> {
+			return String.format("\t %s : %s;%n", e.name, e.type);
+		}).collect(Collectors.toList()));
+		System.out.print(attributes);
+		
+		System.out.println("}");
+		
+		resetOutputStream();
+		
+	}
 
 	@Override
 	public void visit(ComponentList componentList) {
@@ -53,6 +110,11 @@ public class Angular2GeneratingVisitor implements Visitor {
 		for (Service service : servicesList) {
 			System.out.println("import {" + service.getName() + "Service} from './" + service.getName().toLowerCase()
 					+ ".service'");
+			if(service instanceof DomainService) {
+				DomainService domainService = (DomainService) service;
+				System.out.println("import {" + domainService.getDomainInterface().getName() + "} from './" 
+				+ domainService.getDomainInterface().getName().toLowerCase()+"';");
+			}
 		}
 	}
 
@@ -313,9 +375,9 @@ public class Angular2GeneratingVisitor implements Visitor {
 		// since this entire project! is a learning project. here I will inspect
 		// if it is a string[] for now
 		for (ComponentAttribute attr : component.getAttributes()) {
-			if ("string[]".equals(attr.getType().trim())) {
+			if (attr.getType().trim().contains("[]")) {
 				StringBuilder builder = new StringBuilder();
-				builder.append(String.format("<div *ngIf='%s.length > 0'>", attr.getName()));
+				builder.append(String.format("<div *ngIf='%s'>", attr.getName()));
 				builder.append("<ul>");
 				builder.append(String.format("<li *ngFor='#%s of %s'>",
 						attr.getName().substring(0, attr.getName().length() - 1), attr.getName()));
@@ -323,7 +385,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 				builder.append("</li>");
 				builder.append("</ul>");
 				builder.append("</div>");
-				builder.append(String.format("<div *ngIf='%s.length == 0'>", attr.getName()));
+				builder.append(String.format("<div *ngIf='!%s'>", attr.getName()));
 				builder.append(String.format("You don't have any %s yet", attr.getName()));
 				builder.append("</div>");
 				System.out.println(builder.toString());
@@ -638,6 +700,22 @@ public class Angular2GeneratingVisitor implements Visitor {
 		}
 		System.out.printf("<span>%s: {{ %s %s }}</span> %n", textField.getLabel(), textField.getNgModel().getName(), pipes);
 
+	}
+	
+	private void setOutputStream(DomainInterface domainInterface) {
+		currentOutputStream = System.out;
+
+		try {
+			FileOutputStream outputStream = new FileOutputStream(
+					"app/" + this.convertFirstCharacterToLowercase(domainInterface.getName()) + ".ts");
+			PrintStream ps = new PrintStream(outputStream);
+			System.setOut(ps);
+
+		}
+		catch (FileNotFoundException e) {
+			// rloman nog try with resources doen.
+			e.printStackTrace();
+		}
 	}
 
 	private void setOutputStream(Service service) {

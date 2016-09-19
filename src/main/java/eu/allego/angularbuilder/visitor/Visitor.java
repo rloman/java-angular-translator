@@ -11,6 +11,8 @@ import eu.allego.angularbuilder.domain.CustomPipeList;
 import eu.allego.angularbuilder.domain.Directive;
 import eu.allego.angularbuilder.domain.DirectiveList;
 import eu.allego.angularbuilder.domain.Div;
+import eu.allego.angularbuilder.domain.DomainInterface;
+import eu.allego.angularbuilder.domain.DomainService;
 import eu.allego.angularbuilder.domain.ITag;
 import eu.allego.angularbuilder.domain.InlineStyle;
 import eu.allego.angularbuilder.domain.InlineStyleList;
@@ -71,5 +73,9 @@ public interface Visitor {
 	void visit(CustomPipe customPipe);
 
 	void visit(CustomPipeList customPipeList);
+
+	void visit(DomainInterface domainInterface);
+
+	void visit(DomainService domainService);
 
 }

@@ -1,20 +1,18 @@
 package eu.allego.angularbuilder;
 
-import eu.allego.angularbuilder.domain.Button;
 import eu.allego.angularbuilder.domain.Component;
 import eu.allego.angularbuilder.domain.ComponentAttribute;
 import eu.allego.angularbuilder.domain.Constructor;
 import eu.allego.angularbuilder.domain.Css;
 import eu.allego.angularbuilder.domain.CustomPipe;
-import eu.allego.angularbuilder.domain.Directive;
-import eu.allego.angularbuilder.domain.Div;
+import eu.allego.angularbuilder.domain.DomainInterface;
+import eu.allego.angularbuilder.domain.DomainService;
 import eu.allego.angularbuilder.domain.Event;
-import eu.allego.angularbuilder.domain.Pipe;
 import eu.allego.angularbuilder.domain.ITag;
 import eu.allego.angularbuilder.domain.InlineStyle;
-import eu.allego.angularbuilder.domain.InputField;
 import eu.allego.angularbuilder.domain.InputProperty;
 import eu.allego.angularbuilder.domain.OutputProperty;
+import eu.allego.angularbuilder.domain.Pipe;
 import eu.allego.angularbuilder.domain.Service;
 import eu.allego.angularbuilder.domain.ServiceMethod;
 import eu.allego.angularbuilder.domain.Template;
@@ -26,7 +24,34 @@ import eu.allego.angularbuilder.visitor.Visitor;
 public class Application {
 	public static void main(String[] args) {
 		
-		renderLikeApplication();
+//		renderLikeApplication();
+		domainServiceWithoutHttp();
+	}
+	
+	public static void domainServiceWithoutHttp(){
+		
+		Template template = new Template("<h1>Testing domain service</h1>", false);
+		Component appComponent = new Component("App", "my-app", template);
+		
+		Template domainServiceTestTemplate = new Template(false);
+		Component domainServiceTestComponent = 	new Component("ServiceTest", "servicetest", domainServiceTestTemplate);
+		ComponentAttribute posts = new ComponentAttribute("posts", "Post[]");
+		domainServiceTestComponent.addAttribute(posts);
+		
+		DomainInterface postInterface = new DomainInterface("Post");
+		
+		// question mark means this instance var may be empty in the created instance
+		postInterface.addInstanceVar("id?", "number");
+		postInterface.addInstanceVar("title?", "string");
+		DomainService postService = new DomainService(postInterface);
+		
+		domainServiceTestComponent.addService(postService);
+		Constructor constructor = new Constructor("\t\tthis.posts = postService.getPosts();");
+		domainServiceTestComponent.setConstructor(constructor);
+		
+		appComponent.addChildComponent(domainServiceTestComponent);
+		
+		appComponent.accept(new Angular2GeneratingVisitor());
 	}
 	
 	public static void renderPipesAndCustomPipes() {
@@ -172,96 +197,35 @@ public class Application {
 
 	}
 
-	public static void foo(Component appComponent) {
+	public static void renderADefaultServerSkeleton() {
 
-		// Template appComponentTemplate = new Template("<h1>My First Angular
-		// App</h1>", true);
+		 Template appComponentTemplate = new Template("<h1>Test for making a skeleton of a service</h1>", true);
 
-		// Component appComponent = new Component("App", "my-app",
-		// appComponentTemplate);
+		 Component appComponent = new Component("App", "my-app",
+		 appComponentTemplate);
 		{
-			ServiceMethod method = new ServiceMethod("getCourses()", "string[]", "return ['aaa', 'bbb']");
-			Service courseService = new Service("Course", method);
+			ServiceMethod method = new ServiceMethod("getPosts()", "string[]", "return ['aaa', 'bbb']");
+			Service postService = new Service("Post", method);
 
-			Template coursesComponentTemplate = new Template(
+			Template postsComponentTemplate = new Template(
 					"<h2>Courses</h2> Title: {{title}}	<input type='text' autoGrow />", true);
 
-			Component coursesComponent = new Component("Courses", "courses", coursesComponentTemplate);
-			ComponentAttribute title = new ComponentAttribute("title", "string", "Overview of Courses");
+			Component coursesComponent = new Component("Posts", "posts", postsComponentTemplate);
+			ComponentAttribute title = new ComponentAttribute("title", "string", "Overview of Posts");
 			coursesComponent.addAttribute(title);
 
-			ComponentAttribute courses = new ComponentAttribute("courses", "string[]");
+			ComponentAttribute courses = new ComponentAttribute("posts", "string[]");
 			coursesComponent.addAttribute(courses);
 
-			coursesComponent.addService(courseService);
-			Directive autoGrowDirective = new Directive("AutoGrow", Event.FOCUS, Event.BLUR);
-			coursesComponent.addDirective(autoGrowDirective);
+			coursesComponent.addService(postService);
 
-			Constructor c = new Constructor("\t\tthis.courses = courseService.getCourses();");
+			Constructor c = new Constructor("\t\tthis.posts = postService.getPosts();");
 			coursesComponent.setConstructor(c);
 
 			appComponent.addChildComponent(coursesComponent);
 		}
 
-		{
-			ServiceMethod method = new ServiceMethod("getAuthors()", "string[]",
-					"return ['Andrew Hunt', 'Dave Thomas', 'Donald Knuth']");
-			Service authorService = new Service("Author", method);
-
-			Template authorsTemplate = new Template("<h2>Authors</h2> {{title}}", false);
-
-			Component authorsComponent = new Component("Authors", "authors", authorsTemplate);
-			ComponentAttribute title = new ComponentAttribute("title", "string", "Overview of Authors");
-			authorsComponent.addAttribute(title);
-
-			authorsComponent.addService(authorService);
-
-			ComponentAttribute authors = new ComponentAttribute("authors", "string[]");
-			authorsComponent.addAttribute(authors);
-
-			Constructor c = new Constructor("\t\tthis.authors = authorService.getAuthors();");
-			authorsComponent.setConstructor(c);
-
-			appComponent.addChildComponent(authorsComponent);
-		}
-
-		{
-			Div div = new Div();
-			div.addEvent(Event.CLICK);
-
-			ComponentAttribute firstNameComponentAttribute = new InputProperty("firstName", "string");
-			ComponentAttribute titleComponentAttribute = new ComponentAttribute("title", "string",
-					"Overview of buttons");
-
-			InputField input = new InputField();
-			input.setNgModel(firstNameComponentAttribute);
-
-			Widget textField = new TextField("Voornaam", firstNameComponentAttribute);
-			Widget titleField = new TextField("Titel", titleComponentAttribute);
-
-			div.addChild(textField);
-			div.addChild(input);
-			div.addChild(titleField);
-
-			Widget button = new Button("click me");
-			button.addEvent(Event.CLICK);
-			button.addEvent(Event.BLUR);
-			button.addCss(Css.btn);
-			button.addCss(Css.btnPrimary);
-			button.addConditionalCssStyle(Css.active, "isActive");
-			div.addChild(button);
-
-			Template template = new Template(true);
-			template.add(div);
-
-			Component buttonComponent = new Component("Buttons", "buttons", template);
-
-			buttonComponent.addAttribute(titleComponentAttribute);
-			buttonComponent.addAttribute(firstNameComponentAttribute);
-
-			appComponent.addChildComponent(buttonComponent);
-
-		}
+		
 		Visitor visitor = new Angular2GeneratingVisitor();
 
 		appComponent.accept(visitor);

@@ -8,6 +8,10 @@ public class Service extends Node {
 	
 	private ServiceMethod serviceMethod;
 	
+	public Service(String name){
+		this.name = name;
+	}
+	
 
 	public Service(String name, ServiceMethod serviceMethod) {
 		this.name = name;
