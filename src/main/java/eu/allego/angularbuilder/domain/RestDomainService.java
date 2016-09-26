@@ -10,15 +10,13 @@ public class RestDomainService extends DomainService {
 		super(domainInterface);
 		this.baseUrl = baseUrl;
 	}
-
-	@Override
-	public void accept(Visitor visitor) {
-		visitor.visit(this);
-	}
-
+	
 	public String getBaseUrl() {
 		return baseUrl;
 	}
 	
-	
+	@Override
+	public void accept(Visitor visitor) {
+		visitor.visit(this);
+	}
 }
