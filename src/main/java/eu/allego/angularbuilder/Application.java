@@ -13,6 +13,7 @@ import eu.allego.angularbuilder.domain.InlineStyle;
 import eu.allego.angularbuilder.domain.InputProperty;
 import eu.allego.angularbuilder.domain.OutputProperty;
 import eu.allego.angularbuilder.domain.Pipe;
+import eu.allego.angularbuilder.domain.RestDomainService;
 import eu.allego.angularbuilder.domain.Service;
 import eu.allego.angularbuilder.domain.ServiceMethod;
 import eu.allego.angularbuilder.domain.Template;
@@ -23,70 +24,96 @@ import eu.allego.angularbuilder.visitor.Visitor;
 
 public class Application {
 	public static void main(String[] args) {
-		
-//		renderLikeApplication();
-		domainServiceWithoutHttp();
+
+		domainServiceWithHttp();
+
 	}
-	
-	public static void domainServiceWithoutHttp(){
-		
-		Template template = new Template("<h1>Testing domain service</h1>", false);
+
+	public static void domainServiceWithHttp() {
+
+		Template template = new Template("<h1>Testing REST domain service</h1>", false);
 		Component appComponent = new Component("App", "my-app", template);
-		
+
 		Template domainServiceTestTemplate = new Template(false);
-		Component domainServiceTestComponent = 	new Component("ServiceTest", "servicetest", domainServiceTestTemplate);
+		Component domainServiceTestComponent = new Component("ServiceTest", "servicetest", domainServiceTestTemplate);
 		ComponentAttribute posts = new ComponentAttribute("posts", "Post[]");
 		domainServiceTestComponent.addAttribute(posts);
-		
+
 		DomainInterface postInterface = new DomainInterface("Post");
-		
-		// question mark means this instance var may be empty in the created instance
+
+		// question mark means this instance var may be empty in the created
+		// instance
+		postInterface.addInstanceVar("id?", "number");
+		postInterface.addInstanceVar("title?", "string");
+		RestDomainService postService = new RestDomainService(postInterface, "http://jsonplaceholder.typicode.com/posts");
+
+		domainServiceTestComponent.addService(postService);
+		// refactor this constructor to a default setting (since this is possible)
+		Constructor constructor = new Constructor("\t\tpostService.getPosts().subscribe(posts => this.posts = posts);");
+		domainServiceTestComponent.setConstructor(constructor);
+
+		appComponent.addChildComponent(domainServiceTestComponent);
+
+		appComponent.accept(new Angular2GeneratingVisitor());
+	}
+
+	public static void domainServiceWithoutHttp() {
+
+		Template template = new Template("<h1>Testing domain service</h1>", false);
+		Component appComponent = new Component("App", "my-app", template);
+
+		Template domainServiceTestTemplate = new Template(false);
+		Component domainServiceTestComponent = new Component("ServiceTest", "servicetest", domainServiceTestTemplate);
+		ComponentAttribute posts = new ComponentAttribute("posts", "Post[]");
+		domainServiceTestComponent.addAttribute(posts);
+
+		DomainInterface postInterface = new DomainInterface("Post");
+
+		// question mark means this instance var may be empty in the created
+		// instance
 		postInterface.addInstanceVar("id?", "number");
 		postInterface.addInstanceVar("title?", "string");
 		DomainService postService = new DomainService(postInterface);
-		
+
 		domainServiceTestComponent.addService(postService);
 		Constructor constructor = new Constructor("\t\tthis.posts = postService.getPosts();");
 		domainServiceTestComponent.setConstructor(constructor);
-		
+
 		appComponent.addChildComponent(domainServiceTestComponent);
-		
+
 		appComponent.accept(new Angular2GeneratingVisitor());
 	}
-	
+
 	public static void renderPipesAndCustomPipes() {
-		
-		
+
 		Template template = new Template("<h1>Firstname test with pipes and custom pipes</h1>", false);
 
 		Component appComponent = new Component("App", "my-app", template);
-		
+
 		Template pipeTemplate = new Template(false);
-		
-		Component pipeComponent = 	new Component("Samenvatting", "samenvatting", pipeTemplate);
-		
+
+		Component pipeComponent = new Component("Samenvatting", "samenvatting", pipeTemplate);
+
 		ComponentAttribute attr = new ComponentAttribute("firstName", "string", "Raymond Loman is lief.");
-		
+
 		TextField textField = new TextField("Firstname", attr);
 		textField.setPipes(Pipe.uppercase);
-		
+
 		pipeTemplate.add(textField);
-		
+
 		CustomPipe pipe = new CustomPipe("Summary", "3");
 		pipeComponent.addPipe(pipe);
 		pipeComponent.addAttribute(attr);
 		appComponent.addChildComponent(pipeComponent);
-		
+
 		textField.addCustomPipe(pipe);
-		
-		
+
 		appComponent.accept(new Angular2GeneratingVisitor());
-		
-		
+
 	}
-	
+
 	public static void renderLikeApplication() {
-		
+
 		Template template = new Template("<h1>Like application</h1>", false);
 
 		Component appComponent = new Component("App", "my-app", template);
@@ -105,7 +132,6 @@ public class Application {
 			Component likesComponent = new Component("LikeMe", "likes", likeTemplate);
 			ComponentAttribute input = new InputProperty("likes", "string");
 
-			
 			// styles
 			InlineStyle inlineStyle = new InlineStyle("highlighted");
 			inlineStyle.addKeyValue("color", "deeppink");
@@ -118,7 +144,6 @@ public class Application {
 
 			likesComponent.addInlineStyle(inlineStyleHover);
 
-			
 			TextField textField = new TextField();
 			textField.setLabel("Firstname");
 			textField.setPipes(Pipe.uppercase);
@@ -199,10 +224,10 @@ public class Application {
 
 	public static void renderADefaultServerSkeleton() {
 
-		 Template appComponentTemplate = new Template("<h1>Test for making a skeleton of a service</h1>", true);
+		Template appComponentTemplate = new Template("<h1>Test for making a skeleton of a service</h1>", true);
 
-		 Component appComponent = new Component("App", "my-app",
-		 appComponentTemplate);
+		Component appComponent = new Component("App", "my-app",
+				appComponentTemplate);
 		{
 			ServiceMethod method = new ServiceMethod("getPosts()", "string[]", "return ['aaa', 'bbb']");
 			Service postService = new Service("Post", method);
@@ -225,7 +250,6 @@ public class Application {
 			appComponent.addChildComponent(coursesComponent);
 		}
 
-		
 		Visitor visitor = new Angular2GeneratingVisitor();
 
 		appComponent.accept(visitor);
