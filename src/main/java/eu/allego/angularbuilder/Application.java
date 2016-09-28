@@ -26,41 +26,78 @@ public class Application {
 	public static void main(String[] args) {
 		domainServiceWithHttpForLiebregts();
 	}
-	
-	
+
 	public static void domainServiceWithHttpForLiebregts() {
 
-		Template template = new Template("<h1>:: Klanten ::</h1>", true);
+		Template template = new Template("<h1>:: Hoofdscherm ::</h1>", true);
 		Component appComponent = new Component("App", "my-app", template);
-		
-		
-		
 
-		Template domainServiceTestTemplate = new Template(true);
-		Component domainServiceTestComponent = new Component("liebregtsklanten", "klanten", domainServiceTestTemplate);
-		ComponentAttribute klanten = new ComponentAttribute("klanten", "Klant[]");
-		domainServiceTestComponent.addAttribute(klanten);
+		// klanten
+		{
 
-		DomainInterface klantInterface = new DomainInterface("Klant");
+			Template domainServiceTestTemplate = new Template("<h1>:: Klanten ::</h1>", true);
+			Component domainServiceTestComponent = new Component("Klanten", "klanten",
+					domainServiceTestTemplate);
+			ComponentAttribute klanten = new ComponentAttribute("klanten", "Klant[]");
+			domainServiceTestComponent.addAttribute(klanten);
 
-		// question mark means this instance var may be empty in the created
-		// instance
-		klantInterface.addInstanceVar("id?", "number");
-		klantInterface.addInstanceVar("naam?", "string");
-		klantInterface.addInstanceVar("adres?", "string");
-		
-		RestDomainService restKlantService = new RestDomainService(klantInterface, "http://localhost:8081/api/klanten");
+			DomainInterface klantInterface = new DomainInterface("Klant");
 
-		domainServiceTestComponent.addService(restKlantService);
-		// refactor this constructor to a default setting (since this is possible)
-		Constructor constructor = new Constructor("\t\tklantService.getKlanten().subscribe(klanten => this.klanten = klanten);");
-		domainServiceTestComponent.setConstructor(constructor);
+			// question mark means this instance var may be empty in the created
+			// instance
+			klantInterface.addInstanceVar("id?", "number");
+			klantInterface.addInstanceVar("naam?", "string");
+			klantInterface.addInstanceVar("adres?", "string");
 
-		appComponent.addChildComponent(domainServiceTestComponent);
+			RestDomainService restKlantService = new RestDomainService(klantInterface,
+					"http://localhost:8081/api/klanten");
+
+			domainServiceTestComponent.addService(restKlantService);
+			// refactor this constructor to a default setting (since this is
+			// possible)
+			Constructor constructor = new Constructor(
+					"\t\tklantService.getKlants().subscribe(klanten => this.klanten = klanten);");
+			domainServiceTestComponent.setConstructor(constructor);
+
+			appComponent.addChildComponent(domainServiceTestComponent);
+		}
+
+		// adressen
+		{
+
+			Template domainServiceTestTemplate = new Template("<h1>:: Adressen ::</h1>", true);
+			Component domainServiceTestComponent = new Component("Adressen", "adressen",
+					domainServiceTestTemplate);
+			ComponentAttribute klanten = new ComponentAttribute("adressen", "Adres[]");
+			domainServiceTestComponent.addAttribute(klanten);
+
+			DomainInterface klantInterface = new DomainInterface("Adres");
+
+			// question mark means this instance var may be empty in the created
+			// instance
+			klantInterface.addInstanceVar("id?", "number");
+			klantInterface.addInstanceVar("straat?", "string");
+			klantInterface.addInstanceVar("huisnummer?", "string");
+			klantInterface.addInstanceVar("postcode?", "string");
+			klantInterface.addInstanceVar("plaats?", "string");
+			klantInterface.addInstanceVar("land?", "string");
+
+			RestDomainService restKlantService = new RestDomainService(klantInterface,
+					"http://localhost:8081/api/adressen");
+
+			domainServiceTestComponent.addService(restKlantService);
+			// refactor this constructor to a default setting (since this is
+			// possible)
+			Constructor constructor = new Constructor(
+					"\t\tadresService.getAdress().subscribe(adressen => this.adressen = adressen);");
+			domainServiceTestComponent.setConstructor(constructor);
+
+			appComponent.addChildComponent(domainServiceTestComponent);
+		}
 
 		appComponent.accept(new Angular2GeneratingVisitor());
 	}
-	
+
 	public static void domainServiceWithHttp() {
 
 		Template template = new Template("<h1>Testing REST domain service</h1>", false);
@@ -77,10 +114,12 @@ public class Application {
 		// instance
 		postInterface.addInstanceVar("id?", "number");
 		postInterface.addInstanceVar("title?", "string");
-		RestDomainService postService = new RestDomainService(postInterface, "http://jsonplaceholder.typicode.com/posts");
+		RestDomainService postService = new RestDomainService(postInterface,
+				"http://jsonplaceholder.typicode.com/posts");
 
 		domainServiceTestComponent.addService(postService);
-		// refactor this constructor to a default setting (since this is possible)
+		// refactor this constructor to a default setting (since this is
+		// possible)
 		Constructor constructor = new Constructor("\t\tpostService.getPosts().subscribe(posts => this.posts = posts);");
 		domainServiceTestComponent.setConstructor(constructor);
 
@@ -88,8 +127,6 @@ public class Application {
 
 		appComponent.accept(new Angular2GeneratingVisitor());
 	}
-
-	
 
 	public static void domainServiceWithoutHttp() {
 
