@@ -19,6 +19,7 @@ import eu.allego.angularbuilder.domain.InlineStyleList;
 import eu.allego.angularbuilder.domain.InputField;
 import eu.allego.angularbuilder.domain.InputProperty;
 import eu.allego.angularbuilder.domain.OutputProperty;
+import eu.allego.angularbuilder.domain.RestDomainService;
 import eu.allego.angularbuilder.domain.Service;
 import eu.allego.angularbuilder.domain.ServiceMethod;
 import eu.allego.angularbuilder.domain.ServicesList;
@@ -77,5 +78,7 @@ public interface Visitor {
 	void visit(DomainInterface domainInterface);
 
 	void visit(DomainService domainService);
+
+	void visit(RestDomainService service);
 
 }

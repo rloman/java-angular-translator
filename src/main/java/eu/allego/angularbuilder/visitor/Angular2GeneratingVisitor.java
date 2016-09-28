@@ -30,6 +30,7 @@ import eu.allego.angularbuilder.domain.InlineStyleList;
 import eu.allego.angularbuilder.domain.InputField;
 import eu.allego.angularbuilder.domain.InputProperty;
 import eu.allego.angularbuilder.domain.OutputProperty;
+import eu.allego.angularbuilder.domain.RestDomainService;
 import eu.allego.angularbuilder.domain.Service;
 import eu.allego.angularbuilder.domain.ServiceMethod;
 import eu.allego.angularbuilder.domain.ServicesList;
@@ -40,60 +41,95 @@ import eu.allego.angularbuilder.domain.Widget;
 public class Angular2GeneratingVisitor implements Visitor {
 
 	private PrintStream currentOutputStream = System.out;
-	
+
 	@Override
-	public void visit(DomainService service){
+	public void visit(RestDomainService service) {
+		
+		setOutputStream(service);
+		
+		System.out.println("import {Http} from 'angular2/http';");
+		System.out.println("import 'rxjs/add/operator/map';");
+		System.out.println("import {Observable} from 'rxjs/Observable';");
+		System.out.println("import {Injectable} from 'angular2/core';");
+		System.out.println();
+
+		DomainInterface domain = service.getDomainInterface();
+		String name = this.convertFirstCharacterToUppercase(domain.getName());
+
+		System.out.printf("import {%s} from './%s';%n", name, this.convertFirstCharacterToLowercase(name));
+
+		System.out.println();
+
+		System.out.println("@Injectable()");
+		System.out.println("export class " + service.getName() + "Service {");
+		System.out.println();
+		System.out.println();
+
+		System.out.println("\tconstructor(private _http:Http) {");
+
+		System.out.println("\t}");
+
+		System.out.printf("\tget%ss() : Observable<%s[]> {%n", name, name);
+		System.out.printf("\t\treturn this._http.get(\"%s\")%n", service.getBaseUrl());
+		System.out.println("\t\t\t.map(res => res.json());");
+		System.out.println("\t}");
+		System.out.println("}");
+		
+		resetOutputStream();
+		
+		service.getDomainInterface().accept(this);
+	}
+
+	@Override
+	public void visit(DomainService service) {
 		setOutputStream(service);
 
 		DomainInterface domain = service.getDomainInterface();
 		String name = this.convertFirstCharacterToUppercase(domain.getName());
-		
+
 		// imports
 		// rloman: refactor to StatementImport.java for later
 		System.out.printf("import {%s} from './%s';%n", name, this.convertFirstCharacterToLowercase(name));
-		
+
 		System.out.println();
 
 		System.out.println("export class " + service.getName() + "Service {");
 		System.out.println();
-		
-		
-		
-		
+
 		System.out.printf("\tget%ss() : %s[] {%n", name, name);
-		
+
 		System.out.println("\t\t// Implement your code here");
-		
+
 		System.out.println("\t\treturn [{id:3, title:'aap'},{id:4, title:'noot'}, {id:5, title:'mies'}]");
 		System.out.println("\t}");
-		
+
 		System.out.printf("\tcreate%s(post:Post) {%n", name, name);
-		
+
 		System.out.println("\t\t// Implement your code here");
 		System.out.println("\t}");
-		
+
 		System.out.println("}");
 
 		resetOutputStream();
-		
+
 		service.getDomainInterface().accept(this);
-		
+
 	}
-	
+
 	@Override
 	public void visit(DomainInterface domainInterface) {
 		setOutputStream(domainInterface);
-		
+
 		System.out.printf("export interface %s {%n", domainInterface.getName());
-		String attributes = String.join("", domainInterface.getAttributes().stream().map( e -> {
+		String attributes = String.join("", domainInterface.getAttributes().stream().map(e -> {
 			return String.format("\t %s : %s;%n", e.name, e.type);
 		}).collect(Collectors.toList()));
 		System.out.print(attributes);
-		
+
 		System.out.println("}");
-		
+
 		resetOutputStream();
-		
+
 	}
 
 	@Override
@@ -110,11 +146,15 @@ public class Angular2GeneratingVisitor implements Visitor {
 		for (Service service : servicesList) {
 			System.out.println("import {" + service.getName() + "Service} from './" + service.getName().toLowerCase()
 					+ ".service'");
-			if(service instanceof DomainService) {
+			if (service instanceof DomainService) {
 				DomainService domainService = (DomainService) service;
-				System.out.println("import {" + domainService.getDomainInterface().getName() + "} from './" 
-				+ domainService.getDomainInterface().getName().toLowerCase()+"';");
+				System.out.println("import {" + domainService.getDomainInterface().getName() + "} from './"
+						+ domainService.getDomainInterface().getName().toLowerCase() + "';");
+				if(service instanceof RestDomainService){
+					System.out.println("import {HTTP_PROVIDERS} from 'angular2/http';");
+				}
 			}
+			
 		}
 	}
 
@@ -149,47 +189,48 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 	@Override
 	public void visit(InlineStyle inlineStyle) {
-		System.out.println(String.format("\t\t%s { ", inlineStyle.getStyleName().indexOf(":") == 0 ? inlineStyle.getStyleName() : "."+inlineStyle.getStyleName()));
+		System.out.println(String.format("\t\t%s { ", inlineStyle.getStyleName().indexOf(":") == 0
+				? inlineStyle.getStyleName() : "." + inlineStyle.getStyleName()));
 		for (InlineStyleLine keyValue : inlineStyle) {
 			System.out.printf("\t\t\t%s : %s;%n", keyValue.key, keyValue.value);
 		}
 		System.out.println("\t\t}");
 	}
-	
-	
+
 	@Override
 	public void visit(CustomPipeList customPipeList) {
-		for(CustomPipe pipe : customPipeList){
+		for (CustomPipe pipe : customPipeList) {
 			pipe.accept(this);
 		}
 	}
-	
+
 	@Override
 	public void visit(CustomPipe customPipe) {
-		
+
 		setOutputStream(customPipe);
-		
+
 		System.out.println("import {Pipe, PipeTransform} from 'angular2/core';");
 		System.out.println();
 		System.out.printf("@Pipe({name: '%s'})%n", customPipe.getName().toLowerCase());
-		
-		System.out.println("export class "+this.convertFirstCharacterToUppercase(customPipe.getName())+"Pipe implements PipeTransform {");
-		
+
+		System.out.println("export class " + this.convertFirstCharacterToUppercase(customPipe.getName())
+				+ "Pipe implements PipeTransform {");
+
 		System.out.println();
 		System.out.println("\ttransform(value: string, args: string[]) {");
-		
+
 		System.out.println("\t\t// sample code");
 		System.out.println("\t\tif(value){ ");
 		System.out.println("\t\t\tvar limit = (args && args[0]) ? parseInt(args[0]) : 50;");
 		System.out.println("\t\t\t return value.substring(0, limit) + '...';");
 		System.out.println("\t\t}");
-		
+
 		System.out.println("\t}");
-		
+
 		System.out.println("}");
-		
+
 		resetOutputStream();
-		
+
 	}
 
 	public void visit(Component component) {
@@ -205,9 +246,10 @@ public class Angular2GeneratingVisitor implements Visitor {
 		component.getServices().accept(this);
 
 		component.getDirectives().accept(this);
-		
-		for(CustomPipe pipe : component.getPipes()) {
-			System.out.println("import {"+this.convertFirstCharacterToUppercase(pipe.getName()+"Pipe} from './"+pipe.getName().toLowerCase()+".pipe'"));
+
+		for (CustomPipe pipe : component.getPipes()) {
+			System.out.println("import {" + this.convertFirstCharacterToUppercase(
+					pipe.getName() + "Pipe} from './" + pipe.getName().toLowerCase() + ".pipe'"));
 		}
 
 		System.out.println();
@@ -221,8 +263,15 @@ public class Angular2GeneratingVisitor implements Visitor {
 			System.out.println(", ");
 			System.out.print("\tproviders: [");
 			System.out.print(String.join(", ", component.getServices().stream().map(e -> {
-				return e.getName() + "Service";
-			}).collect(Collectors.toList())));
+				if(e instanceof RestDomainService) {
+					// kan dit niet anders / in 1 regel? volgens mij kan dat in een aparte map. namelijk
+					return  e.getName() + "Service, HTTP_PROVIDERS";
+				}
+				else {
+					return e.getName() + "Service";
+				}
+				
+			}).distinct().collect(Collectors.toList())));
 			System.out.print("]");
 		}
 
@@ -259,8 +308,8 @@ public class Angular2GeneratingVisitor implements Visitor {
 					.collect(Collectors.toList())));
 			System.out.println("]");
 		}
-		
-		if(!component.getPipes().isEmpty()) {
+
+		if (!component.getPipes().isEmpty()) {
 			System.out.println(", ");
 			System.out.print("\tpipes: [");
 			System.out.print(String.join(", ", component
@@ -353,7 +402,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 		{
 			directive.accept(this);
 		}
-		
+
 		component.getPipes().accept(this);
 
 		resetOutputStream();
@@ -588,16 +637,16 @@ public class Angular2GeneratingVisitor implements Visitor {
 		if (!widget.getConditionalCssStyles().isEmpty()) {
 			System.out.println();
 			System.out.println("\t\t\t[ngClass]=\"{");
-			System.out.println(String.join(",\n", 
+			System.out.println(String.join(",\n",
 					widget.conditionalCssStyles.entrySet()
-					.stream()
-					.map( entry -> {
-						return String.format("\t\t\t\t'%s': %s",
-							this.convertUpperCamelCaseToAngularString(entry.getKey().toString()),
-							entry.getValue());
-					})
-					.collect(Collectors.toList())));
-			
+							.stream()
+							.map(entry -> {
+								return String.format("\t\t\t\t'%s': %s",
+										this.convertUpperCamelCaseToAngularString(entry.getKey().toString()),
+										entry.getValue());
+							})
+							.collect(Collectors.toList())));
+
 			System.out.println("\t\t\t}\"");
 		}
 
@@ -691,17 +740,19 @@ public class Angular2GeneratingVisitor implements Visitor {
 	public void visit(TextField textField) {
 
 		System.out.println("<br/>");
-		String pipes = String.join("", textField.getPipes().stream().map(pipe -> pipe.toString()).collect(Collectors.toList()));
-		if(!textField.getCustomPipes().isEmpty()) {
-			for(CustomPipe customPipe : textField.getCustomPipes()){
+		String pipes = String.join("",
+				textField.getPipes().stream().map(pipe -> pipe.toString()).collect(Collectors.toList()));
+		if (!textField.getCustomPipes().isEmpty()) {
+			for (CustomPipe customPipe : textField.getCustomPipes()) {
 				String attr = customPipe.getAttributes();
-				pipes += " | "+customPipe.getName().toLowerCase() + (attr != null ? ":"+attr : "");
+				pipes += " | " + customPipe.getName().toLowerCase() + (attr != null ? ":" + attr : "");
 			}
 		}
-		System.out.printf("<span>%s: {{ %s %s }}</span> %n", textField.getLabel(), textField.getNgModel().getName(), pipes);
+		System.out.printf("<span>%s: {{ %s %s }}</span> %n", textField.getLabel(), textField.getNgModel().getName(),
+				pipes);
 
 	}
-	
+
 	private void setOutputStream(DomainInterface domainInterface) {
 		currentOutputStream = System.out;
 
