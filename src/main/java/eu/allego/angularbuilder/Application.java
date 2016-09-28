@@ -24,11 +24,43 @@ import eu.allego.angularbuilder.visitor.Visitor;
 
 public class Application {
 	public static void main(String[] args) {
-
-		domainServiceWithHttp();
-
+		domainServiceWithHttpForLiebregts();
 	}
+	
+	
+	public static void domainServiceWithHttpForLiebregts() {
 
+		Template template = new Template("<h1>:: Klanten ::</h1>", true);
+		Component appComponent = new Component("App", "my-app", template);
+		
+		
+		
+
+		Template domainServiceTestTemplate = new Template(true);
+		Component domainServiceTestComponent = new Component("liebregtsklanten", "klanten", domainServiceTestTemplate);
+		ComponentAttribute klanten = new ComponentAttribute("klanten", "Klant[]");
+		domainServiceTestComponent.addAttribute(klanten);
+
+		DomainInterface klantInterface = new DomainInterface("Klant");
+
+		// question mark means this instance var may be empty in the created
+		// instance
+		klantInterface.addInstanceVar("id?", "number");
+		klantInterface.addInstanceVar("naam?", "string");
+		klantInterface.addInstanceVar("adres?", "string");
+		
+		RestDomainService restKlantService = new RestDomainService(klantInterface, "http://localhost:8081/api/klanten");
+
+		domainServiceTestComponent.addService(restKlantService);
+		// refactor this constructor to a default setting (since this is possible)
+		Constructor constructor = new Constructor("\t\tklantService.getKlanten().subscribe(klanten => this.klanten = klanten);");
+		domainServiceTestComponent.setConstructor(constructor);
+
+		appComponent.addChildComponent(domainServiceTestComponent);
+
+		appComponent.accept(new Angular2GeneratingVisitor());
+	}
+	
 	public static void domainServiceWithHttp() {
 
 		Template template = new Template("<h1>Testing REST domain service</h1>", false);
@@ -56,6 +88,8 @@ public class Application {
 
 		appComponent.accept(new Angular2GeneratingVisitor());
 	}
+
+	
 
 	public static void domainServiceWithoutHttp() {
 

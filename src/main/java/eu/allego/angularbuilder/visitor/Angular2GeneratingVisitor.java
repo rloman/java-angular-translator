@@ -76,6 +76,8 @@ public class Angular2GeneratingVisitor implements Visitor {
 		System.out.println("}");
 		
 		resetOutputStream();
+		
+		service.getDomainInterface().accept(this);
 	}
 
 	@Override
