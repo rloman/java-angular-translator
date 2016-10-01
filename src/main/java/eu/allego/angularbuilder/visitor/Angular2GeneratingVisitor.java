@@ -488,7 +488,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 				builder.append("<ul>");
 				builder.append(String.format("<li *ngFor='#%s of %s'>",
 						attr.getName().substring(0, attr.getName().length() - 1), attr.getName()));
-				builder.append(String.format("{{ %s }}", attr.getName().substring(0, attr.getName().length() - 1)));
+				builder.append(String.format("{{ %s | json }}", attr.getName().substring(0, attr.getName().length() - 1)));
 				builder.append("</li>");
 				builder.append("</ul>");
 				builder.append("</div>");
