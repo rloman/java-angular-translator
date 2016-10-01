@@ -251,10 +251,14 @@ public class Angular2GeneratingVisitor implements Visitor {
 			System.out.println("import {" + this.convertFirstCharacterToUppercase(
 					pipe.getName() + "Pipe} from './" + pipe.getName().toLowerCase() + ".pipe'"));
 		}
-
+		
+		// for now always import the router related stuff
+		System.out.println("import {RouteConfig, RouterOutlet, RouterLink} from 'angular2/router';");
+		System.out.println("import {ROUTER_DIRECTIVES} from 'angular2/router';");
+		
 		// enable routing if applicable
 		if (component.isEnableRouting()) {
-			System.out.println("import {RouteConfig, RouterOutlet, RouterLink} from 'angular2/router';");
+			
 			System.out.println("@RouteConfig(");
 
 			System.out.println("\t[");
@@ -267,6 +271,14 @@ public class Angular2GeneratingVisitor implements Visitor {
 						convertFirstCharacterToUppercase(sub.getName()),
 						convertFirstCharacterToUppercase(sub.getName() + "Component"),
 						(counter == 0) ? "useAsDefault:true" : "");
+						// also render singular for (customers -> customer/:id)
+				System.out.printf("\t\t{path:'%s/:id', name:'%s', component:%s, %s}, %n",
+						convertFirstCharacterToLowercase(sub.getName().substring(0,  sub.getName().length()-1)),
+						convertFirstCharacterToUppercase(sub.getName().substring(0,  sub.getName().length()-1)),
+						convertFirstCharacterToUppercase(sub.getName().substring(0,  sub.getName().length()-1) + "Component"),
+						"");
+				
+				
 				if(counter == 0) {
 					destinationWhenInvalidTarget = convertFirstCharacterToUppercase(sub.getName());
 				}
@@ -335,6 +347,9 @@ public class Angular2GeneratingVisitor implements Visitor {
 					.collect(Collectors.toList())));
 			System.out.println("]");
 		}
+		
+		System.out.println(", ");
+		System.out.print("\tdirectives: [ROUTER_DIRECTIVES]");
 
 		if (!component.getPipes().isEmpty()) {
 			System.out.println(", ");
@@ -488,6 +503,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 				builder.append("<ul>");
 				builder.append(String.format("<li *ngFor='#%s of %s'>",
 						attr.getName().substring(0, attr.getName().length() - 1), attr.getName()));
+				builder.append(String.format("<a [routerLink]=\"['%s', {id:%s.id}]\">{{ %s.id }}</a>", convertFirstCharacterToUppercase(attr.getName().substring(0, attr.getName().length() - 1)), attr.getName().substring(0, attr.getName().length() - 1), attr.getName().substring(0, attr.getName().length() - 1)));
 				builder.append(String.format("{{ %s | json }}", attr.getName().substring(0, attr.getName().length() - 1)));
 				builder.append("</li>");
 				builder.append("</ul>");
