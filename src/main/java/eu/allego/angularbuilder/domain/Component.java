@@ -24,6 +24,8 @@ public class Component extends Node {
 	private CustomPipeList pipes = new CustomPipeList();
 
 	private Constructor constructor;
+	
+	private boolean enableRouting;// kan ik wellicht afleiden uit de aanwezigheid van subcomponenen maar dat is niet zeker volgens mij
 
 	/**
 	 * 
@@ -40,7 +42,10 @@ public class Component extends Node {
 		this.name = name;
 		this.selector = selector;
 		this.template = template;
+		this.enableRouting = false;
 	}
+	
+	
 
 	public void addDirective(Directive directive) {
 		this.directives.add(directive);
@@ -131,5 +136,15 @@ public class Component extends Node {
 
 	public CustomPipeList getPipes() {
 		return pipes;
+	}
+
+	public boolean isEnableRouting() {
+		return enableRouting;
+	}
+
+
+
+	public void setEnableRouting(boolean enableRouting) {
+		this.enableRouting = enableRouting;
 	}
 }

@@ -29,19 +29,20 @@ public class Application {
 
 	public static void domainServiceWithHttpForLiebregts() {
 
-		Template template = new Template("<h1>:: Hoofdscherm ::</h1>", true);
+		Template template = new Template("<h1>:: Main ::</h1>", true);
 		Component appComponent = new Component("App", "my-app", template);
+		appComponent.setEnableRouting(true);
 
 		// klanten
 		{
 
-			Template domainServiceTestTemplate = new Template("<h1>:: Klanten ::</h1>", true);
-			Component domainServiceTestComponent = new Component("Klanten", "klanten",
+			Template domainServiceTestTemplate = new Template("<h1>:: Customers ::</h1>", true);
+			Component domainServiceTestComponent = new Component("Customers", "customers",
 					domainServiceTestTemplate);
-			ComponentAttribute klanten = new ComponentAttribute("klanten", "Klant[]");
+			ComponentAttribute klanten = new ComponentAttribute("customers", "Customer[]");
 			domainServiceTestComponent.addAttribute(klanten);
 
-			DomainInterface klantInterface = new DomainInterface("Klant");
+			DomainInterface klantInterface = new DomainInterface("Customer");
 
 			// question mark means this instance var may be empty in the created
 			// instance
@@ -56,7 +57,7 @@ public class Application {
 			// refactor this constructor to a default setting (since this is
 			// possible)
 			Constructor constructor = new Constructor(
-					"\t\tklantService.getKlants().subscribe(klanten => this.klanten = klanten);");
+					"\t\tcustomerService.getCustomers().subscribe(customers => this.customers = customers);");
 			domainServiceTestComponent.setConstructor(constructor);
 
 			appComponent.addChildComponent(domainServiceTestComponent);
@@ -65,13 +66,13 @@ public class Application {
 		// adressen
 		{
 
-			Template domainServiceTestTemplate = new Template("<h1>:: Adressen ::</h1>", true);
-			Component domainServiceTestComponent = new Component("Adressen", "adressen",
+			Template domainServiceTestTemplate = new Template("<h1>:: Addresses ::</h1>", true);
+			Component domainServiceTestComponent = new Component("Addresses", "addresses",
 					domainServiceTestTemplate);
-			ComponentAttribute klanten = new ComponentAttribute("adressen", "Adres[]");
+			ComponentAttribute klanten = new ComponentAttribute("addresses", "Address[]");
 			domainServiceTestComponent.addAttribute(klanten);
 
-			DomainInterface klantInterface = new DomainInterface("Adres");
+			DomainInterface klantInterface = new DomainInterface("Address");
 
 			// question mark means this instance var may be empty in the created
 			// instance
@@ -89,7 +90,7 @@ public class Application {
 			// refactor this constructor to a default setting (since this is
 			// possible)
 			Constructor constructor = new Constructor(
-					"\t\tadresService.getAdress().subscribe(adressen => this.adressen = adressen);");
+					"\t\taddressService.getAddresss().subscribe(addresses => this.addresses = addresses);");
 			domainServiceTestComponent.setConstructor(constructor);
 
 			appComponent.addChildComponent(domainServiceTestComponent);

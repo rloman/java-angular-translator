@@ -44,9 +44,9 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 	@Override
 	public void visit(RestDomainService service) {
-		
+
 		setOutputStream(service);
-		
+
 		System.out.println("import {Http} from 'angular2/http';");
 		System.out.println("import 'rxjs/add/operator/map';");
 		System.out.println("import {Observable} from 'rxjs/Observable';");
@@ -74,9 +74,9 @@ public class Angular2GeneratingVisitor implements Visitor {
 		System.out.println("\t\t\t.map(res => res.json());");
 		System.out.println("\t}");
 		System.out.println("}");
-		
+
 		resetOutputStream();
-		
+
 		service.getDomainInterface().accept(this);
 	}
 
@@ -150,11 +150,11 @@ public class Angular2GeneratingVisitor implements Visitor {
 				DomainService domainService = (DomainService) service;
 				System.out.println("import {" + domainService.getDomainInterface().getName() + "} from './"
 						+ domainService.getDomainInterface().getName().toLowerCase() + "';");
-				if(service instanceof RestDomainService){
+				if (service instanceof RestDomainService) {
 					System.out.println("import {HTTP_PROVIDERS} from 'angular2/http';");
 				}
 			}
-			
+
 		}
 	}
 
@@ -252,6 +252,33 @@ public class Angular2GeneratingVisitor implements Visitor {
 					pipe.getName() + "Pipe} from './" + pipe.getName().toLowerCase() + ".pipe'"));
 		}
 
+		// enable routing if applicable
+		if (component.isEnableRouting()) {
+			System.out.println("import {RouteConfig, RouterOutlet, RouterLink} from 'angular2/router';");
+			System.out.println("@RouteConfig(");
+
+			System.out.println("\t[");
+
+			int counter = 0;
+			String destinationWhenInvalidTarget = null;
+			for (Component sub : component.getChildren()) {
+				System.out.printf("\t\t{path:'%s', name:'%s', component:%s, %s}, %n",
+						convertFirstCharacterToLowercase(sub.getName()),
+						convertFirstCharacterToUppercase(sub.getName()),
+						convertFirstCharacterToUppercase(sub.getName() + "Component"),
+						(counter == 0) ? "useAsDefault:true" : "");
+				if(counter == 0) {
+					destinationWhenInvalidTarget = convertFirstCharacterToUppercase(sub.getName());
+				}
+				counter++;
+			}
+			System.out.printf("\t\t{path:'/*other', name:'Other', redirectTo: ['%s']}", destinationWhenInvalidTarget);
+
+			System.out.println("\t]");
+
+			System.out.println(")");
+		}
+
 		System.out.println();
 		// render header and selector
 		System.out.println("@Component({");
@@ -263,22 +290,23 @@ public class Angular2GeneratingVisitor implements Visitor {
 			System.out.println(", ");
 			System.out.print("\tproviders: [");
 			System.out.print(String.join(", ", component.getServices().stream().map(e -> {
-				if(e instanceof RestDomainService) {
-					// kan dit niet anders / in 1 regel? volgens mij kan dat in een aparte map. namelijk
-					return  e.getName() + "Service, HTTP_PROVIDERS";
+				if (e instanceof RestDomainService) {
+					// kan dit niet anders / in 1 regel? volgens mij kan dat in
+					// een aparte map. namelijk
+					return e.getName() + "Service, HTTP_PROVIDERS";
 				}
 				else {
 					return e.getName() + "Service";
 				}
-				
+
 			}).distinct().collect(Collectors.toList())));
 			System.out.print("]");
 		}
 
 		// render subcomponent directives
-		if (!component.getChildren().isEmpty())
-
-		{
+		// mag dit wel twee keer? (hieronder wordt twee keer directives
+		// gerendered)
+		if (!component.getChildren().isEmpty()) {
 			System.out.println(", ");
 			System.out.print("\tdirectives: [");
 
@@ -290,12 +318,11 @@ public class Angular2GeneratingVisitor implements Visitor {
 					})
 					.collect(Collectors.toList())));
 
-			System.out.print("]");
+			// rloman deze imports zijn niet altijd nodigen falen wellicht als het comonent geen router enabled is
+			System.out.print(", RouterOutlet, RouterLink]");
 		}
 
-		if (!component.getDirectives().isEmpty())
-
-		{
+		if (!component.getDirectives().isEmpty()) {
 			System.out.println(", ");
 			System.out.print("\tdirectives: [");
 
@@ -412,7 +439,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 	private void renderTemplate(Component component) {
 		if (component.getTemplate().isRenderTemplateFile()) {
 			System.out.printf("\ttemplateUrl: '%s' %n",
-					"app/" + this.convertUpperCamelCaseToAngularString(component.getName()) + ".template.html");
+					"app/" + this.convertUpperCamelCaseToAngularString(component.getName()) + ".component.html");
 			setOutputStreamForExternalTemplate(component.getName());
 		}
 		else {
@@ -420,6 +447,37 @@ public class Angular2GeneratingVisitor implements Visitor {
 		}
 
 		component.getTemplate().accept(this);
+
+		if (component.isEnableRouting()) {
+			// from udemy
+			System.out.println("<nav class='navbar navbar-default'>");
+			System.out.println("<div class='container-fluid'>");
+			System.out.println(" <!-- Brand and toggle get grouped for better mobile display -->");
+			System.out.println("<div class='navbar-header'>");
+			System.out.println("<button type='button' class='navbar-toggle collapsed' data-toggle='collapse' "
+					+ "data-target='#bs-example-navbar-collapse-1' aria-expanded='false'>");
+			System.out.println("<span class='sr-only'>Toggle navigation</span>");
+			System.out.println("<span class='icon-bar'></span>");
+			System.out.println("<span class='icon-bar'></span>");
+			System.out.println("<span class='icon-bar'></span>");
+			System.out.println("</button>");
+			System.out.println("<a class='navbar-brand' href='#'>Brand</a>");
+			System.out.println("</div>");
+			
+			// the real world
+			System.out.println("<div class='collapse navbar-collapse' id='bs-example-navbar-collapse-1'>");
+			System.out.println("<ul class='nav navbar-nav'>");
+			for(Component c : component.getChildren()) {
+				System.out.printf("<li><a [routerLink]=\"['%s']\">%s</a> </li> %n", 
+						convertFirstCharacterToUppercase(c.getName()), 
+						convertFirstCharacterToUppercase(c.getName()));	
+			}
+			System.out.println("</ul>");
+			System.out.println("</div>");
+			System.out.println("</div>");
+			System.out.println("</nav>");
+			System.out.println("<router-outlet></router-outlet>");
+		}
 
 		// since this entire project! is a learning project. here I will inspect
 		// if it is a string[] for now
@@ -442,23 +500,29 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 		}
 		// render subcomponents his selectors in the template
-		for (Component child : component.getChildren()) {
-			List<String> namesOfInputProperties = new ArrayList<>();
-			List<String> namesOfOutputProperties = new ArrayList<>();
-			for (ComponentAttribute attr : child.getAttributes()) {
-				if (attr instanceof InputProperty) {
-					namesOfInputProperties.add(
-							String.format("%s='%s'", attr.getName(), attr.getValue() != null ? attr.getValue() : ""));
-				}
-				if (attr instanceof OutputProperty) {
-					namesOfOutputProperties
-							.add(String.format("(%s)='%s'", attr.getName(),
-									((OutputProperty) attr).getEventHandlerInJavascriptCode()));
-				}
+		// for now only the parent component (this one) does not have routing
+		// enabled
+		if (!component.isEnableRouting()) {
+			for (Component child : component.getChildren()) {
+				List<String> namesOfInputProperties = new ArrayList<>();
+				List<String> namesOfOutputProperties = new ArrayList<>();
+				for (ComponentAttribute attr : child.getAttributes()) {
+					if (attr instanceof InputProperty) {
+						namesOfInputProperties.add(
+								String.format("%s='%s'", attr.getName(),
+										attr.getValue() != null ? attr.getValue() : ""));
+					}
+					if (attr instanceof OutputProperty) {
+						namesOfOutputProperties
+								.add(String.format("(%s)='%s'", attr.getName(),
+										((OutputProperty) attr).getEventHandlerInJavascriptCode()));
+					}
 
+				}
+				System.out.printf("\t\t<%s %s %s></%s>%n", child.getSelector(),
+						String.join(", ", namesOfInputProperties),
+						String.join(", ", namesOfOutputProperties), child.getSelector());
 			}
-			System.out.printf("\t\t<%s %s %s></%s>%n", child.getSelector(), String.join(", ", namesOfInputProperties),
-					String.join(", ", namesOfOutputProperties), child.getSelector());
 		}
 
 		if (component.getTemplate().isRenderTemplateFile()) {
@@ -791,7 +855,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 		try {
 			FileOutputStream outputStream = new FileOutputStream(
-					"app/" + this.convertUpperCamelCaseToAngularString(componentName) + ".template.html");
+					"app/" + this.convertUpperCamelCaseToAngularString(componentName) + ".component.html");
 			PrintStream ps = new PrintStream(outputStream);
 			System.setOut(ps);
 
