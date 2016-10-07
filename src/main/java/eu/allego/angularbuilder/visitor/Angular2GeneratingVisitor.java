@@ -102,8 +102,9 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 		System.out.println("\t\treturn [{id:3, title:'aap'},{id:4, title:'noot'}, {id:5, title:'mies'}]");
 		System.out.println("\t}");
-
-		System.out.printf("\tcreate%s(post:Post) {%n", name, name);
+			
+		// rloman wat moet je hier met twee strings?
+		System.out.printf("\tcreate%s(post:Post) {%n", name);
 
 		System.out.println("\t\t// Implement your code here");
 		System.out.println("\t}");
@@ -794,14 +795,14 @@ public class Angular2GeneratingVisitor implements Visitor {
 	@Override
 	public void visit(InputProperty inputComponentAttribute) {
 		System.out.println();
-		System.out.printf("\t@Input()\n\t%s: %s;%n", inputComponentAttribute.getName(),
+		System.out.printf("\t@Input()%n\t%s: %s;%n", inputComponentAttribute.getName(),
 				inputComponentAttribute.getType());
 	}
 
 	@Override
 	public void visit(OutputProperty outputComponentAttribute) {
 		System.out.println();
-		System.out.printf("\t@Output()\n\t%s %s;%n", outputComponentAttribute.getName(),
+		System.out.printf("\t@Output()%n\t%s %s;%n", outputComponentAttribute.getName(),
 				"= new " + outputComponentAttribute.getType() + "()");
 
 		// Add some code for the dummy implementation regarding the event
