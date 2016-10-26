@@ -29,7 +29,7 @@ public class Application {
 
 	public static void domainServiceWithHttpForLiebregts() {
 
-		Template template = new Template("<h1>:: Main ::</h1>", true);
+		Template template = new Template("<h1>:: Liebregts main ::</h1>", true);
 		Component appComponent = new Component("App", "my-app", template);
 		appComponent.setEnableRouting(true);
 
@@ -39,31 +39,45 @@ public class Application {
 			Template domainServiceTestTemplate = new Template("<h1>:: Customers ::</h1>", true);
 			Component domainServiceTestComponent = new Component("Customers", "customers",
 					domainServiceTestTemplate);
-			ComponentAttribute klanten = new ComponentAttribute("customers", "Customer[]");
-			domainServiceTestComponent.addAttribute(klanten);
+			ComponentAttribute customers = new ComponentAttribute("customers", "Customer[]");
+			domainServiceTestComponent.addAttribute(customers);
 
-			DomainInterface klantInterface = new DomainInterface("Customer");
+			DomainInterface customerInterface = new DomainInterface("Customer");
 
 			// question mark means this instance var may be empty in the created
 			// instance
-			klantInterface.addInstanceVar("id?", "number");
-			klantInterface.addInstanceVar("naam?", "string");
-			klantInterface.addInstanceVar("adres?", "string");
+			customerInterface.addInstanceVar("id?", "number");
+			customerInterface.addInstanceVar("naam?", "string");
+			customerInterface.addInstanceVar("debiteurennummer?", "string");
 
-			RestDomainService restKlantService = new RestDomainService(klantInterface,
-					"http://localhost:8081/api/klanten");
+			RestDomainService restKlantService = new RestDomainService(customerInterface,
+					"http://localhost:8081/api/klanten/");
 
 			domainServiceTestComponent.addService(restKlantService);
 			// refactor this constructor to a default setting (since this is
 			// possible)
-			Constructor constructor = new Constructor(
+			Constructor constructorForPlural = new Constructor(
 					"\t\tcustomerService.getCustomers().subscribe(customers => this.customers = customers);");
-			domainServiceTestComponent.setConstructor(constructor);
+			domainServiceTestComponent.setConstructor(constructorForPlural);
 
 			appComponent.addChildComponent(domainServiceTestComponent);
+			
+			// temp to test if singular is easy to create
+			// suppose we always want to make a CustomerComponent for singular instances
+			Template singularTemplate = new Template("<h1>:: Customer ::</h1>\n<div>\n\t{{ customer | json }}\n</div>\n", true);
+			Component singularComponent = new Component("Customer", "customer", singularTemplate);
+			ComponentAttribute customer = new ComponentAttribute("customer", "Customer");
+			singularComponent.addAttribute(customer);
+			singularComponent.setForSingularUse(true);
+			Constructor constructorForSingular = new Constructor("customerService.getCustomer(parseInt(_routeParams.get('id'))).subscribe(customer => this.customer = customer);");
+			singularComponent.setConstructor(constructorForSingular);
+			singularComponent.addService(restKlantService);
+			
+			domainServiceTestComponent.addChildComponent(singularComponent);
 		}
 
 		// adressen
+		/*
 		{
 
 			Template domainServiceTestTemplate = new Template("<h1>:: Addresses ::</h1>", true);
@@ -95,6 +109,7 @@ public class Application {
 
 			appComponent.addChildComponent(domainServiceTestComponent);
 		}
+		*/
 
 		appComponent.accept(new Angular2GeneratingVisitor());
 	}

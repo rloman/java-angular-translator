@@ -68,12 +68,26 @@ public class Angular2GeneratingVisitor implements Visitor {
 		System.out.println("\tconstructor(private _http:Http) {");
 
 		System.out.println("\t}");
+		
+		System.out.println();
 
+		// create the service method for the plular list
 		System.out.printf("\tget%ss() : Observable<%s[]> {%n", name, name);
 		System.out.printf("\t\treturn this._http.get(\"%s\")%n", service.getBaseUrl());
 		System.out.println("\t\t\t.map(res => res.json());");
 		System.out.println("\t}");
+		
+		System.out.println();
+		
+		
+		// create the sevice method for the singular get
+		System.out.printf("\tget%s(id : number) : Observable<%s> {%n", name, name);
+		System.out.printf("\t\treturn this._http.get('%s'+id)%n", service.getBaseUrl());
+		System.out.println("\t\t\t.map(res => res.json());");
+		System.out.println("\t}");
+		
 		System.out.println("}");
+		
 
 		resetOutputStream();
 
@@ -102,8 +116,9 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 		System.out.println("\t\treturn [{id:3, title:'aap'},{id:4, title:'noot'}, {id:5, title:'mies'}]");
 		System.out.println("\t}");
-
-		System.out.printf("\tcreate%s(post:Post) {%n", name, name);
+			
+		// rloman wat moet je hier met twee strings?
+		System.out.printf("\tcreate%s(post:Post) {%n", name);
 
 		System.out.println("\t\t// Implement your code here");
 		System.out.println("\t}");
@@ -135,8 +150,16 @@ public class Angular2GeneratingVisitor implements Visitor {
 	@Override
 	public void visit(ComponentList componentList) {
 		for (Component child : componentList) {
-			System.out.println("import {" + child.getName() + "Component} from './" + child.getName().toLowerCase()
-					+ ".component'");
+			renderChildersImportRecursive(child);
+			
+		}
+	}
+	
+	private void renderChildersImportRecursive(Component child) {
+		System.out.println("import {" + child.getName() + "Component} from './" + child.getName().toLowerCase()
+				+ ".component'");
+		for(Component subchild : child.getChildren()) {
+			renderChildersImportRecursive(subchild);
 		}
 	}
 
@@ -251,10 +274,14 @@ public class Angular2GeneratingVisitor implements Visitor {
 			System.out.println("import {" + this.convertFirstCharacterToUppercase(
 					pipe.getName() + "Pipe} from './" + pipe.getName().toLowerCase() + ".pipe'"));
 		}
-
+		
+		// for now always import the router related stuff
+		System.out.println("import {RouteConfig, RouterOutlet, RouterLink, RouteParams} from 'angular2/router';");
+		System.out.println("import {ROUTER_DIRECTIVES} from 'angular2/router';");
+		
 		// enable routing if applicable
 		if (component.isEnableRouting()) {
-			System.out.println("import {RouteConfig, RouterOutlet, RouterLink} from 'angular2/router';");
+			
 			System.out.println("@RouteConfig(");
 
 			System.out.println("\t[");
@@ -267,6 +294,14 @@ public class Angular2GeneratingVisitor implements Visitor {
 						convertFirstCharacterToUppercase(sub.getName()),
 						convertFirstCharacterToUppercase(sub.getName() + "Component"),
 						(counter == 0) ? "useAsDefault:true" : "");
+						// also render singular for (customers -> customer/:id)
+				System.out.printf("\t\t{path:'%s/:id', name:'%s', component:%s, %s}, %n",
+						convertFirstCharacterToLowercase(sub.getName().substring(0,  sub.getName().length()-1)),
+						convertFirstCharacterToUppercase(sub.getName().substring(0,  sub.getName().length()-1)),
+						convertFirstCharacterToUppercase(sub.getName().substring(0,  sub.getName().length()-1) + "Component"),
+						"");
+				
+				
 				if(counter == 0) {
 					destinationWhenInvalidTarget = convertFirstCharacterToUppercase(sub.getName());
 				}
@@ -335,6 +370,9 @@ public class Angular2GeneratingVisitor implements Visitor {
 					.collect(Collectors.toList())));
 			System.out.println("]");
 		}
+		
+		System.out.println(", ");
+		System.out.print("\tdirectives: [ROUTER_DIRECTIVES]");
 
 		if (!component.getPipes().isEmpty()) {
 			System.out.println(", ");
@@ -368,10 +406,13 @@ public class Angular2GeneratingVisitor implements Visitor {
 					.getServices()
 					.stream()
 					.map(e -> {
-						return e.getName().toLowerCase() + "Service: " + e.getName() + "Service";
+						return "private "+e.getName().toLowerCase() + "Service: " + e.getName() + "Service";
 					})
 					.collect(Collectors.toList())));
-
+			// always???? rloman
+			if(component.isForSingularUse()) {
+				System.out.print(", private _routeParams :RouteParams");
+			}
 			System.out.println(") {");
 
 			if (component.getConstructor() != null) {
@@ -488,7 +529,8 @@ public class Angular2GeneratingVisitor implements Visitor {
 				builder.append("<ul>");
 				builder.append(String.format("<li *ngFor='#%s of %s'>",
 						attr.getName().substring(0, attr.getName().length() - 1), attr.getName()));
-				builder.append(String.format("{{ %s }}", attr.getName().substring(0, attr.getName().length() - 1)));
+				builder.append(String.format("<a [routerLink]=\"['%s', {id:%s.id}]\">{{ %s.id }}</a>", convertFirstCharacterToUppercase(attr.getName().substring(0, attr.getName().length() - 1)), attr.getName().substring(0, attr.getName().length() - 1), attr.getName().substring(0, attr.getName().length() - 1)));
+				builder.append(String.format("{{ %s | json }}", attr.getName().substring(0, attr.getName().length() - 1)));
 				builder.append("</li>");
 				builder.append("</ul>");
 				builder.append("</div>");
@@ -778,14 +820,14 @@ public class Angular2GeneratingVisitor implements Visitor {
 	@Override
 	public void visit(InputProperty inputComponentAttribute) {
 		System.out.println();
-		System.out.printf("\t@Input()\n\t%s: %s;%n", inputComponentAttribute.getName(),
+		System.out.printf("\t@Input()%n\t%s: %s;%n", inputComponentAttribute.getName(),
 				inputComponentAttribute.getType());
 	}
 
 	@Override
 	public void visit(OutputProperty outputComponentAttribute) {
 		System.out.println();
-		System.out.printf("\t@Output()\n\t%s %s;%n", outputComponentAttribute.getName(),
+		System.out.printf("\t@Output()%n\t%s %s;%n", outputComponentAttribute.getName(),
 				"= new " + outputComponentAttribute.getType() + "()");
 
 		// Add some code for the dummy implementation regarding the event
