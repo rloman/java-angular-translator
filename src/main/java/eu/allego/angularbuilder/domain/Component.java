@@ -26,6 +26,8 @@ public class Component extends Node {
 	private Constructor constructor;
 	
 	private boolean enableRouting;// kan ik wellicht afleiden uit de aanwezigheid van subcomponenen maar dat is niet zeker volgens mij
+	
+	private boolean forSingularUse = false;
 
 	/**
 	 * 
@@ -146,5 +148,17 @@ public class Component extends Node {
 
 	public void setEnableRouting(boolean enableRouting) {
 		this.enableRouting = enableRouting;
+	}
+
+
+
+	public boolean isForSingularUse() {
+		return forSingularUse;
+	}
+
+
+
+	public void setForSingularUse(boolean forSingularUse) {
+		this.forSingularUse = forSingularUse;
 	}
 }

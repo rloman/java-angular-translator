@@ -68,12 +68,26 @@ public class Angular2GeneratingVisitor implements Visitor {
 		System.out.println("\tconstructor(private _http:Http) {");
 
 		System.out.println("\t}");
+		
+		System.out.println();
 
+		// create the service method for the plular list
 		System.out.printf("\tget%ss() : Observable<%s[]> {%n", name, name);
 		System.out.printf("\t\treturn this._http.get(\"%s\")%n", service.getBaseUrl());
 		System.out.println("\t\t\t.map(res => res.json());");
 		System.out.println("\t}");
+		
+		System.out.println();
+		
+		
+		// create the sevice method for the singular get
+		System.out.printf("\tget%s(id : number) : Observable<%s> {%n", name, name);
+		System.out.printf("\t\treturn this._http.get('%s'+id)%n", service.getBaseUrl());
+		System.out.println("\t\t\t.map(res => res.json());");
+		System.out.println("\t}");
+		
 		System.out.println("}");
+		
 
 		resetOutputStream();
 
@@ -262,7 +276,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 		}
 		
 		// for now always import the router related stuff
-		System.out.println("import {RouteConfig, RouterOutlet, RouterLink} from 'angular2/router';");
+		System.out.println("import {RouteConfig, RouterOutlet, RouterLink, RouteParams} from 'angular2/router';");
 		System.out.println("import {ROUTER_DIRECTIVES} from 'angular2/router';");
 		
 		// enable routing if applicable
@@ -392,10 +406,13 @@ public class Angular2GeneratingVisitor implements Visitor {
 					.getServices()
 					.stream()
 					.map(e -> {
-						return e.getName().toLowerCase() + "Service: " + e.getName() + "Service";
+						return "private "+e.getName().toLowerCase() + "Service: " + e.getName() + "Service";
 					})
 					.collect(Collectors.toList())));
-
+			// always???? rloman
+			if(component.isForSingularUse()) {
+				System.out.print(", private _routeParams :RouteParams");
+			}
 			System.out.println(") {");
 
 			if (component.getConstructor() != null) {

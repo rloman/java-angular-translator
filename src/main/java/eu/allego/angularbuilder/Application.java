@@ -51,16 +51,29 @@ public class Application {
 			customerInterface.addInstanceVar("debiteurennummer?", "string");
 
 			RestDomainService restKlantService = new RestDomainService(customerInterface,
-					"http://localhost:8081/api/klanten");
+					"http://localhost:8081/api/klanten/");
 
 			domainServiceTestComponent.addService(restKlantService);
 			// refactor this constructor to a default setting (since this is
 			// possible)
-			Constructor constructor = new Constructor(
+			Constructor constructorForPlural = new Constructor(
 					"\t\tcustomerService.getCustomers().subscribe(customers => this.customers = customers);");
-			domainServiceTestComponent.setConstructor(constructor);
+			domainServiceTestComponent.setConstructor(constructorForPlural);
 
 			appComponent.addChildComponent(domainServiceTestComponent);
+			
+			// temp to test if singular is easy to create
+			// suppose we always want to make a CustomerComponent for singular instances
+			Template singularTemplate = new Template("<h1>:: Customer ::</h1>\n<div>\n\t{{ customer | json }}\n</div>\n", true);
+			Component singularComponent = new Component("Customer", "customer", singularTemplate);
+			ComponentAttribute customer = new ComponentAttribute("customer", "Customer");
+			singularComponent.addAttribute(customer);
+			singularComponent.setForSingularUse(true);
+			Constructor constructorForSingular = new Constructor("customerService.getCustomer(parseInt(_routeParams.get('id'))).subscribe(customer => this.customer = customer);");
+			singularComponent.setConstructor(constructorForSingular);
+			singularComponent.addService(restKlantService);
+			
+			domainServiceTestComponent.addChildComponent(singularComponent);
 		}
 
 		// adressen
