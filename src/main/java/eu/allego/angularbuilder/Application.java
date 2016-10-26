@@ -29,7 +29,7 @@ public class Application {
 
 	public static void domainServiceWithHttpForLiebregts() {
 
-		Template template = new Template("<h1>:: Main ::</h1>", true);
+		Template template = new Template("<h1>:: Liebregts main ::</h1>", true);
 		Component appComponent = new Component("App", "my-app", template);
 		appComponent.setEnableRouting(true);
 
@@ -39,18 +39,18 @@ public class Application {
 			Template domainServiceTestTemplate = new Template("<h1>:: Customers ::</h1>", true);
 			Component domainServiceTestComponent = new Component("Customers", "customers",
 					domainServiceTestTemplate);
-			ComponentAttribute klanten = new ComponentAttribute("customers", "Customer[]");
-			domainServiceTestComponent.addAttribute(klanten);
+			ComponentAttribute customers = new ComponentAttribute("customers", "Customer[]");
+			domainServiceTestComponent.addAttribute(customers);
 
-			DomainInterface klantInterface = new DomainInterface("Customer");
+			DomainInterface customerInterface = new DomainInterface("Customer");
 
 			// question mark means this instance var may be empty in the created
 			// instance
-			klantInterface.addInstanceVar("id?", "number");
-			klantInterface.addInstanceVar("naam?", "string");
-			klantInterface.addInstanceVar("adres?", "string");
+			customerInterface.addInstanceVar("id?", "number");
+			customerInterface.addInstanceVar("naam?", "string");
+			customerInterface.addInstanceVar("debiteurennummer?", "string");
 
-			RestDomainService restKlantService = new RestDomainService(klantInterface,
+			RestDomainService restKlantService = new RestDomainService(customerInterface,
 					"http://localhost:8081/api/klanten");
 
 			domainServiceTestComponent.addService(restKlantService);
@@ -64,6 +64,7 @@ public class Application {
 		}
 
 		// adressen
+		/*
 		{
 
 			Template domainServiceTestTemplate = new Template("<h1>:: Addresses ::</h1>", true);
@@ -95,6 +96,7 @@ public class Application {
 
 			appComponent.addChildComponent(domainServiceTestComponent);
 		}
+		*/
 
 		appComponent.accept(new Angular2GeneratingVisitor());
 	}

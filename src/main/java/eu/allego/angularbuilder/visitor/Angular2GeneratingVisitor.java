@@ -136,8 +136,16 @@ public class Angular2GeneratingVisitor implements Visitor {
 	@Override
 	public void visit(ComponentList componentList) {
 		for (Component child : componentList) {
-			System.out.println("import {" + child.getName() + "Component} from './" + child.getName().toLowerCase()
-					+ ".component'");
+			renderChildersImportRecursive(child);
+			
+		}
+	}
+	
+	private void renderChildersImportRecursive(Component child) {
+		System.out.println("import {" + child.getName() + "Component} from './" + child.getName().toLowerCase()
+				+ ".component'");
+		for(Component subchild : child.getChildren()) {
+			renderChildersImportRecursive(subchild);
 		}
 	}
 
