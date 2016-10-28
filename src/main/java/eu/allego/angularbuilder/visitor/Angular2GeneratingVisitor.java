@@ -55,14 +55,24 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 		DomainInterface domain = service.getDomainInterface();
 		String name = this.convertFirstCharacterToUppercase(domain.getName());
+		String smallName = this.convertFirstCharacterToLowercase(name);
 
-		System.out.printf("import {%s} from './%s';%n", name, this.convertFirstCharacterToLowercase(name));
+		System.out.printf("import {%s} from './%s';%n", name, smallName);
+		
+		System.out.println("import {Headers, RequestOptions, RequestMethod, Request, Response} from 'angular2/http';");
 
 		System.out.println();
 
 		System.out.println("@Injectable()");
 		System.out.println("export class " + service.getName() + "Service {");
 		System.out.println();
+		System.out.println();
+		
+		System.out.println("private headers: Headers;");
+		System.out.println("private requestoptions: RequestOptions;");
+		
+		System.out.printf("private url: string = '%s';%n",service.getBaseUrl());
+		
 		System.out.println();
 
 		System.out.println("\tconstructor(private _http:Http) {");
@@ -73,19 +83,40 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 		// create the service method for the plular list
 		System.out.printf("\tget%ss() : Observable<%s[]> {%n", name, name);
-		System.out.printf("\t\treturn this._http.get(\"%s\")%n", service.getBaseUrl());
+		System.out.printf("\t\treturn this._http.get(%s)%n", "this.url");
 		System.out.println("\t\t\t.map(res => res.json());");
 		System.out.println("\t}");
 		
 		System.out.println();
 		
-		
 		// create the sevice method for the singular get
 		System.out.printf("\tget%s(id : number) : Observable<%s> {%n", name, name);
-		System.out.printf("\t\treturn this._http.get('%s'+id)%n", service.getBaseUrl());
+		System.out.printf("\t\treturn this._http.get(%s+id)%n", "this.url");
 		System.out.println("\t\t\t.map(res => res.json());");
 		System.out.println("\t}");
 		
+		System.out.println();
+		
+		// create
+		System.out.printf("\tcreate(%s) {%n", smallName);
+		System.out.println("\t\tthis.headers = new Headers();");
+	    System.out.println("\t\tthis.headers.append('Content-Type', 'application/json');");
+	    System.out.println("\t\tthis.requestoptions = new RequestOptions({");
+	    System.out.println("\t\t\tmethod: RequestMethod.Post,");
+	    System.out.println("\t\t\turl: this.url,");
+	    System.out.println("\t\t\theaders: this.headers,");
+	    System.out.printf("\t\t\tbody: JSON.stringify(%s)%n", smallName);
+	    System.out.println("\t\t})");
+	    System.out.println("\t\treturn this._http.request(new Request(this.requestoptions))");
+	    System.out.println("\t\t\t.map((res: Response) => {");   
+	    System.out.println("\t\t\t\tif (res) {");
+	    System.out.println("\t\t\t\t\tconsole.log(res);");
+	    System.out.println("\t\t\t\t\treturn [{ status: res.status, json: res.json() }]");
+	    System.out.println("\t\t\t\t}");  
+	    System.out.println("\t\t\t});");
+		System.out.println("\t}");
+		
+		// close class
 		System.out.println("}");
 		
 
@@ -296,6 +327,11 @@ public class Angular2GeneratingVisitor implements Visitor {
 						(counter == 0) ? "useAsDefault:true" : "");
 						// also render singular for (customers -> customer/:id)
 				System.out.printf("\t\t{path:'%s/:id', name:'%s', component:%s, %s}, %n",
+						convertFirstCharacterToLowercase(sub.getName().substring(0,  sub.getName().length()-1)),
+						convertFirstCharacterToUppercase(sub.getName().substring(0,  sub.getName().length()-1)),
+						convertFirstCharacterToUppercase(sub.getName().substring(0,  sub.getName().length()-1) + "Component"),
+						"");
+				System.out.printf("\t\t{path:'%s/create', name:'%s', component:%s, %s}, %n",
 						convertFirstCharacterToLowercase(sub.getName().substring(0,  sub.getName().length()-1)),
 						convertFirstCharacterToUppercase(sub.getName().substring(0,  sub.getName().length()-1)),
 						convertFirstCharacterToUppercase(sub.getName().substring(0,  sub.getName().length()-1) + "Component"),

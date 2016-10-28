@@ -60,7 +60,7 @@ public class Application {
 					"\t\tcustomerService.getCustomers().subscribe(customers => this.customers = customers);");
 			domainServiceTestComponent.setConstructor(constructorForPlural);
 
-			appComponent.addChildComponent(domainServiceTestComponent);
+			
 			
 			// temp to test if singular is easy to create
 			// suppose we always want to make a CustomerComponent for singular instances
@@ -73,7 +73,28 @@ public class Application {
 			singularComponent.setConstructor(constructorForSingular);
 			singularComponent.addService(restKlantService);
 			
+			// create an object
+			
+			String createTemplateString = "<h1>:: Create customer ::</h1>"+
+			"<div class='input-group'>"+
+				"Naam: <input type='text' class='form-control' [(ngModel)]='naam'><br>"+
+				"Debnr: <input type='text' class='form-control' [(ngModel)]='debiteurennummer'> <br>"+
+			"</div>"+
+			"<span class='input-group-btn'>"+
+            	"<button class='btn btn-primary' (click)='create()'>Create</button>"+
+            "</span>";
+			
+			Template createTemplate = new Template(createTemplateString, true);
+			Component createComponent = new Component("CreateCustomer", "create-customer", createTemplate);
+			createComponent.addService(restKlantService);
+			createComponent.setEnableRouting(true);
+			
+			
+			
 			domainServiceTestComponent.addChildComponent(singularComponent);
+			domainServiceTestComponent.addChildComponent(createComponent);
+			
+			appComponent.addChildComponent(domainServiceTestComponent);
 		}
 
 		// adressen
