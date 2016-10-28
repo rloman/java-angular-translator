@@ -28,6 +28,8 @@ public class Component extends Node {
 	private boolean enableRouting;// kan ik wellicht afleiden uit de aanwezigheid van subcomponenen maar dat is niet zeker volgens mij
 	
 	private boolean forSingularUse = false;
+	
+	private Crud crud;
 
 	/**
 	 * 
@@ -160,5 +162,17 @@ public class Component extends Node {
 
 	public void setForSingularUse(boolean forSingularUse) {
 		this.forSingularUse = forSingularUse;
+	}
+
+
+
+	public Crud getCrud() {
+		return crud;
+	}
+
+
+
+	public void setCrud(Crud crud) {
+		this.crud = crud;
 	}
 }

@@ -3,6 +3,7 @@ package eu.allego.angularbuilder;
 import eu.allego.angularbuilder.domain.Component;
 import eu.allego.angularbuilder.domain.ComponentAttribute;
 import eu.allego.angularbuilder.domain.Constructor;
+import eu.allego.angularbuilder.domain.Crud;
 import eu.allego.angularbuilder.domain.Css;
 import eu.allego.angularbuilder.domain.CustomPipe;
 import eu.allego.angularbuilder.domain.DomainInterface;
@@ -60,7 +61,7 @@ public class Application {
 					"\t\tcustomerService.getCustomers().subscribe(customers => this.customers = customers);");
 			domainServiceTestComponent.setConstructor(constructorForPlural);
 
-			appComponent.addChildComponent(domainServiceTestComponent);
+			
 			
 			// temp to test if singular is easy to create
 			// suppose we always want to make a CustomerComponent for singular instances
@@ -73,7 +74,34 @@ public class Application {
 			singularComponent.setConstructor(constructorForSingular);
 			singularComponent.addService(restKlantService);
 			
+			// create an object
+			
+			String createTemplateString = "<h1>:: Create customer ::</h1>"+
+			"<div class='input-group'>"+
+				"Naam: <input type='text' class='form-control' [(ngModel)]='naam'><br>"+
+				"Debnr: <input type='text' class='form-control' [(ngModel)]='debiteurennummer'> <br>"+
+			"</div>"+
+			"<span class='input-group-btn'>"+
+            	"<button class='btn btn-primary' (click)='create()'>Create</button>"+
+            "</span>";
+			
+			Template createTemplate = new Template(createTemplateString, true);
+			Component createComponent = new Component("CreateCustomer", "create-customer", createTemplate);
+			// rloman refactor. if this is a create component than you cal calculate during rendering the properties and the class it should have
+			ComponentAttribute naam = new ComponentAttribute("naam", "string");
+			ComponentAttribute debiteurnnummer = new ComponentAttribute("debiteurennummer", "string");
+			createComponent.addAttribute(customer);
+			createComponent.addAttribute(naam);
+			createComponent.addAttribute(debiteurnnummer);
+			createComponent.addService(restKlantService);
+			createComponent.setEnableRouting(false);
+			createComponent.setCrud(Crud.CREATE);
+			
+			
 			domainServiceTestComponent.addChildComponent(singularComponent);
+			appComponent.addChildComponent(createComponent);
+			
+			appComponent.addChildComponent(domainServiceTestComponent);
 		}
 
 		// adressen
