@@ -37,11 +37,14 @@ public class Application {
 		// klanten
 		{
 
-			Template domainServiceTestTemplate = new Template("<h1>:: Customers ::</h1>", true);
-			Component domainServiceTestComponent = new Component("Customers", "customers",
-					domainServiceTestTemplate);
+			Template customersTemplate = new Template("<h1>:: Customers ::</h1>", true);
+			Component customersComponent = new Component("Customers", "customers",
+					customersTemplate);
 			ComponentAttribute customers = new ComponentAttribute("customers", "Customer[]");
-			domainServiceTestComponent.addAttribute(customers);
+			customersComponent.addAttribute(customers);
+			
+			ComponentAttribute warning = new ComponentAttribute("warning", "string");
+			customersComponent.addAttribute(warning);
 
 			DomainInterface customerInterface = new DomainInterface("Customer");
 
@@ -54,12 +57,13 @@ public class Application {
 			RestDomainService restKlantService = new RestDomainService(customerInterface,
 					"http://localhost:8081/api/klanten/");
 
-			domainServiceTestComponent.addService(restKlantService);
+			customersComponent.addService(restKlantService);
+			customersComponent.setCrud(Crud.DELETE);
 			// refactor this constructor to a default setting (since this is
 			// possible)
 			Constructor constructorForPlural = new Constructor(
 					"\t\tcustomerService.getCustomers().subscribe(customers => this.customers = customers);");
-			domainServiceTestComponent.setConstructor(constructorForPlural);
+			customersComponent.setConstructor(constructorForPlural);
 
 			
 			
@@ -86,7 +90,7 @@ public class Application {
             "</span>";
 			
 			Template createTemplate = new Template(createTemplateString, true);
-			Component createComponent = new Component("CreateCustomer", "create-customer", createTemplate);
+			Component createComponent = new Component("CustomerCreate", "customer-create", createTemplate);
 			// rloman refactor. if this is a create component than you cal calculate during rendering the properties and the class it should have
 			ComponentAttribute naam = new ComponentAttribute("naam", "string");
 			ComponentAttribute debiteurnnummer = new ComponentAttribute("debiteurennummer", "string");
@@ -98,10 +102,10 @@ public class Application {
 			createComponent.setCrud(Crud.CREATE);
 			
 			
-			domainServiceTestComponent.addChildComponent(singularComponent);
+			customersComponent.addChildComponent(singularComponent);
 			appComponent.addChildComponent(createComponent);
 			
-			appComponent.addChildComponent(domainServiceTestComponent);
+			appComponent.addChildComponent(customersComponent);
 		}
 
 		// adressen

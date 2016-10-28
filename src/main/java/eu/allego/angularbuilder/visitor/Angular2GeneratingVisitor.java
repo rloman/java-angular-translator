@@ -14,6 +14,7 @@ import eu.allego.angularbuilder.domain.ComponentAttribute;
 import eu.allego.angularbuilder.domain.ComponentAttributeList;
 import eu.allego.angularbuilder.domain.ComponentList;
 import eu.allego.angularbuilder.domain.Constructor;
+import eu.allego.angularbuilder.domain.Crud;
 import eu.allego.angularbuilder.domain.Css;
 import eu.allego.angularbuilder.domain.CustomPipe;
 import eu.allego.angularbuilder.domain.CustomPipeList;
@@ -121,6 +122,19 @@ public class Angular2GeneratingVisitor implements Visitor {
 		System.out.println("\t\t\t\t}");
 		System.out.println("\t\t\t});");
 		System.out.println("\t}");
+		
+		System.out.println();
+		
+		// delete
+		System.out.println("\tdelete(customer : Customer) : Observable<boolean> {");
+		System.out.println("\t\tthis.headers = new Headers();");
+		System.out.println("\t\tthis.headers.append('Content-Type', 'application/json');");
+		System.out.println();
+		System.out.println("\t\treturn this._http.delete(this.url+customer.id)");
+		System.out.println("\t\t\t.map(result => result.json());");
+			
+		System.out.println("\t}");
+		
 
 		// close class
 		System.out.println("}");
@@ -462,19 +476,32 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 		// render the create method if applicable
 		if (component.getCrud() != null) {
-			switch (component.getCrud()) {
-				case CREATE :
-					System.out.println("create() {");
-					System.out.println("\tthis.customer = {'naam' : this.naam, 'debiteurennummer' : this.debiteurennummer};");
-					System.out.println("\tthis.customerService.create(this.customer).subscribe(");
-					System.out.println("\t\tresponse => console.log(response)" + ");");
-					System.out.println("\t}");
+			for(Crud element: component.getCrud()){
+				switch (element) {
+					case CREATE :
+						System.out.println("create() {");
+						System.out.println("\tthis.customer = {'naam' : this.naam, 'debiteurennummer' : this.debiteurennummer};");
+						System.out.println("\tthis.customerService.create(this.customer).subscribe(");
+						System.out.println("\t\tresponse => console.log(response)" + ");");
+						System.out.println("\t}");
 
-					break;
+						break;
+					case DELETE:
+						System.out.println("\tdelete(customer: Customer) {");
+						System.out.println("\t\tthis.customerService.delete(customer)");
+						System.out.println("\t\t.subscribe(result => {");
+						System.out.println("\t\t\tthis.warning = 'Customer with id '+customer.id+' deleted!';");
+						System.out.println("\t\t\t}");
+						System.out.println(");");
+						System.out.println("\t\t}");
+						
+						break;
 
-				default :
-					break;
+					default :
+						break;
+				}
 			}
+			
 		}
 
 		// // render the properties of the conditional css of the widgets of
@@ -609,7 +636,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 		}
 
 		// since this entire project! is a learning project. here I will inspect
-		// if it is a string[] for now
+		// if it is a array for now
 		for (ComponentAttribute attr : component.getAttributes()) {
 			if (attr.getType().trim().contains("[]")) {
 				StringBuilder builder = new StringBuilder();
@@ -631,6 +658,9 @@ public class Angular2GeneratingVisitor implements Visitor {
 								attr.getName().length() - 1)));
 				builder.append(String.format("{{ %s | json }}", attr.getName()
 						.substring(0, attr.getName().length() - 1)));
+				builder.append(" ");
+				// remove rloman but should be decided upon Crud enum later
+				builder.append(String.format("<button class='delete' (click)='delete(%s);'>X</button>", attr.getName().substring(0,attr.getName().length() - 1)));
 				builder.append("</li>");
 				builder.append("</ul>");
 				builder.append("</div>");
