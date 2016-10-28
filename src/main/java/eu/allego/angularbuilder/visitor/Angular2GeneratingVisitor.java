@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
+import javax.swing.text.StyleContext.SmallAttributeSet;
+
 import eu.allego.angularbuilder.domain.Button;
 import eu.allego.angularbuilder.domain.Component;
 import eu.allego.angularbuilder.domain.ComponentAttribute;
@@ -126,11 +128,11 @@ public class Angular2GeneratingVisitor implements Visitor {
 		System.out.println();
 		
 		// delete
-		System.out.println("\tdelete(customer : Customer) : Observable<boolean> {");
+		System.out.printf("\tdelete(%s) : Observable<boolean> {%n", smallName);
 		System.out.println("\t\tthis.headers = new Headers();");
 		System.out.println("\t\tthis.headers.append('Content-Type', 'application/json');");
 		System.out.println();
-		System.out.println("\t\treturn this._http.delete(this.url+customer.id)");
+		System.out.printf("\t\treturn this._http.delete(this.url+%s.id)%n", smallName);
 		System.out.println("\t\t\t.map(result => result.json());");
 			
 		System.out.println("\t}");
@@ -476,6 +478,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 		// render the create method if applicable
 		if (component.getCrud() != null) {
+			// rloman should of course be general for the types below
 			for(Crud element: component.getCrud()){
 				switch (element) {
 					case CREATE :
