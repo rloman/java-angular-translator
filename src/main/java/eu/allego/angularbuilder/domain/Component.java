@@ -29,7 +29,7 @@ public class Component extends Node {
 	
 	private boolean forSingularUse = false;
 	
-	private Crud crud;
+	private Crud[] crud;
 
 	/**
 	 * 
@@ -166,13 +166,13 @@ public class Component extends Node {
 
 
 
-	public Crud getCrud() {
+	public Crud[] getCrud() {
 		return crud;
 	}
 
 
 
-	public void setCrud(Crud crud) {
+	public void setCrud(Crud ... crud) {
 		this.crud = crud;
 	}
 }
