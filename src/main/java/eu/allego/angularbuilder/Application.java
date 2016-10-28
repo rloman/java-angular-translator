@@ -3,6 +3,7 @@ package eu.allego.angularbuilder;
 import eu.allego.angularbuilder.domain.Component;
 import eu.allego.angularbuilder.domain.ComponentAttribute;
 import eu.allego.angularbuilder.domain.Constructor;
+import eu.allego.angularbuilder.domain.Crud;
 import eu.allego.angularbuilder.domain.Css;
 import eu.allego.angularbuilder.domain.CustomPipe;
 import eu.allego.angularbuilder.domain.DomainInterface;
@@ -86,13 +87,19 @@ public class Application {
 			
 			Template createTemplate = new Template(createTemplateString, true);
 			Component createComponent = new Component("CreateCustomer", "create-customer", createTemplate);
+			// rloman refactor. if this is a create component than you cal calculate during rendering the properties and the class it should have
+			ComponentAttribute naam = new ComponentAttribute("naam", "string");
+			ComponentAttribute debiteurnnummer = new ComponentAttribute("debiteurennummer", "string");
+			createComponent.addAttribute(customer);
+			createComponent.addAttribute(naam);
+			createComponent.addAttribute(debiteurnnummer);
 			createComponent.addService(restKlantService);
-			createComponent.setEnableRouting(true);
-			
+			createComponent.setEnableRouting(false);
+			createComponent.setCrud(Crud.CREATE);
 			
 			
 			domainServiceTestComponent.addChildComponent(singularComponent);
-			domainServiceTestComponent.addChildComponent(createComponent);
+			appComponent.addChildComponent(createComponent);
 			
 			appComponent.addChildComponent(domainServiceTestComponent);
 		}

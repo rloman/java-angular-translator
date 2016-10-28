@@ -58,8 +58,9 @@ public class Angular2GeneratingVisitor implements Visitor {
 		String smallName = this.convertFirstCharacterToLowercase(name);
 
 		System.out.printf("import {%s} from './%s';%n", name, smallName);
-		
-		System.out.println("import {Headers, RequestOptions, RequestMethod, Request, Response} from 'angular2/http';");
+
+		System.out.println(
+				"import {Headers, RequestOptions, RequestMethod, Request, Response} from 'angular2/http';");
 
 		System.out.println();
 
@@ -67,18 +68,19 @@ public class Angular2GeneratingVisitor implements Visitor {
 		System.out.println("export class " + service.getName() + "Service {");
 		System.out.println();
 		System.out.println();
-		
+
 		System.out.println("private headers: Headers;");
 		System.out.println("private requestoptions: RequestOptions;");
-		
-		System.out.printf("private url: string = '%s';%n",service.getBaseUrl());
-		
+
+		System.out.printf("private url: string = '%s';%n",
+				service.getBaseUrl());
+
 		System.out.println();
 
 		System.out.println("\tconstructor(private _http:Http) {");
 
 		System.out.println("\t}");
-		
+
 		System.out.println();
 
 		// create the service method for the plular list
@@ -86,39 +88,42 @@ public class Angular2GeneratingVisitor implements Visitor {
 		System.out.printf("\t\treturn this._http.get(%s)%n", "this.url");
 		System.out.println("\t\t\t.map(res => res.json());");
 		System.out.println("\t}");
-		
+
 		System.out.println();
-		
+
 		// create the sevice method for the singular get
-		System.out.printf("\tget%s(id : number) : Observable<%s> {%n", name, name);
+		System.out.printf("\tget%s(id : number) : Observable<%s> {%n", name,
+				name);
 		System.out.printf("\t\treturn this._http.get(%s+id)%n", "this.url");
 		System.out.println("\t\t\t.map(res => res.json());");
 		System.out.println("\t}");
-		
+
 		System.out.println();
-		
+
 		// create
 		System.out.printf("\tcreate(%s) {%n", smallName);
 		System.out.println("\t\tthis.headers = new Headers();");
-	    System.out.println("\t\tthis.headers.append('Content-Type', 'application/json');");
-	    System.out.println("\t\tthis.requestoptions = new RequestOptions({");
-	    System.out.println("\t\t\tmethod: RequestMethod.Post,");
-	    System.out.println("\t\t\turl: this.url,");
-	    System.out.println("\t\t\theaders: this.headers,");
-	    System.out.printf("\t\t\tbody: JSON.stringify(%s)%n", smallName);
-	    System.out.println("\t\t})");
-	    System.out.println("\t\treturn this._http.request(new Request(this.requestoptions))");
-	    System.out.println("\t\t\t.map((res: Response) => {");   
-	    System.out.println("\t\t\t\tif (res) {");
-	    System.out.println("\t\t\t\t\tconsole.log(res);");
-	    System.out.println("\t\t\t\t\treturn [{ status: res.status, json: res.json() }]");
-	    System.out.println("\t\t\t\t}");  
-	    System.out.println("\t\t\t});");
+		System.out.println(
+				"\t\tthis.headers.append('Content-Type', 'application/json');");
+		System.out.println("\t\tthis.requestoptions = new RequestOptions({");
+		System.out.println("\t\t\tmethod: RequestMethod.Post,");
+		System.out.println("\t\t\turl: this.url,");
+		System.out.println("\t\t\theaders: this.headers,");
+		System.out.printf("\t\t\tbody: JSON.stringify(%s)%n", smallName);
+		System.out.println("\t\t})");
+		System.out.println(
+				"\t\treturn this._http.request(new Request(this.requestoptions))");
+		System.out.println("\t\t\t.map((res: Response) => {");
+		System.out.println("\t\t\t\tif (res) {");
+		System.out.println("\t\t\t\t\tconsole.log(res);");
+		System.out.println(
+				"\t\t\t\t\treturn [{ status: res.status, json: res.json() }]");
+		System.out.println("\t\t\t\t}");
+		System.out.println("\t\t\t});");
 		System.out.println("\t}");
-		
+
 		// close class
 		System.out.println("}");
-		
 
 		resetOutputStream();
 
@@ -134,7 +139,8 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 		// imports
 		// rloman: refactor to StatementImport.java for later
-		System.out.printf("import {%s} from './%s';%n", name, this.convertFirstCharacterToLowercase(name));
+		System.out.printf("import {%s} from './%s';%n", name,
+				this.convertFirstCharacterToLowercase(name));
 
 		System.out.println();
 
@@ -145,9 +151,10 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 		System.out.println("\t\t// Implement your code here");
 
-		System.out.println("\t\treturn [{id:3, title:'aap'},{id:4, title:'noot'}, {id:5, title:'mies'}]");
+		System.out.println(
+				"\t\treturn [{id:3, title:'aap'},{id:4, title:'noot'}, {id:5, title:'mies'}]");
 		System.out.println("\t}");
-			
+
 		// rloman wat moet je hier met twee strings?
 		System.out.printf("\tcreate%s(post:Post) {%n", name);
 
@@ -167,9 +174,10 @@ public class Angular2GeneratingVisitor implements Visitor {
 		setOutputStream(domainInterface);
 
 		System.out.printf("export interface %s {%n", domainInterface.getName());
-		String attributes = String.join("", domainInterface.getAttributes().stream().map(e -> {
-			return String.format("\t %s : %s;%n", e.name, e.type);
-		}).collect(Collectors.toList()));
+		String attributes = String.join("",
+				domainInterface.getAttributes().stream().map(e -> {
+					return String.format("\t %s : %s;%n", e.name, e.type);
+				}).collect(Collectors.toList()));
 		System.out.print(attributes);
 
 		System.out.println("}");
@@ -182,14 +190,14 @@ public class Angular2GeneratingVisitor implements Visitor {
 	public void visit(ComponentList componentList) {
 		for (Component child : componentList) {
 			renderChildersImportRecursive(child);
-			
+
 		}
 	}
-	
+
 	private void renderChildersImportRecursive(Component child) {
-		System.out.println("import {" + child.getName() + "Component} from './" + child.getName().toLowerCase()
-				+ ".component'");
-		for(Component subchild : child.getChildren()) {
+		System.out.println("import {" + child.getName() + "Component} from './"
+				+ child.getName().toLowerCase() + ".component'");
+		for (Component subchild : child.getChildren()) {
 			renderChildersImportRecursive(subchild);
 		}
 	}
@@ -198,14 +206,23 @@ public class Angular2GeneratingVisitor implements Visitor {
 	public void visit(ServicesList servicesList) {
 
 		for (Service service : servicesList) {
-			System.out.println("import {" + service.getName() + "Service} from './" + service.getName().toLowerCase()
-					+ ".service'");
+			System.out.println(
+					"import {" + service.getName() + "Service} from './"
+							+ service.getName().toLowerCase() + ".service'");
 			if (service instanceof DomainService) {
 				DomainService domainService = (DomainService) service;
-				System.out.println("import {" + domainService.getDomainInterface().getName() + "} from './"
-						+ domainService.getDomainInterface().getName().toLowerCase() + "';");
+				System.out
+						.println(
+								"import {"
+										+ domainService.getDomainInterface()
+												.getName()
+										+ "} from './"
+										+ domainService.getDomainInterface()
+												.getName().toLowerCase()
+										+ "';");
 				if (service instanceof RestDomainService) {
-					System.out.println("import {HTTP_PROVIDERS} from 'angular2/http';");
+					System.out.println(
+							"import {HTTP_PROVIDERS} from 'angular2/http';");
 				}
 			}
 
@@ -216,8 +233,13 @@ public class Angular2GeneratingVisitor implements Visitor {
 	public void visit(DirectiveList directiveList) {
 
 		for (Directive directive : directiveList) {
-			System.out.println("import {" + directive.getName() + "Directive} from './"
-					+ this.convertUpperCamelCaseToAngularString(directive.getName()) + ".directive'");
+			System.out
+					.println(
+							"import {" + directive.getName()
+									+ "Directive} from './"
+									+ this.convertUpperCamelCaseToAngularString(
+											directive.getName())
+					+ ".directive'");
 		}
 	}
 
@@ -243,8 +265,10 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 	@Override
 	public void visit(InlineStyle inlineStyle) {
-		System.out.println(String.format("\t\t%s { ", inlineStyle.getStyleName().indexOf(":") == 0
-				? inlineStyle.getStyleName() : "." + inlineStyle.getStyleName()));
+		System.out.println(String.format("\t\t%s { ",
+				inlineStyle.getStyleName().indexOf(":") == 0
+						? inlineStyle.getStyleName()
+						: "." + inlineStyle.getStyleName()));
 		for (InlineStyleLine keyValue : inlineStyle) {
 			System.out.printf("\t\t\t%s : %s;%n", keyValue.key, keyValue.value);
 		}
@@ -263,11 +287,14 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 		setOutputStream(customPipe);
 
-		System.out.println("import {Pipe, PipeTransform} from 'angular2/core';");
+		System.out
+				.println("import {Pipe, PipeTransform} from 'angular2/core';");
 		System.out.println();
-		System.out.printf("@Pipe({name: '%s'})%n", customPipe.getName().toLowerCase());
+		System.out.printf("@Pipe({name: '%s'})%n",
+				customPipe.getName().toLowerCase());
 
-		System.out.println("export class " + this.convertFirstCharacterToUppercase(customPipe.getName())
+		System.out.println("export class "
+				+ this.convertFirstCharacterToUppercase(customPipe.getName())
 				+ "Pipe implements PipeTransform {");
 
 		System.out.println();
@@ -275,7 +302,8 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 		System.out.println("\t\t// sample code");
 		System.out.println("\t\tif(value){ ");
-		System.out.println("\t\t\tvar limit = (args && args[0]) ? parseInt(args[0]) : 50;");
+		System.out.println(
+				"\t\t\tvar limit = (args && args[0]) ? parseInt(args[0]) : 50;");
 		System.out.println("\t\t\t return value.substring(0, limit) + '...';");
 		System.out.println("\t\t}");
 
@@ -293,7 +321,9 @@ public class Angular2GeneratingVisitor implements Visitor {
 		// beetje exotisch maar wel een keer lekker / leuk :-)
 		System.out.printf("import {Component%s%s} from 'angular2/core'%n",
 				component.containsInputProperty() ? ", Input" : "",
-				component.containsOutputProperty() ? ", Output, EventEmitter" : "");
+				component.containsOutputProperty()
+						? ", Output, EventEmitter"
+						: "");
 
 		component.getChildren().accept(this);
 
@@ -302,48 +332,29 @@ public class Angular2GeneratingVisitor implements Visitor {
 		component.getDirectives().accept(this);
 
 		for (CustomPipe pipe : component.getPipes()) {
-			System.out.println("import {" + this.convertFirstCharacterToUppercase(
-					pipe.getName() + "Pipe} from './" + pipe.getName().toLowerCase() + ".pipe'"));
+			System.out
+					.println("import {" + this.convertFirstCharacterToUppercase(
+							pipe.getName() + "Pipe} from './"
+									+ pipe.getName().toLowerCase() + ".pipe'"));
 		}
-		
+
 		// for now always import the router related stuff
-		System.out.println("import {RouteConfig, RouterOutlet, RouterLink, RouteParams} from 'angular2/router';");
-		System.out.println("import {ROUTER_DIRECTIVES} from 'angular2/router';");
-		
+		System.out.println(
+				"import {RouteConfig, RouterOutlet, RouterLink, RouteParams} from 'angular2/router';");
+		System.out
+				.println("import {ROUTER_DIRECTIVES} from 'angular2/router';");
+
 		// enable routing if applicable
 		if (component.isEnableRouting()) {
-			
+
 			System.out.println("@RouteConfig(");
 
 			System.out.println("\t[");
 
-			int counter = 0;
-			String destinationWhenInvalidTarget = null;
-			for (Component sub : component.getChildren()) {
-				System.out.printf("\t\t{path:'%s', name:'%s', component:%s, %s}, %n",
-						convertFirstCharacterToLowercase(sub.getName()),
-						convertFirstCharacterToUppercase(sub.getName()),
-						convertFirstCharacterToUppercase(sub.getName() + "Component"),
-						(counter == 0) ? "useAsDefault:true" : "");
-						// also render singular for (customers -> customer/:id)
-				System.out.printf("\t\t{path:'%s/:id', name:'%s', component:%s, %s}, %n",
-						convertFirstCharacterToLowercase(sub.getName().substring(0,  sub.getName().length()-1)),
-						convertFirstCharacterToUppercase(sub.getName().substring(0,  sub.getName().length()-1)),
-						convertFirstCharacterToUppercase(sub.getName().substring(0,  sub.getName().length()-1) + "Component"),
-						"");
-				System.out.printf("\t\t{path:'%s/create', name:'%s', component:%s, %s}, %n",
-						convertFirstCharacterToLowercase(sub.getName().substring(0,  sub.getName().length()-1)),
-						convertFirstCharacterToUppercase(sub.getName().substring(0,  sub.getName().length()-1)),
-						convertFirstCharacterToUppercase(sub.getName().substring(0,  sub.getName().length()-1) + "Component"),
-						"");
-				
-				
-				if(counter == 0) {
-					destinationWhenInvalidTarget = convertFirstCharacterToUppercase(sub.getName());
-				}
-				counter++;
-			}
-			System.out.printf("\t\t{path:'/*other', name:'Other', redirectTo: ['%s']}", destinationWhenInvalidTarget);
+			renderPathExpressionsRecursively(component);
+
+			// System.out.printf("\t\t{path:'/*other', name:'Other', redirectTo:
+			// ['%s']}", destinationWhenInvalidTarget);
 
 			System.out.println("\t]");
 
@@ -360,17 +371,18 @@ public class Angular2GeneratingVisitor implements Visitor {
 		if (!component.getServices().isEmpty()) {
 			System.out.println(", ");
 			System.out.print("\tproviders: [");
-			System.out.print(String.join(", ", component.getServices().stream().map(e -> {
-				if (e instanceof RestDomainService) {
-					// kan dit niet anders / in 1 regel? volgens mij kan dat in
-					// een aparte map. namelijk
-					return e.getName() + "Service, HTTP_PROVIDERS";
-				}
-				else {
-					return e.getName() + "Service";
-				}
+			System.out.print(String.join(", ",
+					component.getServices().stream().map(e -> {
+						if (e instanceof RestDomainService) {
+							// kan dit niet anders / in 1 regel? volgens mij kan
+							// dat in
+							// een aparte map. namelijk
+							return e.getName() + "Service, HTTP_PROVIDERS";
+						} else {
+							return e.getName() + "Service";
+						}
 
-			}).distinct().collect(Collectors.toList())));
+					}).distinct().collect(Collectors.toList())));
 			System.out.print("]");
 		}
 
@@ -381,15 +393,13 @@ public class Angular2GeneratingVisitor implements Visitor {
 			System.out.println(", ");
 			System.out.print("\tdirectives: [");
 
-			System.out.print(String.join(", ", component
-					.getChildren()
-					.stream()
-					.map(e -> {
+			System.out.print(String.join(", ",
+					component.getChildren().stream().map(e -> {
 						return e.getName() + "Component";
-					})
-					.collect(Collectors.toList())));
+					}).collect(Collectors.toList())));
 
-			// rloman deze imports zijn niet altijd nodigen falen wellicht als het comonent geen router enabled is
+			// rloman deze imports zijn niet altijd nodigen falen wellicht als
+			// het comonent geen router enabled is
 			System.out.print(", RouterOutlet, RouterLink]");
 		}
 
@@ -397,29 +407,24 @@ public class Angular2GeneratingVisitor implements Visitor {
 			System.out.println(", ");
 			System.out.print("\tdirectives: [");
 
-			System.out.print(String.join(", ", component
-					.getDirectives()
-					.stream()
-					.map(e -> {
+			System.out.print(String.join(", ",
+					component.getDirectives().stream().map(e -> {
 						return e.getName() + "Directive";
-					})
-					.collect(Collectors.toList())));
+					}).collect(Collectors.toList())));
 			System.out.println("]");
 		}
-		
+
 		System.out.println(", ");
 		System.out.print("\tdirectives: [ROUTER_DIRECTIVES]");
 
 		if (!component.getPipes().isEmpty()) {
 			System.out.println(", ");
 			System.out.print("\tpipes: [");
-			System.out.print(String.join(", ", component
-					.getPipes()
-					.stream()
-					.map(e -> {
-						return this.convertFirstCharacterToUppercase(e.getName()) + "Pipe";
-					})
-					.collect(Collectors.toList())));
+			System.out.print(
+					String.join(", ", component.getPipes().stream().map(e -> {
+						return this.convertFirstCharacterToUppercase(
+								e.getName()) + "Pipe";
+					}).collect(Collectors.toList())));
 			System.out.println("]");
 		}
 
@@ -427,26 +432,23 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 		System.out.println("\n" + "})");
 
-		System.out.println("export class " + component.getName() + "Component {");
+		System.out
+				.println("export class " + component.getName() + "Component {");
 		System.out.println();
 
 		component.getAttributes().accept(this);
 
 		// render the constructor (for now render the services and their call)
-		if (!component.getServices().isEmpty())
-
-		{
+		if (!component.getServices().isEmpty()) {
 			System.out.print("\n\tconstructor(");
 
-			System.out.print(String.join(", ", component
-					.getServices()
-					.stream()
-					.map(e -> {
-						return "private "+e.getName().toLowerCase() + "Service: " + e.getName() + "Service";
-					})
-					.collect(Collectors.toList())));
+			System.out.print(String.join(", ",
+					component.getServices().stream().map(e -> {
+						return "private " + e.getName().toLowerCase()
+								+ "Service: " + e.getName() + "Service";
+					}).collect(Collectors.toList())));
 			// always???? rloman
-			if(component.isForSingularUse()) {
+			if (component.isForSingularUse()) {
 				System.out.print(", private _routeParams :RouteParams");
 			}
 			System.out.println(") {");
@@ -456,6 +458,23 @@ public class Angular2GeneratingVisitor implements Visitor {
 			}
 
 			System.out.println("\n\t}");
+		}
+
+		// render the create method if applicable
+		if (component.getCrud() != null) {
+			switch (component.getCrud()) {
+				case CREATE :
+					System.out.println("create() {");
+					System.out.println("\tthis.customer = {'naam' : this.naam, 'debiteurennummer' : this.debiteurennummer};");
+					System.out.println("\tthis.customerService.create(this.customer).subscribe(");
+					System.out.println("\t\tresponse => console.log(response)" + ");");
+					System.out.println("\t}");
+
+					break;
+
+				default :
+					break;
+			}
 		}
 
 		// // render the properties of the conditional css of the widgets of
@@ -513,13 +532,41 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 	}
 
+	private void renderPathExpressionsRecursively(Component component) {
+		for (Component sub : component.getChildren()) {
+			System.out.printf("\t\t{path:'%s', name:'%s', component:%s}, %n",
+					convertFirstCharacterToLowercase(sub.getName()),
+					convertFirstCharacterToUppercase(sub.getName()),
+					convertFirstCharacterToUppercase(
+							sub.getName() + "Component"));
+			renderPathExpressionsRecursively(sub);
+			/*
+			 * System.out.printf(
+			 * "\t\t{path:'%s/:id', name:'%s', component:%s, %s}, %n",
+			 * convertFirstCharacterToLowercase(sub.getName().substring(0,
+			 * sub.getName().length()-1)),
+			 * convertFirstCharacterToUppercase(sub.getName().substring(0,
+			 * sub.getName().length()-1)),
+			 * convertFirstCharacterToUppercase(sub.getName().substring(0,
+			 * sub.getName().length()-1) + "Component"), ""); System.out.printf(
+			 * "\t\t{path:'%s/create', name:'%s', component:%s, %s}, %n",
+			 * convertFirstCharacterToLowercase(sub.getName().substring(0,
+			 * sub.getName().length()-1)),
+			 * convertFirstCharacterToUppercase(sub.getName().substring(0,
+			 * sub.getName().length()-1)),
+			 * convertFirstCharacterToUppercase(sub.getName().substring(0,
+			 * sub.getName().length()-1) + "Component"), "");
+			 */
+		}
+	}
+
 	private void renderTemplate(Component component) {
 		if (component.getTemplate().isRenderTemplateFile()) {
 			System.out.printf("\ttemplateUrl: '%s' %n",
-					"app/" + this.convertUpperCamelCaseToAngularString(component.getName()) + ".component.html");
+					"app/" + this.convertUpperCamelCaseToAngularString(
+							component.getName()) + ".component.html");
 			setOutputStreamForExternalTemplate(component.getName());
-		}
-		else {
+		} else {
 			System.out.println("\ttemplate: `\n\t\t");
 		}
 
@@ -529,25 +576,30 @@ public class Angular2GeneratingVisitor implements Visitor {
 			// from udemy
 			System.out.println("<nav class='navbar navbar-default'>");
 			System.out.println("<div class='container-fluid'>");
-			System.out.println(" <!-- Brand and toggle get grouped for better mobile display -->");
+			System.out.println(
+					" <!-- Brand and toggle get grouped for better mobile display -->");
 			System.out.println("<div class='navbar-header'>");
-			System.out.println("<button type='button' class='navbar-toggle collapsed' data-toggle='collapse' "
-					+ "data-target='#bs-example-navbar-collapse-1' aria-expanded='false'>");
-			System.out.println("<span class='sr-only'>Toggle navigation</span>");
+			System.out.println(
+					"<button type='button' class='navbar-toggle collapsed' data-toggle='collapse' "
+							+ "data-target='#bs-example-navbar-collapse-1' aria-expanded='false'>");
+			System.out
+					.println("<span class='sr-only'>Toggle navigation</span>");
 			System.out.println("<span class='icon-bar'></span>");
 			System.out.println("<span class='icon-bar'></span>");
 			System.out.println("<span class='icon-bar'></span>");
 			System.out.println("</button>");
 			System.out.println("<a class='navbar-brand' href='#'>Brand</a>");
 			System.out.println("</div>");
-			
+
 			// the real world
-			System.out.println("<div class='collapse navbar-collapse' id='bs-example-navbar-collapse-1'>");
+			System.out.println(
+					"<div class='collapse navbar-collapse' id='bs-example-navbar-collapse-1'>");
 			System.out.println("<ul class='nav navbar-nav'>");
-			for(Component c : component.getChildren()) {
-				System.out.printf("<li><a [routerLink]=\"['%s']\">%s</a> </li> %n", 
-						convertFirstCharacterToUppercase(c.getName()), 
-						convertFirstCharacterToUppercase(c.getName()));	
+			for (Component c : component.getChildren()) {
+				System.out.printf(
+						"<li><a [routerLink]=\"['%s']\">%s</a> </li> %n",
+						convertFirstCharacterToUppercase(c.getName()),
+						convertFirstCharacterToUppercase(c.getName()));
 			}
 			System.out.println("</ul>");
 			System.out.println("</div>");
@@ -561,17 +613,31 @@ public class Angular2GeneratingVisitor implements Visitor {
 		for (ComponentAttribute attr : component.getAttributes()) {
 			if (attr.getType().trim().contains("[]")) {
 				StringBuilder builder = new StringBuilder();
-				builder.append(String.format("<div *ngIf='%s'>", attr.getName()));
+				builder.append(
+						String.format("<div *ngIf='%s'>", attr.getName()));
 				builder.append("<ul>");
-				builder.append(String.format("<li *ngFor='#%s of %s'>",
-						attr.getName().substring(0, attr.getName().length() - 1), attr.getName()));
-				builder.append(String.format("<a [routerLink]=\"['%s', {id:%s.id}]\">{{ %s.id }}</a>", convertFirstCharacterToUppercase(attr.getName().substring(0, attr.getName().length() - 1)), attr.getName().substring(0, attr.getName().length() - 1), attr.getName().substring(0, attr.getName().length() - 1)));
-				builder.append(String.format("{{ %s | json }}", attr.getName().substring(0, attr.getName().length() - 1)));
+				builder.append(
+						String.format("<li *ngFor='#%s of %s'>",
+								attr.getName().substring(0,
+										attr.getName().length() - 1),
+						attr.getName()));
+				builder.append(String.format(
+						"<a [routerLink]=\"['%s', {id:%s.id}]\">{{ %s.id }}</a>",
+						convertFirstCharacterToUppercase(attr.getName()
+								.substring(0, attr.getName().length() - 1)),
+						attr.getName().substring(0,
+								attr.getName().length() - 1),
+						attr.getName().substring(0,
+								attr.getName().length() - 1)));
+				builder.append(String.format("{{ %s | json }}", attr.getName()
+						.substring(0, attr.getName().length() - 1)));
 				builder.append("</li>");
 				builder.append("</ul>");
 				builder.append("</div>");
-				builder.append(String.format("<div *ngIf='!%s'>", attr.getName()));
-				builder.append(String.format("You don't have any %s yet", attr.getName()));
+				builder.append(
+						String.format("<div *ngIf='!%s'>", attr.getName()));
+				builder.append(String.format("You don't have any %s yet",
+						attr.getName()));
 				builder.append("</div>");
 				System.out.println(builder.toString());
 			}
@@ -586,34 +652,37 @@ public class Angular2GeneratingVisitor implements Visitor {
 				List<String> namesOfOutputProperties = new ArrayList<>();
 				for (ComponentAttribute attr : child.getAttributes()) {
 					if (attr instanceof InputProperty) {
-						namesOfInputProperties.add(
-								String.format("%s='%s'", attr.getName(),
-										attr.getValue() != null ? attr.getValue() : ""));
+						namesOfInputProperties.add(String.format("%s='%s'",
+								attr.getName(), attr.getValue() != null
+										? attr.getValue()
+										: ""));
 					}
 					if (attr instanceof OutputProperty) {
-						namesOfOutputProperties
-								.add(String.format("(%s)='%s'", attr.getName(),
-										((OutputProperty) attr).getEventHandlerInJavascriptCode()));
+						namesOfOutputProperties.add(String.format("(%s)='%s'",
+								attr.getName(), ((OutputProperty) attr)
+										.getEventHandlerInJavascriptCode()));
 					}
 
 				}
 				System.out.printf("\t\t<%s %s %s></%s>%n", child.getSelector(),
 						String.join(", ", namesOfInputProperties),
-						String.join(", ", namesOfOutputProperties), child.getSelector());
+						String.join(", ", namesOfOutputProperties),
+						child.getSelector());
 			}
 		}
 
 		if (component.getTemplate().isRenderTemplateFile()) {
 			resetOutputStream();
-		}
-		else {
+		} else {
 			System.out.print("\t\t`");
 		}
 	}
 
 	private void recursiveRenderConditionCssStylesForWidget(Widget widget) {
-		for (Entry<Css, String> cssConditional : widget.getConditionalCssStyles().entrySet()) {
-			System.out.println("\t// " + cssConditional.getValue() + " = true; // amend or remove if necessary");
+		for (Entry<Css, String> cssConditional : widget
+				.getConditionalCssStyles().entrySet()) {
+			System.out.println("\t// " + cssConditional.getValue()
+					+ " = true; // amend or remove if necessary");
 		}
 		System.out.println();
 		for (Widget child : widget.getChildren()) {
@@ -625,7 +694,8 @@ public class Angular2GeneratingVisitor implements Visitor {
 	public void visit(InputField inputField) {
 		System.out.println("<br/>");
 
-		System.out.println("\t\t\t<input type='text' [(ngModel)]='" + inputField.getNgModel().getName() + "' />");
+		System.out.println("\t\t\t<input type='text' [(ngModel)]='"
+				+ inputField.getNgModel().getName() + "' />");
 
 	}
 
@@ -649,13 +719,15 @@ public class Angular2GeneratingVisitor implements Visitor {
 	private void recursiveRenderEventHandlersForWidget(Widget widget) {
 		// render the template his event handling if applicable
 		for (Event event : widget.getEvents()) {
-			System.out.printf("\ton%s($event) {%n", widget.getClass().getSimpleName()
-					+ this.convertFirstCharacterToUppercase(event.toString().toLowerCase()));
+			System.out.printf("\ton%s($event) {%n",
+					widget.getClass().getSimpleName()
+							+ this.convertFirstCharacterToUppercase(
+									event.toString().toLowerCase()));
 			// TODO rloman je zou hier ook nog iets kunne doen zodat
 			// $event.stopPropagation(); // werkt. later.
-			System.out.println(
-					"\t\tconsole.log('You " + event.toString().toLowerCase() + "ed a "
-							+ widget.getClass().getSimpleName() + " widget', $event);");
+			System.out.println("\t\tconsole.log('You "
+					+ event.toString().toLowerCase() + "ed a "
+					+ widget.getClass().getSimpleName() + " widget', $event);");
 			System.out.println("\t}");
 		}
 		System.out.println();
@@ -668,7 +740,8 @@ public class Angular2GeneratingVisitor implements Visitor {
 	@Override
 	public void visit(ServiceMethod serviceMethod) {
 
-		System.out.println("\t" + serviceMethod.getName() + " : " + serviceMethod.getReturnType() + " {");
+		System.out.println("\t" + serviceMethod.getName() + " : "
+				+ serviceMethod.getReturnType() + " {");
 		System.out.println("\t\t" + serviceMethod.getBody() + ";");
 		System.out.println("\t}");
 
@@ -685,15 +758,20 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 		setOutputStream(directive);
 
-		System.out.println("import {Directive, ElementRef, Renderer} from 'angular2/core'");
+		System.out.println(
+				"import {Directive, ElementRef, Renderer} from 'angular2/core'");
 		System.out.println();
 		System.out.print("@Directive ({");
-		System.out.println("selector: '[" + this.convertFirstCharacterToLowercase(directive.getName()) + "]',");
+		System.out.println("selector: '["
+				+ this.convertFirstCharacterToLowercase(directive.getName())
+				+ "]',");
 		System.out.println("\thost: {");
 		List<String> names = new ArrayList<>();
 		for (Event event : directive.getEvents()) {
-			names.add("\t\t'(" + event.toString().toLowerCase() + ")'" + ": " + "'on"
-					+ this.convertFirstCharacterToUppercase(event.toString().toLowerCase()) + "()'");
+			names.add("\t\t'(" + event.toString().toLowerCase() + ")'" + ": "
+					+ "'on" + this.convertFirstCharacterToUppercase(
+							event.toString().toLowerCase())
+					+ "()'");
 
 		}
 		System.out.println(String.join(",\n", names));
@@ -701,21 +779,27 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 		System.out.println();
 		System.out.println("})");
-		System.out.println("export class " + directive.getName() + "Directive {");
+		System.out
+				.println("export class " + directive.getName() + "Directive {");
 
 		// render the constructor for now using the Angular2 default settings
 		// from Udemy
 		System.out.println();
-		System.out.println("\tconstructor(private el: ElementRef, private renderer: Renderer) {");
+		System.out.println(
+				"\tconstructor(private el: ElementRef, private renderer: Renderer) {");
 		System.out.println("\t}");
 		System.out.println();
 
 		for (Event event : directive.getEvents()) {
-			int randomWidth = 100 + Double.valueOf((Math.random() * 100)).intValue();
-			System.out.println("\ton" + this.convertFirstCharacterToUppercase(event.toString().toLowerCase()) + "(){");
-			System.out.println("\t\t// Implement your event handling code here!");
+			int randomWidth = 100
+					+ Double.valueOf((Math.random() * 100)).intValue();
+			System.out.println("\ton" + this.convertFirstCharacterToUppercase(
+					event.toString().toLowerCase()) + "(){");
+			System.out
+					.println("\t\t// Implement your event handling code here!");
 			System.out.println("\t\t // Which might be something like this");
-			System.out.printf("\t\tthis.renderer.setElementStyle(this.el.nativeElement, 'width', '%d');%n",
+			System.out.printf(
+					"\t\tthis.renderer.setElementStyle(this.el.nativeElement, 'width', '%d');%n",
 					randomWidth);
 
 			System.out.print("\t}");
@@ -733,8 +817,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 	public void visit(Template template) {
 		if (template.getTemplateString() != null) {
 			System.out.println(template.getTemplateString());
-		}
-		else {
+		} else {
 			for (Widget widget : template.getWidgets()) {
 				widget.accept(this);
 			}
@@ -757,8 +840,11 @@ public class Angular2GeneratingVisitor implements Visitor {
 	 */
 	private void renderEvents(Widget widget) {
 		for (Event e : widget.getEvents()) {
-			System.out.printf("(%s)='on%s($event);' ", e.toString().toLowerCase(), widget.getClass().getSimpleName() +
-					this.convertFirstCharacterToUppercase(e.toString().toLowerCase()));
+			System.out.printf("(%s)='on%s($event);' ",
+					e.toString().toLowerCase(),
+					widget.getClass().getSimpleName()
+							+ this.convertFirstCharacterToUppercase(
+									e.toString().toLowerCase()));
 		}
 	}
 
@@ -768,7 +854,8 @@ public class Angular2GeneratingVisitor implements Visitor {
 			List<String> names = new ArrayList<>();
 
 			for (Css css : widget.getCssStyles()) {
-				names.add(this.convertUpperCamelCaseToAngularString(css.toString()));
+				names.add(this
+						.convertUpperCamelCaseToAngularString(css.toString()));
 			}
 			System.out.print(String.join(" ", names));
 			System.out.print("' ");
@@ -779,15 +866,13 @@ public class Angular2GeneratingVisitor implements Visitor {
 		if (!widget.getConditionalCssStyles().isEmpty()) {
 			System.out.println();
 			System.out.println("\t\t\t[ngClass]=\"{");
-			System.out.println(String.join(",\n",
-					widget.conditionalCssStyles.entrySet()
-							.stream()
-							.map(entry -> {
-								return String.format("\t\t\t\t'%s': %s",
-										this.convertUpperCamelCaseToAngularString(entry.getKey().toString()),
-										entry.getValue());
-							})
-							.collect(Collectors.toList())));
+			System.out.println(String.join(",\n", widget.conditionalCssStyles
+					.entrySet().stream().map(entry -> {
+						return String.format("\t\t\t\t'%s': %s",
+								this.convertUpperCamelCaseToAngularString(
+										entry.getKey().toString()),
+								entry.getValue());
+					}).collect(Collectors.toList())));
 
 			System.out.println("\t\t\t}\"");
 		}
@@ -849,21 +934,26 @@ public class Angular2GeneratingVisitor implements Visitor {
 	@Override
 	public void visit(ComponentAttribute componentAttribute) {
 		System.out.println();
-		System.out.printf("\t%s: %s %s ;%n", componentAttribute.getName(), componentAttribute.getType(),
-				componentAttribute.getValue() != null ? String.format("= '%s'", componentAttribute.getValue()) : "");
+		System.out.printf("\t%s: %s %s ;%n", componentAttribute.getName(),
+				componentAttribute.getType(),
+				componentAttribute.getValue() != null
+						? String.format("= '%s'", componentAttribute.getValue())
+						: "");
 	}
 
 	@Override
 	public void visit(InputProperty inputComponentAttribute) {
 		System.out.println();
-		System.out.printf("\t@Input()%n\t%s: %s;%n", inputComponentAttribute.getName(),
+		System.out.printf("\t@Input()%n\t%s: %s;%n",
+				inputComponentAttribute.getName(),
 				inputComponentAttribute.getType());
 	}
 
 	@Override
 	public void visit(OutputProperty outputComponentAttribute) {
 		System.out.println();
-		System.out.printf("\t@Output()%n\t%s %s;%n", outputComponentAttribute.getName(),
+		System.out.printf("\t@Output()%n\t%s %s;%n",
+				outputComponentAttribute.getName(),
 				"= new " + outputComponentAttribute.getType() + "()");
 
 		// Add some code for the dummy implementation regarding the event
@@ -882,16 +972,17 @@ public class Angular2GeneratingVisitor implements Visitor {
 	public void visit(TextField textField) {
 
 		System.out.println("<br/>");
-		String pipes = String.join("",
-				textField.getPipes().stream().map(pipe -> pipe.toString()).collect(Collectors.toList()));
+		String pipes = String.join("", textField.getPipes().stream()
+				.map(pipe -> pipe.toString()).collect(Collectors.toList()));
 		if (!textField.getCustomPipes().isEmpty()) {
 			for (CustomPipe customPipe : textField.getCustomPipes()) {
 				String attr = customPipe.getAttributes();
-				pipes += " | " + customPipe.getName().toLowerCase() + (attr != null ? ":" + attr : "");
+				pipes += " | " + customPipe.getName().toLowerCase()
+						+ (attr != null ? ":" + attr : "");
 			}
 		}
-		System.out.printf("<span>%s: {{ %s %s }}</span> %n", textField.getLabel(), textField.getNgModel().getName(),
-				pipes);
+		System.out.printf("<span>%s: {{ %s %s }}</span> %n",
+				textField.getLabel(), textField.getNgModel().getName(), pipes);
 
 	}
 
@@ -900,12 +991,12 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 		try {
 			FileOutputStream outputStream = new FileOutputStream(
-					"app/" + this.convertFirstCharacterToLowercase(domainInterface.getName()) + ".ts");
+					"app/" + this.convertFirstCharacterToLowercase(
+							domainInterface.getName()) + ".ts");
 			PrintStream ps = new PrintStream(outputStream);
 			System.setOut(ps);
 
-		}
-		catch (FileNotFoundException e) {
+		} catch (FileNotFoundException e) {
 			// rloman nog try with resources doen.
 			e.printStackTrace();
 		}
@@ -920,8 +1011,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 			PrintStream ps = new PrintStream(outputStream);
 			System.setOut(ps);
 
-		}
-		catch (FileNotFoundException e) {
+		} catch (FileNotFoundException e) {
 			// rloman nog try with resources doen.
 			e.printStackTrace();
 		}
@@ -932,13 +1022,13 @@ public class Angular2GeneratingVisitor implements Visitor {
 		currentOutputStream = System.out;
 
 		try {
-			FileOutputStream outputStream = new FileOutputStream(
-					"app/" + this.convertUpperCamelCaseToAngularString(componentName) + ".component.html");
+			FileOutputStream outputStream = new FileOutputStream("app/"
+					+ this.convertUpperCamelCaseToAngularString(componentName)
+					+ ".component.html");
 			PrintStream ps = new PrintStream(outputStream);
 			System.setOut(ps);
 
-		}
-		catch (FileNotFoundException e) {
+		} catch (FileNotFoundException e) {
 			// rloman nog try with resources doen.
 			e.printStackTrace();
 		}
@@ -949,12 +1039,12 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 		try {
 			FileOutputStream outputStream = new FileOutputStream(
-					"app/" + this.convertUpperCamelCaseToAngularString(directive.getName()) + ".directive.ts");
+					"app/" + this.convertUpperCamelCaseToAngularString(
+							directive.getName()) + ".directive.ts");
 			PrintStream ps = new PrintStream(outputStream);
 			System.setOut(ps);
 
-		}
-		catch (FileNotFoundException e) {
+		} catch (FileNotFoundException e) {
 			// rloman nog try with resources doen.
 			e.printStackTrace();
 		}
@@ -965,12 +1055,12 @@ public class Angular2GeneratingVisitor implements Visitor {
 		currentOutputStream = System.out;
 		try {
 			FileOutputStream outputStream = new FileOutputStream(
-					"app/" + this.convertUpperCamelCaseToAngularString(customPipe.getName()) + ".pipe.ts");
+					"app/" + this.convertUpperCamelCaseToAngularString(
+							customPipe.getName()) + ".pipe.ts");
 			PrintStream ps = new PrintStream(outputStream);
 			System.setOut(ps);
 
-		}
-		catch (FileNotFoundException e) {
+		} catch (FileNotFoundException e) {
 			// rloman nog try with resources doen.
 			e.printStackTrace();
 		}
@@ -978,16 +1068,16 @@ public class Angular2GeneratingVisitor implements Visitor {
 	}
 
 	String convertFirstCharacterToLowercase(String input) {
-		String output = Character.toLowerCase(input.charAt(0)) +
-				(input.length() > 1 ? input.substring(1) : "");
+		String output = Character.toLowerCase(input.charAt(0))
+				+ (input.length() > 1 ? input.substring(1) : "");
 
 		return output;
 
 	}
 
 	String convertFirstCharacterToUppercase(String input) {
-		String output = Character.toUpperCase(input.charAt(0)) +
-				(input.length() > 1 ? input.substring(1) : "");
+		String output = Character.toUpperCase(input.charAt(0))
+				+ (input.length() > 1 ? input.substring(1) : "");
 
 		return output;
 	}
@@ -995,7 +1085,8 @@ public class Angular2GeneratingVisitor implements Visitor {
 	// e.g. convert AutoGrow to auto-grow
 	String convertUpperCamelCaseToAngularString(String input) {
 
-		return this.convertFirstCharacterToLowercase(input).replaceAll("([A-Z])", "-$1").toLowerCase();
+		return this.convertFirstCharacterToLowercase(input)
+				.replaceAll("([A-Z])", "-$1").toLowerCase();
 
 	}
 
@@ -1004,13 +1095,12 @@ public class Angular2GeneratingVisitor implements Visitor {
 		currentOutputStream = System.out;
 
 		try {
-			FileOutputStream outputStream = new FileOutputStream(
-					"app/" + component.getName().toLowerCase() + ".component.ts");
+			FileOutputStream outputStream = new FileOutputStream("app/"
+					+ component.getName().toLowerCase() + ".component.ts");
 			PrintStream ps = new PrintStream(outputStream);
 			System.setOut(ps);
 
-		}
-		catch (FileNotFoundException e) {
+		} catch (FileNotFoundException e) {
 			// rloman nog try with resources doen.
 			e.printStackTrace();
 		}
