@@ -564,11 +564,18 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 	private void renderPathExpressionsRecursively(Component component) {
 		for (Component sub : component.getChildren()) {
-			System.out.printf("\t\t{path:'%s', name:'%s', component:%s}, %n",
+			String defaultRouteString = "";
+			if(sub.isDefaultRoute()) {
+				
+				defaultRouteString = ", useAsDefault:true";
+				
+			}
+			System.out.printf("\t\t{path:'%s', name:'%s', component:%s%s}, %n",
 					convertFirstCharacterToLowercase(sub.getName()),
 					convertFirstCharacterToUppercase(sub.getName()),
 					convertFirstCharacterToUppercase(
-							sub.getName() + "Component"));
+							sub.getName() + "Component"), defaultRouteString);
+			
 			renderPathExpressionsRecursively(sub);
 			/*
 			 * System.out.printf(

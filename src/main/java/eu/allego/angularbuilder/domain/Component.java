@@ -20,16 +20,20 @@ public class Component extends Node {
 	private InlineStyleList inlineStyles = new InlineStyleList();
 
 	private ComponentAttributeList attributes = new ComponentAttributeList();
-	
+
 	private CustomPipeList pipes = new CustomPipeList();
 
 	private Constructor constructor;
-	
-	private boolean enableRouting;// kan ik wellicht afleiden uit de aanwezigheid van subcomponenen maar dat is niet zeker volgens mij
-	
+
+	private boolean enableRouting;// kan ik wellicht afleiden uit de
+									// aanwezigheid van subcomponenen maar dat
+									// is niet zeker volgens mij
+
 	private boolean forSingularUse = false;
-	
+
 	private Crud[] crud;
+
+	private boolean defaultRoute;
 
 	/**
 	 * 
@@ -48,8 +52,6 @@ public class Component extends Node {
 		this.template = template;
 		this.enableRouting = false;
 	}
-	
-	
 
 	public void addDirective(Directive directive) {
 		this.directives.add(directive);
@@ -75,7 +77,7 @@ public class Component extends Node {
 	public void addInlineStyle(InlineStyle style) {
 		this.inlineStyles.add(style);
 	}
-	
+
 	public void addPipe(CustomPipe pipe) {
 		this.pipes.addPipe(pipe);
 	}
@@ -146,33 +148,31 @@ public class Component extends Node {
 		return enableRouting;
 	}
 
-
-
 	public void setEnableRouting(boolean enableRouting) {
 		this.enableRouting = enableRouting;
 	}
-
-
 
 	public boolean isForSingularUse() {
 		return forSingularUse;
 	}
 
-
-
 	public void setForSingularUse(boolean forSingularUse) {
 		this.forSingularUse = forSingularUse;
 	}
-
-
 
 	public Crud[] getCrud() {
 		return crud;
 	}
 
-
-
-	public void setCrud(Crud ... crud) {
+	public void setCrud(Crud... crud) {
 		this.crud = crud;
+	}
+
+	public boolean isDefaultRoute() {
+		return defaultRoute;
+	}
+
+	public void setDefaultRoute(boolean defaultRoute) {
+		this.defaultRoute = defaultRoute;
 	}
 }

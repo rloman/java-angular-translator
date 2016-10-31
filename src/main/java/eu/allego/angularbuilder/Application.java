@@ -30,7 +30,7 @@ public class Application {
 
 	public static void domainServiceWithHttpForLiebregts() {
 
-		Template template = new Template("<h1>:: Liebregts main ::</h1>", true);
+		Template template = new Template("<h1>:: Java to Angular2 Translator ::</h1>", true);
 		Component appComponent = new Component("App", "my-app", template);
 		appComponent.setEnableRouting(true);
 
@@ -69,7 +69,7 @@ public class Application {
 			
 			// temp to test if singular is easy to create
 			// suppose we always want to make a CustomerComponent for singular instances
-			Template singularTemplate = new Template("<h1>:: Customer ::</h1>\n<div>\n\t{{ customer | json }}\n</div>\n", true);
+			Template singularTemplate = new Template("<h1>:: Customer ::</h1>\n<div>\n\t<pre>{{ customer | json }}</pre>\n</div>\n", true);
 			Component singularComponent = new Component("Customer", "customer", singularTemplate);
 			ComponentAttribute customer = new ComponentAttribute("customer", "Customer");
 			singularComponent.addAttribute(customer);
@@ -103,9 +103,11 @@ public class Application {
 			
 			
 			customersComponent.addChildComponent(singularComponent);
-			appComponent.addChildComponent(createComponent);
+			
+			customersComponent.setDefaultRoute(true);
 			
 			appComponent.addChildComponent(customersComponent);
+			appComponent.addChildComponent(createComponent);
 		}
 
 		// adressen
