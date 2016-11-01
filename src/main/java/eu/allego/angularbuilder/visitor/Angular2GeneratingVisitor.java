@@ -78,7 +78,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 		System.out.println();
 
-		System.out.println("\tconstructor(private _http:Http) {");
+		System.out.println("\tconstructor(private http:Http) {");
 
 		System.out.println("\t}");
 
@@ -86,7 +86,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 		// create the service method for the plular list
 		System.out.printf("\tget%ss() : Observable<%s[]> {%n", name, name);
-		System.out.printf("\t\treturn this._http.get(%s)%n", "this.url");
+		System.out.printf("\t\treturn this.http.get(%s)%n", "this.url");
 		System.out.println("\t\t\t.map(res => res.json());");
 		System.out.println("\t}");
 
@@ -95,7 +95,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 		// create the sevice method for the singular get
 		System.out.printf("\tget%s(id : number) : Observable<%s> {%n", name,
 				name);
-		System.out.printf("\t\treturn this._http.get(%s+id)%n", "this.url");
+		System.out.printf("\t\treturn this.http.get(%s+id)%n", "this.url");
 		System.out.println("\t\t\t.map(res => res.json());");
 		System.out.println("\t}");
 
@@ -113,7 +113,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 		System.out.printf("\t\t\tbody: JSON.stringify(%s)%n", smallName);
 		System.out.println("\t\t})");
 		System.out.println(
-				"\t\treturn this._http.request(new Request(this.requestoptions))");
+				"\t\treturn this.http.request(new Request(this.requestoptions))");
 		System.out.println("\t\t\t.map((res: Response) => {");
 		System.out.println("\t\t\t\tif (res) {");
 		System.out.println("\t\t\t\t\tconsole.log(res);");
@@ -135,7 +135,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 		System.out.println("\t\t\theaders: this.headers,");
 		System.out.printf("\t\t\tbody: JSON.stringify(%s)%n", smallName);
 		System.out.println("\t\t})");
-		System.out.println("\t\treturn this._http.request(new Request(this.requestoptions))");
+		System.out.println("\t\treturn this.http.request(new Request(this.requestoptions))");
 		System.out.println("\t\t\t.map((res: Response) => {");
 		System.out.println("\t\t\tif (res) {");
 		System.out.println("\t\t\t\tconsole.log(res);");
@@ -152,7 +152,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 		System.out.println("\t\tthis.headers = new Headers();");
 		System.out.println("\t\tthis.headers.append('Content-Type', 'application/json');");
 		System.out.println();
-		System.out.printf("\t\treturn this._http.delete(this.url+%s.id)%n", smallName);
+		System.out.printf("\t\treturn this.http.delete(this.url+%s.id)%n", smallName);
 		System.out.println("\t\t\t.map(result => result.json());");
 			
 		System.out.println("\t}");
@@ -488,7 +488,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 					}).collect(Collectors.toList())));
 			// always???? rloman
 			if (component.isForSingularUse()) {
-				System.out.print(", private _routeParams :RouteParams");
+				System.out.print(", private routeParams :RouteParams");
 			}
 			System.out.println(") {");
 
