@@ -126,14 +126,14 @@ public class Angular2GeneratingVisitor implements Visitor {
 		System.out.println();
 		
 		//update
-		System.out.println("\tupdate(customer) : Observable<Customer>{");
+		System.out.printf("\tupdate(%s) : Observable<%s>{%n", smallName, name);
 		System.out.println("\t\tthis.headers = new Headers();");
 		System.out.println("\t\tthis.headers.append('Content-Type', 'application/json');");
 		System.out.println("\t\tthis.requestoptions = new RequestOptions({");
 		System.out.println("\t\t\tmethod: RequestMethod.Put,");
-		System.out.println("\t\t\turl: this.url+customer.id,");
+		System.out.printf("\t\t\turl: this.url+%s.id,%n", smallName);
 		System.out.println("\t\t\theaders: this.headers,");
-		System.out.println("\t\t\tbody: JSON.stringify(customer)");
+		System.out.printf("\t\t\tbody: JSON.stringify(%s)%n", smallName);
 		System.out.println("\t\t})");
 		System.out.println("\t\treturn this._http.request(new Request(this.requestoptions))");
 		System.out.println("\t\t\t.map((res: Response) => {");
@@ -353,6 +353,9 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 	public void visit(Component component) {
 		setOutputStream(component);
+		
+		String pascalCaseName = component.getName();
+		String camelCaseName = this.convertFirstCharacterToLowercase(pascalCaseName);
 
 		// beetje exotisch maar wel een keer lekker / leuk :-)
 		System.out.printf("import {Component%s%s} from 'angular2/core'%n",
@@ -503,27 +506,28 @@ public class Angular2GeneratingVisitor implements Visitor {
 				switch (element) {
 					case CREATE :
 						System.out.println("create() {");
-						System.out.println("\tthis.customer = {'naam' : this.naam, 'debiteurennummer' : this.debiteurennummer};");
-						System.out.println("\tthis.customerService.create(this.customer).subscribe(");
+						System.out.printf("\tthis.%sService.create(this.%s).subscribe(%n", camelCaseName, camelCaseName );
 						System.out.println("\t\tresponse => console.log(response)" + ");");
 						System.out.println("\t}");
 
 						break;
 					case DELETE:
 						System.out.println();
-						System.out.println("\tdelete(customer: Customer) {");
-						System.out.println("\t\tthis.customerService.delete(customer)");
+						camelCaseName = camelCaseName.substring(0, camelCaseName.length()-1);
+						pascalCaseName = pascalCaseName.substring(0, pascalCaseName.length()-1);
+						System.out.printf("\tdelete(%s: %s) {%n", camelCaseName, pascalCaseName);
+						System.out.printf("\t\tthis.%sService.delete(%s)%n", camelCaseName, camelCaseName);
 						System.out.println("\t\t.subscribe(result => {");
-						System.out.println("\t\t\tthis.warning = 'Customer with id '+customer.id+' deleted!';");
+						System.out.printf("\t\t\tthis.warning = '%s with id '+%s.id+' deleted!';%n", pascalCaseName, camelCaseName);
 						System.out.println("\t\t\t}");
-						System.out.println(");");
-						System.out.println("\t\t}");
+						System.out.println("\t\t);");
+						System.out.println("\t}");
 						
 						break;
 					case UPDATE:
 						System.out.println();
 						System.out.println("\tupdate() {");
-						System.out.println("\t\tthis.customerService.update(this.customer).subscribe(res => {");
+						System.out.printf("\t\tthis.%sService.update(this.%s).subscribe(res => {%n", camelCaseName, camelCaseName);
 						System.out.println("\t\t\tconsole.log(res);");
 						System.out.println("\t\t});");
 						System.out.println("\t}");
