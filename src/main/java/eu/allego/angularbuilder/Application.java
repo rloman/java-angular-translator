@@ -34,7 +34,7 @@ public class Application {
 		Component appComponent = new Component("App", "my-app", template);
 		appComponent.setEnableRouting(true);
 
-		// klanten
+		// customers
 		{
 
 			Template customersTemplate = new Template("<h1>:: Customers ::</h1>", true);
@@ -81,7 +81,7 @@ public class Application {
 			Template singularTemplate = new Template(templateSingularString, true);
 			Component singularComponent = new Component("Customer", "customer", singularTemplate);
 			singularComponent.setCrud(Crud.UPDATE);
-			ComponentAttribute customer = new ComponentAttribute("customer", "Customer");
+			ComponentAttribute customer = new ComponentAttribute("customer", "Customer={}");
 			singularComponent.addAttribute(customer);
 			singularComponent.setForSingularUse(true);
 			Constructor constructorForSingular = new Constructor("customerService.getCustomer(parseInt(_routeParams.get('id'))).subscribe(customer => this.customer = customer);");
@@ -91,8 +91,8 @@ public class Application {
 			// create an object
 			String createTemplateString = "<h1>:: Create customer ::</h1>"+
 			"<div class='input-group'>"+
-				"Naam: <input type='text' class='form-control' [(ngModel)]='naam'><br>"+
-				"Debnr: <input type='text' class='form-control' [(ngModel)]='debiteurennummer'> <br>"+
+				"Naam: <input type='text' class='form-control' [(ngModel)]='customer.naam'><br>"+
+				"Debnr: <input type='text' class='form-control' [(ngModel)]='customer.debiteurennummer'> <br>"+
 			"</div>"+
 			"<span class='input-group-btn'>"+
             	"<button class='btn btn-primary' (click)='create()'>Create</button>"+
