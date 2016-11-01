@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
-import javax.swing.text.StyleContext.SmallAttributeSet;
-
 import eu.allego.angularbuilder.domain.Button;
 import eu.allego.angularbuilder.domain.Component;
 import eu.allego.angularbuilder.domain.ComponentAttribute;
