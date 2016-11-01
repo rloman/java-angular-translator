@@ -513,13 +513,15 @@ public class Angular2GeneratingVisitor implements Visitor {
 						break;
 					case DELETE:
 						System.out.println();
+						camelCaseName = camelCaseName.substring(0, camelCaseName.length()-1);
+						pascalCaseName = pascalCaseName.substring(0, pascalCaseName.length()-1);
 						System.out.printf("\tdelete(%s: %s) {%n", camelCaseName, pascalCaseName);
 						System.out.printf("\t\tthis.%sService.delete(%s)%n", camelCaseName, camelCaseName);
 						System.out.println("\t\t.subscribe(result => {");
 						System.out.printf("\t\t\tthis.warning = '%s with id '+%s.id+' deleted!';%n", pascalCaseName, camelCaseName);
 						System.out.println("\t\t\t}");
-						System.out.println(");");
-						System.out.println("\t\t}");
+						System.out.println("\t\t);");
+						System.out.println("\t}");
 						
 						break;
 					case UPDATE:
