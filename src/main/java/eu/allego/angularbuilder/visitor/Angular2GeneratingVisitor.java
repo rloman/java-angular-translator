@@ -125,6 +125,28 @@ public class Angular2GeneratingVisitor implements Visitor {
 		
 		System.out.println();
 		
+		//update
+		System.out.println("\tupdate(customer) : Observable<Customer>{");
+		System.out.println("\t\tthis.headers = new Headers();");
+		System.out.println("\t\tthis.headers.append('Content-Type', 'application/json');");
+		System.out.println("\t\tthis.requestoptions = new RequestOptions({");
+		System.out.println("\t\t\tmethod: RequestMethod.Put,");
+		System.out.println("\t\t\turl: this.url+customer.id,");
+		System.out.println("\t\t\theaders: this.headers,");
+		System.out.println("\t\t\tbody: JSON.stringify(customer)");
+		System.out.println("\t\t})");
+		System.out.println("\t\treturn this._http.request(new Request(this.requestoptions))");
+		System.out.println("\t\t\t.map((res: Response) => {");
+		System.out.println("\t\t\tif (res) {");
+		System.out.println("\t\t\t\tconsole.log(res);");
+		System.out.println("\t\t\t\treturn [{ status: res.status, json: res.json() }]");
+		System.out.println("\t\t\t}");
+		System.out.println("\t\t});");
+		System.out.println("\t}");
+		
+		System.out.println();
+		
+		
 		// delete
 		System.out.printf("\tdelete(%s) : Observable<boolean> {%n", smallName);
 		System.out.println("\t\tthis.headers = new Headers();");
@@ -488,6 +510,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 						break;
 					case DELETE:
+						System.out.println();
 						System.out.println("\tdelete(customer: Customer) {");
 						System.out.println("\t\tthis.customerService.delete(customer)");
 						System.out.println("\t\t.subscribe(result => {");
@@ -495,6 +518,16 @@ public class Angular2GeneratingVisitor implements Visitor {
 						System.out.println("\t\t\t}");
 						System.out.println(");");
 						System.out.println("\t\t}");
+						
+						break;
+					case UPDATE:
+						System.out.println();
+						System.out.println("\tupdate() {");
+						System.out.println("\t\tthis.customerService.update(this.customer).subscribe(res => {");
+						System.out.println("\t\t\tconsole.log(res);");
+						System.out.println("\t\t});");
+						System.out.println("\t}");
+						
 						
 						break;
 

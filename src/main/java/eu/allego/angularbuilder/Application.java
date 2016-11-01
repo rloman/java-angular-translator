@@ -69,8 +69,18 @@ public class Application {
 			
 			// temp to test if singular is easy to create
 			// suppose we always want to make a CustomerComponent for singular instances
-			Template singularTemplate = new Template("<h1>:: Customer ::</h1>\n<div>\n\t<pre>{{ customer | json }}</pre>\n</div>\n", true);
+		
+			String templateSingularString = "<h1>:: Customer ::</h1>\n<div>\n\t<pre>{{ customer | json }}</pre>\n</div>\n";
+			templateSingularString += "<div *ngIf='customer'>" +
+			"<div class='input-group'>Naam: <input type='text' class='form-control' [(ngModel)]='customer.naam'><br>"+
+			"Debnr: <input type='text' class='form-control' [(ngModel)]='customer.debiteurennummer'>		<br>"+
+			"</div>"+
+			"<span class='input-group-btn'><button class='btn btn-primary' (click)='update()'>Update</button></span>"+
+			"</div>";
+
+			Template singularTemplate = new Template(templateSingularString, true);
 			Component singularComponent = new Component("Customer", "customer", singularTemplate);
+			singularComponent.setCrud(Crud.UPDATE);
 			ComponentAttribute customer = new ComponentAttribute("customer", "Customer");
 			singularComponent.addAttribute(customer);
 			singularComponent.setForSingularUse(true);
@@ -79,7 +89,6 @@ public class Application {
 			singularComponent.addService(restKlantService);
 			
 			// create an object
-			
 			String createTemplateString = "<h1>:: Create customer ::</h1>"+
 			"<div class='input-group'>"+
 				"Naam: <input type='text' class='form-control' [(ngModel)]='naam'><br>"+
