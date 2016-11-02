@@ -231,7 +231,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 	private void renderChildersImportRecursive(Component child) {
 		System.out.println("import {" + child.getName() + "Component} from './"
-				+ child.getName().toLowerCase() + ".component'");
+				+ this.convertUpperCamelCaseToAngularString(child.getName()) + ".component'");
 		for (Component subchild : child.getChildren()) {
 			renderChildersImportRecursive(subchild);
 		}
@@ -1167,7 +1167,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 		try {
 			FileOutputStream outputStream = new FileOutputStream("app/"
-					+ component.getName().toLowerCase() + ".component.ts");
+					+ convertUpperCamelCaseToAngularString(component.getName()) + ".component.ts");
 			PrintStream ps = new PrintStream(outputStream);
 			System.setOut(ps);
 
