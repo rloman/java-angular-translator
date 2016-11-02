@@ -78,7 +78,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 		System.out.println();
 
-		System.out.println("\tconstructor(private _http:Http) {");
+		System.out.println("\tconstructor(private http:Http) {");
 
 		System.out.println("\t}");
 
@@ -86,7 +86,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 		// create the service method for the plular list
 		System.out.printf("\tget%ss() : Observable<%s[]> {%n", name, name);
-		System.out.printf("\t\treturn this._http.get(%s)%n", "this.url");
+		System.out.printf("\t\treturn this.http.get(%s)%n", "this.url");
 		System.out.println("\t\t\t.map(res => res.json());");
 		System.out.println("\t}");
 
@@ -95,7 +95,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 		// create the sevice method for the singular get
 		System.out.printf("\tget%s(id : number) : Observable<%s> {%n", name,
 				name);
-		System.out.printf("\t\treturn this._http.get(%s+id)%n", "this.url");
+		System.out.printf("\t\treturn this.http.get(%s+id)%n", "this.url");
 		System.out.println("\t\t\t.map(res => res.json());");
 		System.out.println("\t}");
 
@@ -113,7 +113,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 		System.out.printf("\t\t\tbody: JSON.stringify(%s)%n", smallName);
 		System.out.println("\t\t})");
 		System.out.println(
-				"\t\treturn this._http.request(new Request(this.requestoptions))");
+				"\t\treturn this.http.request(new Request(this.requestoptions))");
 		System.out.println("\t\t\t.map((res: Response) => {");
 		System.out.println("\t\t\t\tif (res) {");
 		System.out.println("\t\t\t\t\tconsole.log(res);");
@@ -135,7 +135,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 		System.out.println("\t\t\theaders: this.headers,");
 		System.out.printf("\t\t\tbody: JSON.stringify(%s)%n", smallName);
 		System.out.println("\t\t})");
-		System.out.println("\t\treturn this._http.request(new Request(this.requestoptions))");
+		System.out.println("\t\treturn this.http.request(new Request(this.requestoptions))");
 		System.out.println("\t\t\t.map((res: Response) => {");
 		System.out.println("\t\t\tif (res) {");
 		System.out.println("\t\t\t\tconsole.log(res);");
@@ -152,7 +152,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 		System.out.println("\t\tthis.headers = new Headers();");
 		System.out.println("\t\tthis.headers.append('Content-Type', 'application/json');");
 		System.out.println();
-		System.out.printf("\t\treturn this._http.delete(this.url+%s.id)%n", smallName);
+		System.out.printf("\t\treturn this.http.delete(this.url+%s.id)%n", smallName);
 		System.out.println("\t\t\t.map(result => result.json());");
 			
 		System.out.println("\t}");
@@ -191,7 +191,6 @@ public class Angular2GeneratingVisitor implements Visitor {
 				"\t\treturn [{id:3, title:'aap'},{id:4, title:'noot'}, {id:5, title:'mies'}]");
 		System.out.println("\t}");
 
-		// rloman wat moet je hier met twee strings?
 		System.out.printf("\tcreate%s(post:Post) {%n", name);
 
 		System.out.println("\t\t// Implement your code here");
@@ -232,7 +231,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 	private void renderChildersImportRecursive(Component child) {
 		System.out.println("import {" + child.getName() + "Component} from './"
-				+ child.getName().toLowerCase() + ".component'");
+				+ this.convertUpperCamelCaseToAngularString(child.getName()) + ".component'");
 		for (Component subchild : child.getChildren()) {
 			renderChildersImportRecursive(subchild);
 		}
@@ -488,7 +487,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 					}).collect(Collectors.toList())));
 			// always???? rloman
 			if (component.isForSingularUse()) {
-				System.out.print(", private _routeParams :RouteParams");
+				System.out.print(", private routeParams :RouteParams");
 			}
 			System.out.println(") {");
 
@@ -501,7 +500,6 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 		// render the create method if applicable
 		if (component.getCrud() != null) {
-			// rloman should of course be general for the types below
 			for(Crud element: component.getCrud()){
 				switch (element) {
 					case CREATE :
@@ -798,8 +796,6 @@ public class Angular2GeneratingVisitor implements Visitor {
 					widget.getClass().getSimpleName()
 							+ this.convertFirstCharacterToUppercase(
 									event.toString().toLowerCase()));
-			// TODO rloman je zou hier ook nog iets kunne doen zodat
-			// $event.stopPropagation(); // werkt. later.
 			System.out.println("\t\tconsole.log('You "
 					+ event.toString().toLowerCase() + "ed a "
 					+ widget.getClass().getSimpleName() + " widget', $event);");
@@ -1171,7 +1167,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 		try {
 			FileOutputStream outputStream = new FileOutputStream("app/"
-					+ component.getName().toLowerCase() + ".component.ts");
+					+ convertUpperCamelCaseToAngularString(component.getName()) + ".component.ts");
 			PrintStream ps = new PrintStream(outputStream);
 			System.setOut(ps);
 

@@ -84,7 +84,7 @@ public class Application {
 			ComponentAttribute customer = new ComponentAttribute("customer", "Customer={}");
 			singularComponent.addAttribute(customer);
 			singularComponent.setForSingularUse(true);
-			Constructor constructorForSingular = new Constructor("customerService.getCustomer(parseInt(_routeParams.get('id'))).subscribe(customer => this.customer = customer);");
+			Constructor constructorForSingular = new Constructor("customerService.getCustomer(parseInt(routeParams.get('id'))).subscribe(customer => this.customer = customer);");
 			singularComponent.setConstructor(constructorForSingular);
 			singularComponent.addService(restKlantService);
 			
