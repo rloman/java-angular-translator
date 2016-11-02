@@ -25,10 +25,10 @@ import eu.allego.angularbuilder.visitor.Visitor;
 
 public class Application {
 	public static void main(String[] args) {
-		domainServiceWithHttpForLiebregts();
+		restFullDomainServiceDemoWithHttp();
 	}
 
-	public static void domainServiceWithHttpForLiebregts() {
+	public static void restFullDomainServiceDemoWithHttp() {
 
 		Template template = new Template(
 				"<h1>:: Java to Angular2 Translator ::</h1>", true);
