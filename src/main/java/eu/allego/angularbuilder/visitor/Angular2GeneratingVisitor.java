@@ -191,7 +191,6 @@ public class Angular2GeneratingVisitor implements Visitor {
 				"\t\treturn [{id:3, title:'aap'},{id:4, title:'noot'}, {id:5, title:'mies'}]");
 		System.out.println("\t}");
 
-		// rloman wat moet je hier met twee strings?
 		System.out.printf("\tcreate%s(post:Post) {%n", name);
 
 		System.out.println("\t\t// Implement your code here");
@@ -501,7 +500,6 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 		// render the create method if applicable
 		if (component.getCrud() != null) {
-			// rloman should of course be general for the types below
 			for(Crud element: component.getCrud()){
 				switch (element) {
 					case CREATE :
@@ -798,8 +796,6 @@ public class Angular2GeneratingVisitor implements Visitor {
 					widget.getClass().getSimpleName()
 							+ this.convertFirstCharacterToUppercase(
 									event.toString().toLowerCase()));
-			// TODO rloman je zou hier ook nog iets kunne doen zodat
-			// $event.stopPropagation(); // werkt. later.
 			System.out.println("\t\tconsole.log('You "
 					+ event.toString().toLowerCase() + "ed a "
 					+ widget.getClass().getSimpleName() + " widget', $event);");
