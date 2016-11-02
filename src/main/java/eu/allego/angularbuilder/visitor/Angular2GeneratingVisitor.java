@@ -500,20 +500,12 @@ public class Angular2GeneratingVisitor implements Visitor {
 		// // render the properties of the conditional css of the widgets of
 		// this
 		// component if applicable recursively
-		for (
-
-		Widget widget : component.getTemplate().getWidgets())
-
-		{
+		for (Widget widget : component.getTemplate().getWidgets()) {
 			recursiveRenderConditionCssStylesForWidget(widget);
 		}
 
 		// render the event handlers recursively
-		for (
-
-		Widget widget : component.getTemplate().getWidgets())
-
-		{
+		for (Widget widget : component.getTemplate().getWidgets()){
 			recursiveRenderEventHandlersForWidget(widget);
 		}
 
@@ -522,27 +514,15 @@ public class Angular2GeneratingVisitor implements Visitor {
 		// render the (FILES) of the children
 		// rloman might refactor all those component like component, service and
 		// directive to one common base class
-		for (
-
-		Component child : component.getChildren())
-
-		{
+		for (Component child : component.getChildren()) {
 			child.accept(this);
 		}
 
-		for (
-
-		Service service : component.getServices())
-
-		{
+		for (Service service : component.getServices()){
 			service.accept(this);
 		}
 
-		for (
-
-		Directive directive : component.getDirectives())
-
-		{
+		for (Directive directive : component.getDirectives()) {
 			directive.accept(this);
 		}
 
@@ -565,23 +545,6 @@ public class Angular2GeneratingVisitor implements Visitor {
 					convertFirstCharacterToUppercase(sub.getName() + "Component"), defaultRouteString);
 
 			renderPathExpressionsRecursively(sub);
-			/*
-			 * System.out.printf(
-			 * "\t\t{path:'%s/:id', name:'%s', component:%s, %s}, %n",
-			 * convertFirstCharacterToLowercase(sub.getName().substring(0,
-			 * sub.getName().length()-1)),
-			 * convertFirstCharacterToUppercase(sub.getName().substring(0,
-			 * sub.getName().length()-1)),
-			 * convertFirstCharacterToUppercase(sub.getName().substring(0,
-			 * sub.getName().length()-1) + "Component"), ""); System.out.printf(
-			 * "\t\t{path:'%s/create', name:'%s', component:%s, %s}, %n",
-			 * convertFirstCharacterToLowercase(sub.getName().substring(0,
-			 * sub.getName().length()-1)),
-			 * convertFirstCharacterToUppercase(sub.getName().substring(0,
-			 * sub.getName().length()-1)),
-			 * convertFirstCharacterToUppercase(sub.getName().substring(0,
-			 * sub.getName().length()-1) + "Component"), "");
-			 */
 		}
 	}
 
