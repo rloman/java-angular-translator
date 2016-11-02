@@ -1,3 +1,35 @@
+v0.3.0
+      Cleanup release notes
+      Add itag widget to the compiler. Refactor a lot of code
+      Add input property principle to the compiler
+      Add outputproperty principle to the compiler
+      Refactor the inputProperty and outputProperty fields (boolean) of class ComponentAttribute to separate subclass InputProperty and OutputProperty
+      Add templateUrl to the compiler
+      Refactor the List / ArrayList classes instances in Component to separate List class
+      Implement exercise regarding likes Section 4, lecture 38 using the parser
+      Cleaner / spanner textField after exercise regarding Likes
+      Add *ngFor in for loop over string[] for *ngIf demo purposes for now
+      Add inlinestyle for Component to the parser
+      Implement the Angular2 filter principle to the translator
+      This rocks but you have to implement the atttr now
+      Refactor List<String> to List<CustomPipe> in textfield
+      Rename all methods with name filter in it to pipe to comply to namechange of enum Filter to Pipe a several commits ago
+      Implement condition css using ngClass
+      Add domainservice with domaininterface
+      Rocking creator of a restful webservice and client
+      Enable routing in the translator to render menu's for subcomponents
+      Render every object in a plural loop to JSON for now
+      Add the singular GET method and component to the translator
+      Add create in Service and in app
+      Implement Create with Service and Component.
+      Add delete of crud object to translator
+      Add update to the translator for a domain object. it rocks
+      Set Angular2Visitor to generate all code compliant to naming and no hard coded customers
+      Simple / too simple fix for failing componentname to variable / servicename mapping
+      Remove these silly underscores in front of variable names
+      Fix naming when component has multipe terms (e.g. CustomerCreateComponent)
+      Move base package to eu.carpago
+========================================
 v0.2.0     
       Add some code which convert Upper camelcase to angular case
       remove some obsolete test
@@ -18,4 +50,4 @@ v0.2.0
 
 v0.1.0
       This is the first, initial release so everything is new here
-
+=======================================
