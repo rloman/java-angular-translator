@@ -82,6 +82,7 @@ public class Component extends Node {
 		this.pipes.addPipe(pipe);
 	}
 
+	@Override
 	public void accept(Visitor visitor) {
 		visitor.visit(this);
 	}

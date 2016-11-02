@@ -18,6 +18,7 @@ public enum Pipe {
 		this.attr = attr;
 	}
 
+	@Override
 	public String toString() {
 		return " | "+name() + (attr!= null ? ":" + attr : "");
 	}

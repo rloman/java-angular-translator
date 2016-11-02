@@ -33,6 +33,7 @@ public class TextField extends Widget {
 		this.ngModel = inputComponent;
 	}
 
+	@Override
 	public String getLabel() {
 		return label;
 	}
