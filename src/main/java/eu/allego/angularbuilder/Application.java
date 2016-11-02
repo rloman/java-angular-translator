@@ -31,7 +31,7 @@ public class Application {
 	public static void restFullDomainServiceDemoWithHttp() {
 
 		Template template = new Template(
-				"<h1>:: Java to Angular2 Translator ::</h1>", true);
+				"<h1>:: Java to Angular2 Translator Demo ::</h1>", true);
 		Component appComponent = new Component("App", "my-app", template);
 		appComponent.setEnableRouting(true);
 
