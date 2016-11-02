@@ -350,6 +350,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 	}
 
+	@Override
 	public void visit(Component component) {
 		setOutputStream(component);
 		
