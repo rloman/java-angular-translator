@@ -56,79 +56,79 @@ public class Application {
 		{
 
 			Template customersTemplate = new Template(
-					"<h1>:: Customers ::</h1>", true);
-			Component customersComponent = new Component("Customers",
-					"customers", customersTemplate);
-			ComponentAttribute customers = new ComponentAttribute("customers",
-					"Customer[]");
+					"<h1>:: Posts ::</h1>", true);
+			Component customersComponent = new Component("Posts",
+					"posts", customersTemplate);
+			ComponentAttribute customers = new ComponentAttribute("posts",
+					"Post[]");
 			customersComponent.addAttribute(customers);
 
 			ComponentAttribute warning = new ComponentAttribute("warning",
 					"string");
 			customersComponent.addAttribute(warning);
 
-			DomainInterface customerInterface = new DomainInterface("Customer");
+			DomainInterface customerInterface = new DomainInterface("Post");
 
 			// question mark means this instance var may be empty in the created
 			// instance
 			customerInterface.addInstanceVar(ID, "number", false);
-			customerInterface.addInstanceVar("naam", "string", false);
-			customerInterface.addInstanceVar("debiteurennummer", "string", false);
+			customerInterface.addInstanceVar("title", "string", true);
+			customerInterface.addInstanceVar("body", "string", false);
 
 			RestDomainService restKlantService = new RestDomainService(
-					customerInterface, "http://localhost:8081/api/klanten/");
+					customerInterface, "http://jsonplaceholder.typicode.com/posts/");
 
 			customersComponent.addService(restKlantService);
 			customersComponent.setCrud(Crud.DELETE);
 			// refactor this constructor to a default setting (since this is
 			// possible)
 			Constructor constructorForPlural = new Constructor(
-					"\t\tcustomerService.getCustomers().subscribe(customers => this.customers = customers);");
+					"\t\tpostService.getPosts().subscribe(posts => this.posts = posts);");
 			customersComponent.setConstructor(constructorForPlural);
 
 			// temp to test if singular is easy to create
 			// suppose we always want to make a CustomerComponent for singular
 			// instances
-			String templateSingularString = "<h1>:: Customer ::</h1>\n<div>\n\t<pre>{{ customer | json }}</pre>\n</div>\n";
-			templateSingularString += "<div *ngIf='customer'>"
-					+ "<div class='input-group'>Naam: <input type='text' class='form-control' [(ngModel)]='customer.naam'><br>"
-					+ "Debnr: <input type='text' class='form-control' [(ngModel)]='customer.debiteurennummer'>		<br>"
+			String templateSingularString = "<h1>:: Post ::</h1>\n<div>\n\t<pre>{{ post | json }}</pre>\n</div>\n";
+			templateSingularString += "<div *ngIf='post'>"
+					+ "<div class='input-group'>Naam: <input type='text' class='form-control' [(ngModel)]='post.title'><br>"
+					+ "Debnr: <input type='text' class='form-control' [(ngModel)]='post.body'>		<br>"
 					+ "</div>"
 					+ "<span class='input-group-btn'><button class='btn btn-primary' (click)='update()'>Update</button></span>"
 					+ "</div>";
 
 			Template singularTemplate = new Template(templateSingularString,
 					true);
-			Component singularComponent = new Component("Customer", "customer",
+			Component singularComponent = new Component("Post", "post",
 					singularTemplate);
 			singularComponent.setCrud(Crud.UPDATE);
-			ComponentAttribute customer = new ComponentAttribute("customer",
-					"Customer={}");
+			ComponentAttribute customer = new ComponentAttribute("post",
+					"Post={}");
 			singularComponent.addAttribute(customer);
 			singularComponent.setForSingularUse(true);
 			Constructor constructorForSingular = new Constructor(
-					"customerService.getCustomer(parseInt(routeParams.get('id'))).subscribe(customer => this.customer = customer);");
+					"postService.getPost(parseInt(routeParams.get('id'))).subscribe(post => this.post = post);");
 			singularComponent.setConstructor(constructorForSingular);
 			singularComponent.addService(restKlantService);
 
 			// create an object
-			String createTemplateString = "<h1>:: Create customer ::</h1>"
+			String createTemplateString = "<h1>:: Create post ::</h1>"
 					+ "<div class='input-group'>"
-					+ "Naam: <input type='text' class='form-control' [(ngModel)]='customer.naam'><br>"
-					+ "Debnr: <input type='text' class='form-control' [(ngModel)]='customer.debiteurennummer'> <br>"
+					+ "Naam: <input type='text' class='form-control' [(ngModel)]='post.title'><br>"
+					+ "Debnr: <input type='text' class='form-control' [(ngModel)]='post.body'> <br>"
 					+ "</div>" + "<span class='input-group-btn'>"
 					+ "<button class='btn btn-primary' (click)='create()'>Create</button>"
 					+ "</span>";
 
 			Template createTemplate = new Template(createTemplateString, true);
-			Component createComponent = new Component("CustomerCreate",
-					"customer-create", createTemplate);
+			Component createComponent = new Component("PostCreate",
+					"post-create", createTemplate);
 			// rloman refactor. if this is a create component than you cal
 			// calculate during rendering the properties and the class it should
 			// have
-			ComponentAttribute naam = new ComponentAttribute("naam", "string");
+			ComponentAttribute naam = new ComponentAttribute("title", "string");
 			ComponentAttribute debiteurnnummer = new ComponentAttribute(
-					"debiteurennummer", "string");
+					"body", "string");
 			createComponent.addAttribute(customer);
 			createComponent.addAttribute(naam);
 			createComponent.addAttribute(debiteurnnummer);

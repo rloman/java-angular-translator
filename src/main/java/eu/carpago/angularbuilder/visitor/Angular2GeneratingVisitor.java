@@ -613,7 +613,6 @@ public class Angular2GeneratingVisitor implements Visitor {
 		component.getTemplate().accept(this);
 
 		if (component.isRoutingEnabled()) {
-			// from udemy
 			System.out.println("<nav class='navbar navbar-default'>");
 			System.out.println("<div class='container-fluid'>");
 			System.out.println(" <!-- Brand and toggle get grouped for better mobile display -->");
@@ -794,7 +793,6 @@ public class Angular2GeneratingVisitor implements Visitor {
 		System.out.println("export class " + directive.getName() + "Directive {");
 
 		// render the constructor for now using the Angular2 default settings
-		// from Udemy
 		System.out.println();
 		System.out.println("\tconstructor(private el: ElementRef, private renderer: Renderer) {");
 		System.out.println("\t}");
