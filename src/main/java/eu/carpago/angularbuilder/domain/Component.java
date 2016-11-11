@@ -34,6 +34,8 @@ public class Component extends Node {
 	private Crud[] crud;
 
 	private boolean defaultRoute;
+	
+	private DomainInterface domain;
 
 	/**
 	 * 
@@ -175,5 +177,13 @@ public class Component extends Node {
 
 	public void setDefaultRoute(boolean defaultRoute) {
 		this.defaultRoute = defaultRoute;
+	}
+
+	public DomainInterface getDomain() {
+		return domain;
+	}
+
+	public void setDomain(DomainInterface domain) {
+		this.domain = domain;
 	}
 }

@@ -11,6 +11,7 @@ import eu.carpago.angularbuilder.domain.CustomPipeList;
 import eu.carpago.angularbuilder.domain.Directive;
 import eu.carpago.angularbuilder.domain.DirectiveList;
 import eu.carpago.angularbuilder.domain.Div;
+import eu.carpago.angularbuilder.domain.DomainDrivenDevelopment;
 import eu.carpago.angularbuilder.domain.DomainInterface;
 import eu.carpago.angularbuilder.domain.DomainService;
 import eu.carpago.angularbuilder.domain.ITag;
@@ -80,5 +81,7 @@ public interface Visitor {
 	void visit(DomainService domainService);
 
 	void visit(RestDomainService service);
+
+	void visit(DomainDrivenDevelopment domainDrivenDevelopment);
 
 }

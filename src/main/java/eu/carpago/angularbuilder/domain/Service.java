@@ -4,6 +4,7 @@ import eu.carpago.angularbuilder.visitor.Visitor;
 
 public class Service extends Node {
 
+	// rloman was dit nu
 	private String name = "Course";
 	
 	private ServiceMethod serviceMethod;

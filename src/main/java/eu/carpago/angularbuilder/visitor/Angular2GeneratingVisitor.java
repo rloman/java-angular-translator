@@ -21,6 +21,7 @@ import eu.carpago.angularbuilder.domain.CustomPipeList;
 import eu.carpago.angularbuilder.domain.Directive;
 import eu.carpago.angularbuilder.domain.DirectiveList;
 import eu.carpago.angularbuilder.domain.Div;
+import eu.carpago.angularbuilder.domain.DomainDrivenDevelopment;
 import eu.carpago.angularbuilder.domain.DomainInterface;
 import eu.carpago.angularbuilder.domain.DomainService;
 import eu.carpago.angularbuilder.domain.Event;
@@ -42,6 +43,11 @@ import eu.carpago.angularbuilder.domain.InlineStyle.InlineStyleLine;
 public class Angular2GeneratingVisitor implements Visitor {
 
 	private PrintStream currentOutputStream = System.out;
+	
+	@Override
+	public void visit(DomainDrivenDevelopment domainDrivenDevelopment) {
+		domainDrivenDevelopment.getAppComponent().accept(this);
+	}
 
 	@Override
 	public void visit(RestDomainService service) {
@@ -55,7 +61,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 		System.out.println();
 
 		DomainInterface domain = service.getDomainInterface();
-		String name = this.convertFirstCharacterToUppercase(domain.getName());
+		String name = this.convertFirstCharacterToUppercase(domain.getSingularPascalcaseName());
 		String smallName = this.convertFirstCharacterToLowercase(name);
 
 		System.out.printf("import {%s} from './%s';%n", name, smallName);
@@ -163,7 +169,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 		setOutputStream(service);
 
 		DomainInterface domain = service.getDomainInterface();
-		String name = this.convertFirstCharacterToUppercase(domain.getName());
+		String name = this.convertFirstCharacterToUppercase(domain.getSingularPascalcaseName());
 
 		// imports
 		// rloman: refactor to StatementImport.java for later
@@ -198,7 +204,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 	public void visit(DomainInterface domainInterface) {
 		setOutputStream(domainInterface);
 
-		System.out.printf("export interface %s {%n", domainInterface.getName());
+		System.out.printf("export interface %s {%n", domainInterface.getSingularPascalcaseName());
 		String attributes = String.join("", domainInterface.getAttributes().stream().map(e -> {
 			return String.format("\t %s : %s;%n", e.name, e.type);
 		}).collect(Collectors.toList()));
@@ -234,8 +240,8 @@ public class Angular2GeneratingVisitor implements Visitor {
 					+ ".service'");
 			if (service instanceof DomainService) {
 				DomainService domainService = (DomainService) service;
-				System.out.println("import {" + domainService.getDomainInterface().getName() + "} from './"
-						+ domainService.getDomainInterface().getName().toLowerCase() + "';");
+				System.out.println("import {" + domainService.getDomainInterface().getSingularPascalcaseName() + "} from './"
+						+ domainService.getDomainInterface().getSingularPascalcaseName().toLowerCase() + "';");
 				if (service instanceof RestDomainService) {
 					System.out.println("import {HTTP_PROVIDERS} from 'angular2/http';");
 				}
@@ -460,7 +466,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 				switch (element) {
 				case CREATE:
 					System.out.println("create() {");
-					System.out.printf("\tthis.%sService.create(this.%s).subscribe(%n", camelCaseName, camelCaseName);
+					System.out.printf("\tthis.%sService.create(this.%s).subscribe(%n", component.getDomain().getSingularCamelcaseName(), component.getDomain().getSingularCamelcaseName());
 					System.out.println("\t\tresponse => console.log(response)" + ");");
 					System.out.println("\t}");
 
@@ -929,7 +935,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 		try {
 			FileOutputStream outputStream = new FileOutputStream(
-					"app/" + this.convertFirstCharacterToLowercase(domainInterface.getName()) + ".ts");
+					"app/" + this.convertFirstCharacterToLowercase(domainInterface.getSingularPascalcaseName()) + ".ts");
 			PrintStream ps = new PrintStream(outputStream);
 			System.setOut(ps);
 
@@ -1001,23 +1007,23 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 	}
 
-	String convertFirstCharacterToLowercase(String input) {
+	public static String convertFirstCharacterToLowercase(String input) {
 		String output = Character.toLowerCase(input.charAt(0)) + (input.length() > 1 ? input.substring(1) : "");
 
 		return output;
 
 	}
 
-	String convertFirstCharacterToUppercase(String input) {
+	public static String convertFirstCharacterToUppercase(String input) {
 		String output = Character.toUpperCase(input.charAt(0)) + (input.length() > 1 ? input.substring(1) : "");
 
 		return output;
 	}
 
 	// e.g. convert AutoGrow to auto-grow
-	String convertUpperCamelCaseToAngularString(String input) {
+	public static String convertUpperCamelCaseToAngularString(String input) {
 
-		return this.convertFirstCharacterToLowercase(input).replaceAll("([A-Z])", "-$1").toLowerCase();
+		return convertFirstCharacterToLowercase(input).replaceAll("([A-Z])", "-$1").toLowerCase();
 
 	}
 

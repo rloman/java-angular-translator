@@ -6,6 +6,8 @@ import eu.carpago.angularbuilder.domain.Constructor;
 import eu.carpago.angularbuilder.domain.Crud;
 import eu.carpago.angularbuilder.domain.Css;
 import eu.carpago.angularbuilder.domain.CustomPipe;
+import eu.carpago.angularbuilder.domain.DomainDrivenDevelopment;
+import eu.carpago.angularbuilder.domain.DomainDrivenDevelopment.DomainDrivenDevelopmentBuilder;
 import eu.carpago.angularbuilder.domain.DomainInterface;
 import eu.carpago.angularbuilder.domain.DomainService;
 import eu.carpago.angularbuilder.domain.Event;
@@ -25,7 +27,21 @@ import eu.carpago.angularbuilder.visitor.Visitor;
 
 public class Application {
 	public static void main(String[] args) {
-		restFullDomainServiceDemoWithHttp();
+		domainDrivenDevelopment();
+	}
+	
+	
+	public static void domainDrivenDevelopment() {
+		DomainInterface customerInterface = new DomainInterface("Customer");
+
+		// question mark means this instance var may be empty in the created
+		// instance
+		customerInterface.addInstanceVar("id?", "number");
+		customerInterface.addInstanceVar("naam?", "string");
+		customerInterface.addInstanceVar("debiteurennummer?", "string");
+		
+		DomainDrivenDevelopment b = new DomainDrivenDevelopmentBuilder(customerInterface, "http://localhost:8081/api/klanten/").build();
+		b.accept(new Angular2GeneratingVisitor());
 	}
 
 	public static void restFullDomainServiceDemoWithHttp() {
@@ -72,7 +88,6 @@ public class Application {
 			// temp to test if singular is easy to create
 			// suppose we always want to make a CustomerComponent for singular
 			// instances
-
 			String templateSingularString = "<h1>:: Customer ::</h1>\n<div>\n\t<pre>{{ customer | json }}</pre>\n</div>\n";
 			templateSingularString += "<div *ngIf='customer'>"
 					+ "<div class='input-group'>Naam: <input type='text' class='form-control' [(ngModel)]='customer.naam'><br>"
