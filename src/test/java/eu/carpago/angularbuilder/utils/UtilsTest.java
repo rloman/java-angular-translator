@@ -24,7 +24,5 @@ public class UtilsTest {
 	public void testconvertUpperCamelCaseToAngularString() {
 		
 		Assert.assertEquals("auto-grow", Utils.convertUpperCamelCaseToAngularString("AutoGrow"));
-		
 	}
-
 }
