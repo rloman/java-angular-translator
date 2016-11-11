@@ -4,8 +4,7 @@ import eu.carpago.angularbuilder.visitor.Visitor;
 
 public class Service extends Node {
 
-	// rloman was dit nu
-	private String name = "Course";
+	private String name;
 	
 	private ServiceMethod serviceMethod;
 	
@@ -19,14 +18,6 @@ public class Service extends Node {
 		this.serviceMethod = serviceMethod;
 	}
 
-
-	@Override
-	public void accept(Visitor visitor) {
-		visitor.visit(this);
-
-	}
-
-
 	public String getName() {
 		return name;
 	}
@@ -34,6 +25,12 @@ public class Service extends Node {
 
 	public ServiceMethod getServiceMethod() {
 		return serviceMethod;
+	}
+	
+	@Override
+	public void accept(Visitor visitor) {
+		visitor.visit(this);
+
 	}
 
 }
