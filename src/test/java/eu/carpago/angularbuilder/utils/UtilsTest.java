@@ -1,4 +1,4 @@
-package eu.carpago.angularbuilder.visitor;
+package eu.carpago.angularbuilder.utils;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -6,7 +6,7 @@ import org.junit.Test;
 import eu.carpago.angularbuilder.utils.Utils;
 
 
-public class Angular2GeneratingVisitorTest {
+public class UtilsTest {
 	
 	@Test
 	public void testConvertFirstCharacterToLowercase() {
