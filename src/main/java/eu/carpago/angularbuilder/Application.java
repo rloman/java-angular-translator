@@ -49,7 +49,7 @@ public class Application {
 		Template template = new Template(
 				"<h1>:: Java to Angular2 Translator Demo ::</h1>", true);
 		Component appComponent = new Component("App", "my-app", template);
-		appComponent.setEnableRouting(true);
+		appComponent.setRoutingEnabled(true);
 
 		// customers
 		{
@@ -132,7 +132,7 @@ public class Application {
 			createComponent.addAttribute(naam);
 			createComponent.addAttribute(debiteurnnummer);
 			createComponent.addService(restKlantService);
-			createComponent.setEnableRouting(false);
+			createComponent.setRoutingEnabled(false);
 			createComponent.setCrud(Crud.CREATE);
 
 			customersComponent.addChildComponent(singularComponent);

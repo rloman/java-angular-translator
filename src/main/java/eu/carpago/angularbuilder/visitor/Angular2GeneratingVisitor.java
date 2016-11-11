@@ -354,7 +354,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 		System.out.println("import {ROUTER_DIRECTIVES} from 'angular2/router';");
 
 		// enable routing if applicable
-		if (component.isEnableRouting()) {
+		if (component.isRoutingEnabled()) {
 
 			System.out.println("@RouteConfig(");
 
@@ -566,7 +566,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 		component.getTemplate().accept(this);
 
-		if (component.isEnableRouting()) {
+		if (component.isRoutingEnabled()) {
 			// from udemy
 			System.out.println("<nav class='navbar navbar-default'>");
 			System.out.println("<div class='container-fluid'>");
@@ -628,7 +628,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 		// render subcomponents his selectors in the template
 		// for now only the parent component (this one) does not have routing
 		// enabled
-		if (!component.isEnableRouting()) {
+		if (!component.isRoutingEnabled()) {
 			for (Component child : component.getChildren()) {
 				List<String> namesOfInputProperties = new ArrayList<>();
 				List<String> namesOfOutputProperties = new ArrayList<>();

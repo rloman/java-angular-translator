@@ -150,7 +150,7 @@ public class DomainDrivenDevelopment extends Node {
 			createComponent.addAttribute(singularComponent);
 
 			createComponent.addService(this.domainService);
-			createComponent.setEnableRouting(false);
+			createComponent.setRoutingEnabled(false);
 			createComponent.setCrud(Crud.CREATE);
 		}
 
@@ -158,7 +158,7 @@ public class DomainDrivenDevelopment extends Node {
 			Template template = new Template(this.title == null ? "" :"<h1>:: Java to Angular2 Translator Demo ::</h1>", true);
 			this.appComponent = new Component("App", "my-app", template);
 			
-			this.appComponent.setEnableRouting(true);
+			this.appComponent.setRoutingEnabled(true);
 		}
 	}
 }
