@@ -8,8 +8,6 @@ import eu.carpago.angularbuilder.utils.Utils;
 
 public class Angular2GeneratingVisitorTest {
 	
-	private Angular2GeneratingVisitor visitor = new Angular2GeneratingVisitor();
-	
 	@Test
 	public void testConvertFirstCharacterToLowercase() {
 		Assert.assertEquals("jansen", Utils.convertFirstCharacterToLowercase("Jansen"));
@@ -25,7 +23,7 @@ public class Angular2GeneratingVisitorTest {
 	@Test
 	public void testconvertUpperCamelCaseToAngularString() {
 		
-		Assert.assertEquals("auto-grow", visitor.convertUpperCamelCaseToAngularString("AutoGrow"));
+		Assert.assertEquals("auto-grow", Utils.convertUpperCamelCaseToAngularString("AutoGrow"));
 		
 	}
 

@@ -227,7 +227,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 	private void renderChildersImportRecursive(Component child) {
 		System.out.println("import {" + child.getName() + "Component} from './"
-				+ this.convertUpperCamelCaseToAngularString(child.getName()) + ".component'");
+				+ Utils.convertUpperCamelCaseToAngularString(child.getName()) + ".component'");
 		for (Component subchild : child.getChildren()) {
 			renderChildersImportRecursive(subchild);
 		}
@@ -256,7 +256,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 		for (Directive directive : directiveList) {
 			System.out.println("import {" + directive.getName() + "Directive} from './"
-					+ this.convertUpperCamelCaseToAngularString(directive.getName()) + ".directive'");
+					+ Utils.convertUpperCamelCaseToAngularString(directive.getName()) + ".directive'");
 		}
 	}
 
@@ -558,7 +558,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 	private void renderTemplate(Component component) {
 		if (component.getTemplate().isRenderTemplateFile()) {
 			System.out.printf("\ttemplateUrl: '%s' %n",
-					"app/" + this.convertUpperCamelCaseToAngularString(component.getName()) + ".component.html");
+					"app/" + Utils.convertUpperCamelCaseToAngularString(component.getName()) + ".component.html");
 			setOutputStreamForExternalTemplate(component.getName());
 		} else {
 			System.out.println("\ttemplate: `\n\t\t");
@@ -809,7 +809,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 			List<String> names = new ArrayList<>();
 
 			for (Css css : widget.getCssStyles()) {
-				names.add(this.convertUpperCamelCaseToAngularString(css.toString()));
+				names.add(Utils.convertUpperCamelCaseToAngularString(css.toString()));
 			}
 			System.out.print(String.join(" ", names));
 			System.out.print("' ");
@@ -822,7 +822,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 			System.out.println("\t\t\t[ngClass]=\"{");
 			System.out.println(String.join(",\n", widget.conditionalCssStyles.entrySet().stream().map(entry -> {
 				return String.format("\t\t\t\t'%s': %s",
-						this.convertUpperCamelCaseToAngularString(entry.getKey().toString()), entry.getValue());
+						Utils.convertUpperCamelCaseToAngularString(entry.getKey().toString()), entry.getValue());
 			}).collect(Collectors.toList())));
 
 			System.out.println("\t\t\t}\"");
@@ -967,7 +967,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 		try {
 			FileOutputStream outputStream = new FileOutputStream(
-					"app/" + this.convertUpperCamelCaseToAngularString(componentName) + ".component.html");
+					"app/" + Utils.convertUpperCamelCaseToAngularString(componentName) + ".component.html");
 			PrintStream ps = new PrintStream(outputStream);
 			System.setOut(ps);
 
@@ -982,7 +982,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 		try {
 			FileOutputStream outputStream = new FileOutputStream(
-					"app/" + this.convertUpperCamelCaseToAngularString(directive.getName()) + ".directive.ts");
+					"app/" + Utils.convertUpperCamelCaseToAngularString(directive.getName()) + ".directive.ts");
 			PrintStream ps = new PrintStream(outputStream);
 			System.setOut(ps);
 
@@ -997,7 +997,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 		currentOutputStream = System.out;
 		try {
 			FileOutputStream outputStream = new FileOutputStream(
-					"app/" + this.convertUpperCamelCaseToAngularString(customPipe.getName()) + ".pipe.ts");
+					"app/" + Utils.convertUpperCamelCaseToAngularString(customPipe.getName()) + ".pipe.ts");
 			PrintStream ps = new PrintStream(outputStream);
 			System.setOut(ps);
 
@@ -1008,20 +1008,13 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 	}
 
-	// e.g. convert AutoGrow to auto-grow
-	public static String convertUpperCamelCaseToAngularString(String input) {
-
-		return Utils.convertFirstCharacterToLowercase(input).replaceAll("([A-Z])", "-$1").toLowerCase();
-
-	}
-
 	// this methods set the output to the files where it should be
 	private void setOutputStream(Component component) {
 		currentOutputStream = System.out;
 
 		try {
 			FileOutputStream outputStream = new FileOutputStream(
-					"app/" + convertUpperCamelCaseToAngularString(component.getName()) + ".component.ts");
+					"app/" + Utils.convertUpperCamelCaseToAngularString(component.getName()) + ".component.ts");
 			PrintStream ps = new PrintStream(outputStream);
 			System.setOut(ps);
 
