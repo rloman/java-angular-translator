@@ -3,7 +3,7 @@ package eu.carpago.angularbuilder.domain;
 import java.util.ArrayList;
 import java.util.List;
 
-import eu.carpago.angularbuilder.visitor.Angular2GeneratingVisitor;
+import eu.carpago.angularbuilder.utils.Utils;
 import eu.carpago.angularbuilder.visitor.Visitor;
 
 public class DomainInterface extends Node {
@@ -41,7 +41,7 @@ public class DomainInterface extends Node {
 	}
 	
 	public String getSingularCamelcaseName() {
-		return Angular2GeneratingVisitor.convertFirstCharacterToLowercase(this.getSingularPascalcaseName());
+		return Utils.convertFirstCharacterToLowercase(this.getSingularPascalcaseName());
 		
 	}
 	

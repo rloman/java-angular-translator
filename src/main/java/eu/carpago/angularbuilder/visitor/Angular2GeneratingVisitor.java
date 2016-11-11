@@ -27,6 +27,7 @@ import eu.carpago.angularbuilder.domain.DomainService;
 import eu.carpago.angularbuilder.domain.Event;
 import eu.carpago.angularbuilder.domain.ITag;
 import eu.carpago.angularbuilder.domain.InlineStyle;
+import eu.carpago.angularbuilder.domain.InlineStyle.InlineStyleLine;
 import eu.carpago.angularbuilder.domain.InlineStyleList;
 import eu.carpago.angularbuilder.domain.InputField;
 import eu.carpago.angularbuilder.domain.InputProperty;
@@ -38,7 +39,7 @@ import eu.carpago.angularbuilder.domain.ServicesList;
 import eu.carpago.angularbuilder.domain.Template;
 import eu.carpago.angularbuilder.domain.TextField;
 import eu.carpago.angularbuilder.domain.Widget;
-import eu.carpago.angularbuilder.domain.InlineStyle.InlineStyleLine;
+import eu.carpago.angularbuilder.utils.Utils;
 
 public class Angular2GeneratingVisitor implements Visitor {
 
@@ -62,7 +63,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 		DomainInterface domain = service.getDomainInterface();
 		String name = this.convertFirstCharacterToUppercase(domain.getSingularPascalcaseName());
-		String smallName = this.convertFirstCharacterToLowercase(name);
+		String smallName = Utils.convertFirstCharacterToLowercase(name);
 
 		System.out.printf("import {%s} from './%s';%n", name, smallName);
 
@@ -173,7 +174,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 		// imports
 		// rloman: refactor to StatementImport.java for later
-		System.out.printf("import {%s} from './%s';%n", name, this.convertFirstCharacterToLowercase(name));
+		System.out.printf("import {%s} from './%s';%n", name, Utils.convertFirstCharacterToLowercase(name));
 
 		System.out.println();
 
@@ -330,7 +331,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 		setOutputStream(component);
 
 		String pascalCaseName = component.getName();
-		String camelCaseName = this.convertFirstCharacterToLowercase(pascalCaseName);
+		String camelCaseName = Utils.convertFirstCharacterToLowercase(pascalCaseName);
 
 		// beetje exotisch maar wel een keer lekker / leuk :-)
 		System.out.printf("import {Component%s%s} from 'angular2/core'%n",
@@ -547,7 +548,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 			}
 			System.out.printf("\t\t{path:'%s', name:'%s', component:%s%s}, %n",
-					convertFirstCharacterToLowercase(sub.getName()), convertFirstCharacterToUppercase(sub.getName()),
+					Utils.convertFirstCharacterToLowercase(sub.getName()), convertFirstCharacterToUppercase(sub.getName()),
 					convertFirstCharacterToUppercase(sub.getName() + "Component"), defaultRouteString);
 
 			renderPathExpressionsRecursively(sub);
@@ -729,7 +730,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 		System.out.println("import {Directive, ElementRef, Renderer} from 'angular2/core'");
 		System.out.println();
 		System.out.print("@Directive ({");
-		System.out.println("selector: '[" + this.convertFirstCharacterToLowercase(directive.getName()) + "]',");
+		System.out.println("selector: '[" + Utils.convertFirstCharacterToLowercase(directive.getName()) + "]',");
 		System.out.println("\thost: {");
 		List<String> names = new ArrayList<>();
 		for (Event event : directive.getEvents()) {
@@ -935,7 +936,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 		try {
 			FileOutputStream outputStream = new FileOutputStream(
-					"app/" + this.convertFirstCharacterToLowercase(domainInterface.getSingularPascalcaseName()) + ".ts");
+					"app/" + Utils.convertFirstCharacterToLowercase(domainInterface.getSingularPascalcaseName()) + ".ts");
 			PrintStream ps = new PrintStream(outputStream);
 			System.setOut(ps);
 
@@ -1007,13 +1008,6 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 	}
 
-	public static String convertFirstCharacterToLowercase(String input) {
-		String output = Character.toLowerCase(input.charAt(0)) + (input.length() > 1 ? input.substring(1) : "");
-
-		return output;
-
-	}
-
 	public static String convertFirstCharacterToUppercase(String input) {
 		String output = Character.toUpperCase(input.charAt(0)) + (input.length() > 1 ? input.substring(1) : "");
 
@@ -1023,7 +1017,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 	// e.g. convert AutoGrow to auto-grow
 	public static String convertUpperCamelCaseToAngularString(String input) {
 
-		return convertFirstCharacterToLowercase(input).replaceAll("([A-Z])", "-$1").toLowerCase();
+		return Utils.convertFirstCharacterToLowercase(input).replaceAll("([A-Z])", "-$1").toLowerCase();
 
 	}
 

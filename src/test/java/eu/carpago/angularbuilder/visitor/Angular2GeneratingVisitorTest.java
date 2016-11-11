@@ -3,7 +3,7 @@ package eu.carpago.angularbuilder.visitor;
 import org.junit.Assert;
 import org.junit.Test;
 
-import eu.carpago.angularbuilder.visitor.Angular2GeneratingVisitor;
+import eu.carpago.angularbuilder.utils.Utils;
 
 
 public class Angular2GeneratingVisitorTest {
@@ -12,8 +12,8 @@ public class Angular2GeneratingVisitorTest {
 	
 	@Test
 	public void testConvertFirstCharacterToLowercase() {
-		Assert.assertEquals("jansen", visitor.convertFirstCharacterToLowercase("Jansen"));
-		Assert.assertEquals("janSen", visitor.convertFirstCharacterToLowercase("JanSen"));
+		Assert.assertEquals("jansen", Utils.convertFirstCharacterToLowercase("Jansen"));
+		Assert.assertEquals("janSen", Utils.convertFirstCharacterToLowercase("JanSen"));
 	}
 	
 	@Test
