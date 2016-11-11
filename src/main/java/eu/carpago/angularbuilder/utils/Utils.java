@@ -13,6 +13,12 @@ public abstract class Utils {
 
 	}
 	
+	public static String convertFirstCharacterToUppercase(String input) {
+		String output = Character.toUpperCase(input.charAt(0)) + (input.length() > 1 ? input.substring(1) : "");
+
+		return output;
+	}
+	
 	
 
 }

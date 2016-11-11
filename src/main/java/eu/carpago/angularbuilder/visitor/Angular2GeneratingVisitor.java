@@ -62,7 +62,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 		System.out.println();
 
 		DomainInterface domain = service.getDomainInterface();
-		String name = this.convertFirstCharacterToUppercase(domain.getSingularPascalcaseName());
+		String name = Utils.convertFirstCharacterToUppercase(domain.getSingularPascalcaseName());
 		String smallName = Utils.convertFirstCharacterToLowercase(name);
 
 		System.out.printf("import {%s} from './%s';%n", name, smallName);
@@ -170,7 +170,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 		setOutputStream(service);
 
 		DomainInterface domain = service.getDomainInterface();
-		String name = this.convertFirstCharacterToUppercase(domain.getSingularPascalcaseName());
+		String name = Utils.convertFirstCharacterToUppercase(domain.getSingularPascalcaseName());
 
 		// imports
 		// rloman: refactor to StatementImport.java for later
@@ -306,7 +306,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 		System.out.println();
 		System.out.printf("@Pipe({name: '%s'})%n", customPipe.getName().toLowerCase());
 
-		System.out.println("export class " + this.convertFirstCharacterToUppercase(customPipe.getName())
+		System.out.println("export class " + Utils.convertFirstCharacterToUppercase(customPipe.getName())
 				+ "Pipe implements PipeTransform {");
 
 		System.out.println();
@@ -345,7 +345,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 		component.getDirectives().accept(this);
 
 		for (CustomPipe pipe : component.getPipes()) {
-			System.out.println("import {" + this.convertFirstCharacterToUppercase(
+			System.out.println("import {" + Utils.convertFirstCharacterToUppercase(
 					pipe.getName() + "Pipe} from './" + pipe.getName().toLowerCase() + ".pipe'"));
 		}
 
@@ -427,7 +427,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 			System.out.println(", ");
 			System.out.print("\tpipes: [");
 			System.out.print(String.join(", ", component.getPipes().stream().map(e -> {
-				return this.convertFirstCharacterToUppercase(e.getName()) + "Pipe";
+				return Utils.convertFirstCharacterToUppercase(e.getName()) + "Pipe";
 			}).collect(Collectors.toList())));
 			System.out.println("]");
 		}
@@ -548,8 +548,8 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 			}
 			System.out.printf("\t\t{path:'%s', name:'%s', component:%s%s}, %n",
-					Utils.convertFirstCharacterToLowercase(sub.getName()), convertFirstCharacterToUppercase(sub.getName()),
-					convertFirstCharacterToUppercase(sub.getName() + "Component"), defaultRouteString);
+					Utils.convertFirstCharacterToLowercase(sub.getName()), Utils.convertFirstCharacterToUppercase(sub.getName()),
+					Utils.convertFirstCharacterToUppercase(sub.getName() + "Component"), defaultRouteString);
 
 			renderPathExpressionsRecursively(sub);
 		}
@@ -587,7 +587,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 			System.out.println("<ul class='nav navbar-nav'>");
 			for (Component c : component.getChildren()) {
 				System.out.printf("<li><a [routerLink]=\"['%s']\">%s</a> </li> %n",
-						convertFirstCharacterToUppercase(c.getName()), convertFirstCharacterToUppercase(c.getName()));
+						Utils.convertFirstCharacterToUppercase(c.getName()), Utils.convertFirstCharacterToUppercase(c.getName()));
 			}
 			System.out.println("</ul>");
 			System.out.println("</div>");
@@ -606,7 +606,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 				builder.append(String.format("<li *ngFor='#%s of %s'>",
 						attr.getName().substring(0, attr.getName().length() - 1), attr.getName()));
 				builder.append(String.format("<a [routerLink]=\"['%s', {id:%s.id}]\">{{ %s.id }}</a>",
-						convertFirstCharacterToUppercase(attr.getName().substring(0, attr.getName().length() - 1)),
+						Utils.convertFirstCharacterToUppercase(attr.getName().substring(0, attr.getName().length() - 1)),
 						attr.getName().substring(0, attr.getName().length() - 1),
 						attr.getName().substring(0, attr.getName().length() - 1)));
 				builder.append(
@@ -695,7 +695,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 		// render the template his event handling if applicable
 		for (Event event : widget.getEvents()) {
 			System.out.printf("\ton%s($event) {%n", widget.getClass().getSimpleName()
-					+ this.convertFirstCharacterToUppercase(event.toString().toLowerCase()));
+					+ Utils.convertFirstCharacterToUppercase(event.toString().toLowerCase()));
 			System.out.println("\t\tconsole.log('You " + event.toString().toLowerCase() + "ed a "
 					+ widget.getClass().getSimpleName() + " widget', $event);");
 			System.out.println("\t}");
@@ -735,7 +735,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 		List<String> names = new ArrayList<>();
 		for (Event event : directive.getEvents()) {
 			names.add("\t\t'(" + event.toString().toLowerCase() + ")'" + ": " + "'on"
-					+ this.convertFirstCharacterToUppercase(event.toString().toLowerCase()) + "()'");
+					+ Utils.convertFirstCharacterToUppercase(event.toString().toLowerCase()) + "()'");
 
 		}
 		System.out.println(String.join(",\n", names));
@@ -754,7 +754,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 		for (Event event : directive.getEvents()) {
 			int randomWidth = 100 + Double.valueOf((Math.random() * 100)).intValue();
-			System.out.println("\ton" + this.convertFirstCharacterToUppercase(event.toString().toLowerCase()) + "(){");
+			System.out.println("\ton" + Utils.convertFirstCharacterToUppercase(event.toString().toLowerCase()) + "(){");
 			System.out.println("\t\t// Implement your event handling code here!");
 			System.out.println("\t\t // Which might be something like this");
 			System.out.printf("\t\tthis.renderer.setElementStyle(this.el.nativeElement, 'width', '%d');%n",
@@ -799,7 +799,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 	private void renderEvents(Widget widget) {
 		for (Event e : widget.getEvents()) {
 			System.out.printf("(%s)='on%s($event);' ", e.toString().toLowerCase(), widget.getClass().getSimpleName()
-					+ this.convertFirstCharacterToUppercase(e.toString().toLowerCase()));
+					+ Utils.convertFirstCharacterToUppercase(e.toString().toLowerCase()));
 		}
 	}
 
@@ -1006,12 +1006,6 @@ public class Angular2GeneratingVisitor implements Visitor {
 			e.printStackTrace();
 		}
 
-	}
-
-	public static String convertFirstCharacterToUppercase(String input) {
-		String output = Character.toUpperCase(input.charAt(0)) + (input.length() > 1 ? input.substring(1) : "");
-
-		return output;
 	}
 
 	// e.g. convert AutoGrow to auto-grow

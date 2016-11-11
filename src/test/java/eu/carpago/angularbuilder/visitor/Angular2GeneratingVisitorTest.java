@@ -18,8 +18,8 @@ public class Angular2GeneratingVisitorTest {
 	
 	@Test
 	public void testConvertFirstCharacterToUppercase() {
-		Assert.assertEquals("Jansen", visitor.convertFirstCharacterToUppercase("jansen"));
-		Assert.assertEquals("JanSen", visitor.convertFirstCharacterToUppercase("janSen"));
+		Assert.assertEquals("Jansen", Utils.convertFirstCharacterToUppercase("jansen"));
+		Assert.assertEquals("JanSen", Utils.convertFirstCharacterToUppercase("janSen"));
 	}
 	
 	@Test
