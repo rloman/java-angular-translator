@@ -7,10 +7,10 @@ running the Application's main method the result is a full blown Angular2 applic
 runnable with NodeJS
 
 ## Getting started
-* Create *app* subfolder or link to your desired output directory
+* Create **app** subfolder or link to your desired output directory
 * See example in Application::main
 * Run the main
-  * Results in Angular2 application in de *app* folder 
+  * Results in Angular2 application in de **app** folder 
 
 ##To be continued
 In version 1.1.0 a full blown CRUD based application structure can be created
