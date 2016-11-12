@@ -10,7 +10,7 @@ runnable with NodeJS
 * Create 'app' subfolder or link to your desired output directory
 * See example in Application::main
 * Run the main
-..* Results in Angular2 app in de src folder 
+  * Results in Angular2 app in de src folder 
 
 ##To be continued
 In version 1.1.0 a full blown CRUD based application structure can be created
