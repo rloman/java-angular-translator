@@ -12,4 +12,4 @@ With the application you can code a component based Java application and after r
   * Results in Angular2 application in de **app** folder 
 
 ##To be continued
-In version 1.1.0 a full blown CRUD based application structure can be created
+In version 1.0.0 a full blown CRUD based application structure can be expected
