@@ -12,10 +12,12 @@ public class DomainInterface extends Node {
 
 		public String name;
 		public String type;
+		public boolean mandatory;
 
-		public KeyValueBean(String name, String type) {
+		public KeyValueBean(String name, String type, boolean mandatory) {
 			this.name = name;
 			this.type = type;
+			this.mandatory = mandatory;
 		}
 	}
 
@@ -27,8 +29,8 @@ public class DomainInterface extends Node {
 		this.name = name;
 	}
 
-	public void addInstanceVar(String name, String type) {
-		this.attributes.add(new KeyValueBean(name, type));
+	public void addInstanceVar(String name, String type, boolean mandatory) {
+		this.attributes.add(new KeyValueBean(name, type, mandatory));
 	}
 
 	@Override

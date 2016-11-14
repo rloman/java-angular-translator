@@ -207,7 +207,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 		System.out.printf("export interface %s {%n", domainInterface.getSingularPascalcaseName());
 		String attributes = String.join("", domainInterface.getAttributes().stream().map(e -> {
-			return String.format("\t %s : %s;%n", e.name, e.type);
+			return String.format("\t %s%s : %s;%n", e.name, e.mandatory? "?":"", e.type);
 		}).collect(Collectors.toList()));
 		System.out.print(attributes);
 
