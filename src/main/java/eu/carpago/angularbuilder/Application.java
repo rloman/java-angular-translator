@@ -36,7 +36,7 @@ public class Application {
 
 		// question mark means this instance var may be empty in the created
 		// instance
-		customerInterface.addInstanceVar("naam", "string", false);
+		customerInterface.addInstanceVar("naam", "string", true);
 		customerInterface.addInstanceVar("debiteurennummer", "string", false);
 		
 		DomainDrivenDevelopment b = new DomainDrivenDevelopmentBuilder(customerInterface, "http://localhost:8081/api/klanten/").build();
