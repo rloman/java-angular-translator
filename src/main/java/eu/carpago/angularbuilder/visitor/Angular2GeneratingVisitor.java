@@ -23,6 +23,7 @@ import eu.carpago.angularbuilder.domain.DirectiveList;
 import eu.carpago.angularbuilder.domain.Div;
 import eu.carpago.angularbuilder.domain.DomainDrivenDevelopment;
 import eu.carpago.angularbuilder.domain.DomainInterface;
+import eu.carpago.angularbuilder.domain.DomainInterfaceAttribute;
 import eu.carpago.angularbuilder.domain.DomainService;
 import eu.carpago.angularbuilder.domain.Event;
 import eu.carpago.angularbuilder.domain.ITag;
@@ -206,15 +207,19 @@ public class Angular2GeneratingVisitor implements Visitor {
 		setOutputStream(domainInterface);
 
 		System.out.printf("export interface %s {%n", domainInterface.getSingularPascalcaseName());
-		String attributes = String.join("", domainInterface.getAttributes().stream().map(e -> {
-			return String.format("\t %s%s : %s;%n", e.name, e.mandatory? "":"?", e.type);
-		}).collect(Collectors.toList()));
-		System.out.print(attributes);
-
+		
+		for(DomainInterfaceAttribute attr : domainInterface) {
+			attr.accept(this);
+		}
+		
 		System.out.println("}");
 
 		resetOutputStream();
-
+	}
+	
+	@Override
+	public void visit(DomainInterfaceAttribute attr) {
+		System.out.printf("\t %s%s : %s;%n", attr.getName(), attr.isMandatory() ? "" :"?", attr.getType());
 	}
 
 	@Override

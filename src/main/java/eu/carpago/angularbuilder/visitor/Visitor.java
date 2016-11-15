@@ -13,6 +13,7 @@ import eu.carpago.angularbuilder.domain.DirectiveList;
 import eu.carpago.angularbuilder.domain.Div;
 import eu.carpago.angularbuilder.domain.DomainDrivenDevelopment;
 import eu.carpago.angularbuilder.domain.DomainInterface;
+import eu.carpago.angularbuilder.domain.DomainInterfaceAttribute;
 import eu.carpago.angularbuilder.domain.DomainService;
 import eu.carpago.angularbuilder.domain.ITag;
 import eu.carpago.angularbuilder.domain.InlineStyle;
@@ -83,5 +84,7 @@ public interface Visitor {
 	void visit(RestDomainService service);
 
 	void visit(DomainDrivenDevelopment domainDrivenDevelopment);
+
+	void visit(DomainInterfaceAttribute domainInterfaceAttribute);
 
 }

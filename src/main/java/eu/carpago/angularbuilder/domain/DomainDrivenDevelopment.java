@@ -1,6 +1,5 @@
 package eu.carpago.angularbuilder.domain;
 
-import eu.carpago.angularbuilder.domain.DomainInterface.KeyValueBean;
 import eu.carpago.angularbuilder.visitor.Visitor;
 
 public class DomainDrivenDevelopment extends Node {
@@ -89,8 +88,8 @@ public class DomainDrivenDevelopment extends Node {
 			String templateSingularString = String.format("<h1>:: %s ::</h1>\n<div>\n\t<pre>{{ %s | json }}</pre>\n</div>\n", this.domain.getSingularPascalcaseName(), this.domain.getSingularCamelcaseName());
 			templateSingularString += String.format("<div *ngIf='%s'>", this.domain.getSingularCamelcaseName());
 			templateSingularString += "<div class='input-group'>";
-			for(KeyValueBean keyValueBean : this.domain.getAttributes() ){
-				String property = keyValueBean.name;
+			for(DomainInterfaceAttribute attr : this.domain ){
+				String property = attr.getName();
 				if(!ID.equals(property)) {
 					templateSingularString += String.format("%s: <input type='text' class='form-control' [(ngModel)]='%s.%s'><br>",property, this.domain.getSingularCamelcaseName(), property);
 				}
@@ -124,8 +123,8 @@ public class DomainDrivenDevelopment extends Node {
 			String createTemplateString = String.format("<h1>:: Create %s ::</h1>",
 					this.domain.getSingularCamelcaseName());
 			createTemplateString += "<div class='input-group'>";
-			for (KeyValueBean keyValueBean : this.domain.getAttributes()) {
-				String property = keyValueBean.name;
+			for (DomainInterfaceAttribute attr : this.domain) {
+				String property = attr.getName();
 				if (!ID.equals(property)) {
 					createTemplateString += String.format(
 							"%s: <input type='text' class='form-control' [(ngModel)]='%s.%s'><br>",
@@ -140,10 +139,9 @@ public class DomainDrivenDevelopment extends Node {
 			this.createComponent = new Component(this.domain.getSingularPascalcaseName() + "Create",
 					this.domain.getSingularCamelcaseName() + "-create", createTemplate);
 			this.createComponent.setDomain(this.domain);
-			for (KeyValueBean keyValueBean : this.domain.getAttributes()) {
-				if (!ID.equals(keyValueBean.name)) {
-					ComponentAttribute attr = new ComponentAttribute(keyValueBean.name, keyValueBean.type);
-					createComponent.addAttribute(attr);
+			for (DomainInterfaceAttribute attr : this.domain) {
+				if (!ID.equals(attr.getName())) {
+					createComponent.addAttribute(new ComponentAttribute(attr.getName(), attr.getType()));
 				}
 			}
 

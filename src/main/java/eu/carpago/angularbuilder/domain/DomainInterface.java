@@ -1,36 +1,24 @@
 package eu.carpago.angularbuilder.domain;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import eu.carpago.angularbuilder.utils.Utils;
 import eu.carpago.angularbuilder.visitor.Visitor;
 
-public class DomainInterface extends Node {
-
-	public static class KeyValueBean {
-
-		public String name;
-		public String type;
-		public boolean mandatory;
-
-		public KeyValueBean(String name, String type, boolean mandatory) {
-			this.name = name;
-			this.type = type;
-			this.mandatory = mandatory;
-		}
-	}
+public class DomainInterface extends Node implements Iterable<DomainInterfaceAttribute> {
 
 	private String name;
 
-	private List<KeyValueBean> attributes = new ArrayList<>();
+	private List<DomainInterfaceAttribute> attributes = new ArrayList<>();
 
 	public DomainInterface(String name) {
 		this.name = name;
 	}
 
 	public void addInstanceVar(String name, String type, boolean mandatory) {
-		this.attributes.add(new KeyValueBean(name, type, mandatory));
+		this.attributes.add(new DomainInterfaceAttribute(name, type, mandatory));
 	}
 
 	@Override
@@ -55,7 +43,9 @@ public class DomainInterface extends Node {
 		return this.getSingularCamelcaseName()+"s";
 	}
 	
-	public List<KeyValueBean> getAttributes() {
-		return attributes;
+	@Override
+	public Iterator<DomainInterfaceAttribute> iterator() {
+		
+		return this.attributes.iterator();
 	}
 }
