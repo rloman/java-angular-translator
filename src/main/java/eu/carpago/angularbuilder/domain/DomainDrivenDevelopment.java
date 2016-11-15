@@ -22,6 +22,7 @@ public class DomainDrivenDevelopment extends Node {
 	
 	public static class DomainDrivenDevelopmentBuilder{
 		
+		private static final String ID = "id";
 		private String title;
 		private Component appComponent;
 		private DomainInterface domain;
@@ -32,7 +33,7 @@ public class DomainDrivenDevelopment extends Node {
 		
 		public DomainDrivenDevelopmentBuilder(DomainInterface domain, String baseUrl) {
 			this.domain = domain;
-			this.domain.addInstanceVar("id", "number", false);
+			this.domain.addInstanceVar(ID, "number", false);
 			this.baseUrl = baseUrl;
 		}
 		
@@ -90,7 +91,7 @@ public class DomainDrivenDevelopment extends Node {
 			templateSingularString += "<div class='input-group'>";
 			for(KeyValueBean keyValueBean : this.domain.getAttributes() ){
 				String property = keyValueBean.name;
-				if(!"id".equals(property)) {
+				if(!ID.equals(property)) {
 					templateSingularString += String.format("%s: <input type='text' class='form-control' [(ngModel)]='%s.%s'><br>",property, this.domain.getSingularCamelcaseName(), property);
 				}
 			}
@@ -125,7 +126,7 @@ public class DomainDrivenDevelopment extends Node {
 			createTemplateString += "<div class='input-group'>";
 			for (KeyValueBean keyValueBean : this.domain.getAttributes()) {
 				String property = keyValueBean.name;
-				if (!"id".equals(property)) {
+				if (!ID.equals(property)) {
 					createTemplateString += String.format(
 							"%s: <input type='text' class='form-control' [(ngModel)]='%s.%s'><br>",
 							property, this.domain.getSingularCamelcaseName(),
@@ -140,7 +141,7 @@ public class DomainDrivenDevelopment extends Node {
 					this.domain.getSingularCamelcaseName() + "-create", createTemplate);
 			this.createComponent.setDomain(this.domain);
 			for (KeyValueBean keyValueBean : this.domain.getAttributes()) {
-				if (!"id".equals(keyValueBean.name)) {
+				if (!ID.equals(keyValueBean.name)) {
 					ComponentAttribute attr = new ComponentAttribute(keyValueBean.name, keyValueBean.type);
 					createComponent.addAttribute(attr);
 				}

@@ -26,6 +26,8 @@ import eu.carpago.angularbuilder.visitor.Angular2GeneratingVisitor;
 import eu.carpago.angularbuilder.visitor.Visitor;
 
 public class Application {
+	private static final String ID = "id";
+
 	public static void main(String[] args) {
 		domainDrivenDevelopment();
 	}
@@ -69,7 +71,7 @@ public class Application {
 
 			// question mark means this instance var may be empty in the created
 			// instance
-			customerInterface.addInstanceVar("id", "number", false);
+			customerInterface.addInstanceVar(ID, "number", false);
 			customerInterface.addInstanceVar("naam", "string", false);
 			customerInterface.addInstanceVar("debiteurennummer", "string", false);
 
@@ -161,7 +163,7 @@ public class Application {
 
 		// question mark means this instance var may be empty in the created
 		// instance
-		postInterface.addInstanceVar("id", "number", false);
+		postInterface.addInstanceVar(ID, "number", false);
 		postInterface.addInstanceVar("title", "string", false);
 		RestDomainService postService = new RestDomainService(postInterface,
 				"http://jsonplaceholder.typicode.com/posts");
@@ -194,7 +196,7 @@ public class Application {
 
 		// question mark means this instance var may be empty in the created
 		// instance
-		postInterface.addInstanceVar("id", "number", false);
+		postInterface.addInstanceVar(ID, "number", false);
 		postInterface.addInstanceVar("title", "string", false);
 		DomainService postService = new DomainService(postInterface);
 
