@@ -36,9 +36,8 @@ public class Application {
 
 		// question mark means this instance var may be empty in the created
 		// instance
-		customerInterface.addInstanceVar("id?", "number");
-		customerInterface.addInstanceVar("naam?", "string");
-		customerInterface.addInstanceVar("debiteurennummer?", "string");
+		customerInterface.addInstanceVar("naam", "string", true);
+		customerInterface.addInstanceVar("debiteurennummer", "string", false);
 		
 		DomainDrivenDevelopment b = new DomainDrivenDevelopmentBuilder(customerInterface, "http://localhost:8081/api/klanten/").build();
 		b.accept(new Angular2GeneratingVisitor());
@@ -70,9 +69,9 @@ public class Application {
 
 			// question mark means this instance var may be empty in the created
 			// instance
-			customerInterface.addInstanceVar("id?", "number");
-			customerInterface.addInstanceVar("naam?", "string");
-			customerInterface.addInstanceVar("debiteurennummer?", "string");
+			customerInterface.addInstanceVar("id", "number", false);
+			customerInterface.addInstanceVar("naam", "string", false);
+			customerInterface.addInstanceVar("debiteurennummer", "string", false);
 
 			RestDomainService restKlantService = new RestDomainService(
 					customerInterface, "http://localhost:8081/api/klanten/");
@@ -143,40 +142,6 @@ public class Application {
 			appComponent.addChildComponent(createComponent);
 		}
 
-		// adressen
-		/*
-		 * {
-		 * 
-		 * Template domainServiceTestTemplate = new Template(
-		 * "<h1>:: Addresses ::</h1>", true); Component
-		 * domainServiceTestComponent = new Component("Addresses", "addresses",
-		 * domainServiceTestTemplate); ComponentAttribute klanten = new
-		 * ComponentAttribute("addresses", "Address[]");
-		 * domainServiceTestComponent.addAttribute(klanten);
-		 * 
-		 * DomainInterface klantInterface = new DomainInterface("Address");
-		 * 
-		 * // question mark means this instance var may be empty in the created
-		 * // instance klantInterface.addInstanceVar("id?", "number");
-		 * klantInterface.addInstanceVar("straat?", "string");
-		 * klantInterface.addInstanceVar("huisnummer?", "string");
-		 * klantInterface.addInstanceVar("postcode?", "string");
-		 * klantInterface.addInstanceVar("plaats?", "string");
-		 * klantInterface.addInstanceVar("land?", "string");
-		 * 
-		 * RestDomainService restKlantService = new
-		 * RestDomainService(klantInterface,
-		 * "http://localhost:8081/api/adressen");
-		 * 
-		 * domainServiceTestComponent.addService(restKlantService); // refactor
-		 * this constructor to a default setting (since this is // possible)
-		 * Constructor constructor = new Constructor(
-		 * "\t\taddressService.getAddresss().subscribe(addresses => this.addresses = addresses);"
-		 * ); domainServiceTestComponent.setConstructor(constructor);
-		 * 
-		 * appComponent.addChildComponent(domainServiceTestComponent); }
-		 */
-
 		appComponent.accept(new Angular2GeneratingVisitor());
 	}
 
@@ -196,8 +161,8 @@ public class Application {
 
 		// question mark means this instance var may be empty in the created
 		// instance
-		postInterface.addInstanceVar("id?", "number");
-		postInterface.addInstanceVar("title?", "string");
+		postInterface.addInstanceVar("id", "number", false);
+		postInterface.addInstanceVar("title", "string", false);
 		RestDomainService postService = new RestDomainService(postInterface,
 				"http://jsonplaceholder.typicode.com/posts");
 
@@ -229,8 +194,8 @@ public class Application {
 
 		// question mark means this instance var may be empty in the created
 		// instance
-		postInterface.addInstanceVar("id?", "number");
-		postInterface.addInstanceVar("title?", "string");
+		postInterface.addInstanceVar("id", "number", false);
+		postInterface.addInstanceVar("title", "string", false);
 		DomainService postService = new DomainService(postInterface);
 
 		domainServiceTestComponent.addService(postService);

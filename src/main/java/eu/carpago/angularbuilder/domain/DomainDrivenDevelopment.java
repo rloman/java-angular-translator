@@ -32,6 +32,7 @@ public class DomainDrivenDevelopment extends Node {
 		
 		public DomainDrivenDevelopmentBuilder(DomainInterface domain, String baseUrl) {
 			this.domain = domain;
+			this.domain.addInstanceVar("id", "number", false);
 			this.baseUrl = baseUrl;
 		}
 		
@@ -89,8 +90,8 @@ public class DomainDrivenDevelopment extends Node {
 			templateSingularString += "<div class='input-group'>";
 			for(KeyValueBean keyValueBean : this.domain.getAttributes() ){
 				String property = keyValueBean.name;
-				if(!"id".equals(property.replace("?", ""))) {
-					templateSingularString += String.format("%s: <input type='text' class='form-control' [(ngModel)]='%s.%s'><br>",property.replace("?", ""), this.domain.getSingularCamelcaseName(), property.replace("?", ""));
+				if(!"id".equals(property)) {
+					templateSingularString += String.format("%s: <input type='text' class='form-control' [(ngModel)]='%s.%s'><br>",property, this.domain.getSingularCamelcaseName(), property);
 				}
 			}
 			templateSingularString		+= "</div>"
@@ -124,11 +125,11 @@ public class DomainDrivenDevelopment extends Node {
 			createTemplateString += "<div class='input-group'>";
 			for (KeyValueBean keyValueBean : this.domain.getAttributes()) {
 				String property = keyValueBean.name;
-				if (!"id".equals(property.replace("?", ""))) {
+				if (!"id".equals(property)) {
 					createTemplateString += String.format(
 							"%s: <input type='text' class='form-control' [(ngModel)]='%s.%s'><br>",
-							property.replace("?", ""), this.domain.getSingularCamelcaseName(),
-							property.replace("?", ""));
+							property, this.domain.getSingularCamelcaseName(),
+							property);
 				}
 			}
 			createTemplateString += "</div>" + "<span class='input-group-btn'>"
@@ -139,7 +140,7 @@ public class DomainDrivenDevelopment extends Node {
 					this.domain.getSingularCamelcaseName() + "-create", createTemplate);
 			this.createComponent.setDomain(this.domain);
 			for (KeyValueBean keyValueBean : this.domain.getAttributes()) {
-				if (!"id".equals(keyValueBean.name.replace("?", ""))) {
+				if (!"id".equals(keyValueBean.name)) {
 					ComponentAttribute attr = new ComponentAttribute(keyValueBean.name, keyValueBean.type);
 					createComponent.addAttribute(attr);
 				}
