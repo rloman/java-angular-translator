@@ -355,7 +355,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 		}
 
 		// for now always import the router related stuff
-		System.out.println("import {RouteConfig, RouterOutlet, RouterLink, RouteParams} from 'angular2/router';");
+		System.out.println("import {RouteConfig, RouterOutlet, RouterLink, RouteParams, Router} from 'angular2/router';");
 		System.out.println("import {ROUTER_DIRECTIVES} from 'angular2/router';");
 
 		// enable routing if applicable
@@ -455,26 +455,36 @@ public class Angular2GeneratingVisitor implements Visitor {
 			}).collect(Collectors.toList())));
 			// always???? rloman
 			if (component.isForSingularUse()) {
-				System.out.print(", private routeParams :RouteParams");
+				System.out.print(", private routeParams :RouteParams, private router :Router");
+			}
+			else {
+				// rloman deze keuze moet anders worden (based on CRUD)
+				System.out.print(", private router :Router");
 			}
 			System.out.println(") {");
 
+			System.out.println("\n\t}");
+			
 			if (component.getConstructor() != null) {
 				component.getConstructor().accept(this);
 			}
-
-			System.out.println("\n\t}");
 		}
 
-		// render the create method if applicable
+		// render the CRUD methods if applicable
 		if (component.getCrud() != null) {
 			for (Crud element : component.getCrud()) {
 				switch (element) {
 				case CREATE:
-					System.out.println("create() {");
-					System.out.printf("\tthis.%sService.create(this.%s).subscribe(%n", component.getDomain().getSingularCamelcaseName(), component.getDomain().getSingularCamelcaseName());
-					System.out.println("\t\tresponse => console.log(response)" + ");");
+					System.out.println();
+					System.out.println("\tcreate() {");
+					System.out.printf("\t\tthis.%sService.create(this.%s).subscribe(%n", component.getDomain().getSingularCamelcaseName(), component.getDomain().getSingularCamelcaseName());
+					System.out.println("\t\t\tresponse => {");
+					System.out.println("\t\t\t\tconsole.log(response);");
+					System.out.printf("\t\t\t\tthis.router.navigate(['%s']);%n", component.getDomain().getPluralPascalcaseName());
+					System.out.println("\t\t\t}");
+					System.out.println("\t\t)");
 					System.out.println("\t}");
+					
 
 					break;
 				case DELETE:
@@ -486,6 +496,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 					System.out.println("\t\t.subscribe(result => {");
 					System.out.printf("\t\t\tthis.warning = '%s with id '+%s.id+' deleted!';%n", pascalCaseName,
 							camelCaseName);
+					System.out.println("\t\t\tthis.ngOnInit();");
 					System.out.println("\t\t\t}");
 					System.out.println("\t\t);");
 					System.out.println("\t}");
@@ -497,6 +508,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 					System.out.printf("\t\tthis.%sService.update(this.%s).subscribe(res => {%n", camelCaseName,
 							camelCaseName);
 					System.out.println("\t\t\tconsole.log(res);");
+					System.out.printf("\t\t\tthis.router.navigate(['%s']);%n", component.getDomain().getPluralPascalcaseName());
 					System.out.println("\t\t});");
 					System.out.println("\t}");
 
@@ -721,10 +733,12 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 	}
 
+	// refactor(ed) to ngOnInit
 	@Override
 	public void visit(Constructor constructor) {
-
-		System.out.print(constructor.getCode());
+		System.out.println("\tngOnInit(){");
+		System.out.println("\t\t"+constructor.getCode());
+		System.out.println("\t}");
 	}
 
 	@Override

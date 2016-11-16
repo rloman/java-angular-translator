@@ -75,7 +75,7 @@ public class DomainDrivenDevelopment extends Node {
 			
 			// constructor
 			Constructor constructorForPlural = new Constructor(
-					String.format("\t\t%sService.get%s().subscribe(%s => this.%s = %s);",this.domain.getSingularCamelcaseName(), this.domain.getPluralPascalcaseName(), this.domain.getPluralCamelcaseName(), this.domain.getPluralCamelcaseName(), this.domain.getPluralCamelcaseName()));
+					String.format("\t\tthis.%sService.get%s().subscribe(%s => this.%s = %s);",this.domain.getSingularCamelcaseName(), this.domain.getPluralPascalcaseName(), this.domain.getPluralCamelcaseName(), this.domain.getPluralCamelcaseName(), this.domain.getPluralCamelcaseName()));
 			this.pluralComponent.setConstructor(constructorForPlural);
 			pluralComponent.setDefaultRoute(true);
 			pluralComponent.setDomain(this.domain);
@@ -95,7 +95,7 @@ public class DomainDrivenDevelopment extends Node {
 				}
 			}
 			templateSingularString		+= "</div>"
-					+ "<span class='input-group-btn'><button class='btn btn-primary' (click)='update()'>Update</button></span>"
+					+ "<span class='input-group-btn'><button class='btn btn-primary' (click)='update()'>Save</button></span>"
 					+ "</div>";
 
 			Template singularTemplate = new Template(templateSingularString,
@@ -108,7 +108,7 @@ public class DomainDrivenDevelopment extends Node {
 			singularComponent.addAttribute(singular);
 			singularComponent.setForSingularUse(true);
 			Constructor constructorForSingular = new Constructor(
-					String.format("%sService.get%s(parseInt(routeParams.get('id'))).subscribe(%s => this.%s = %s);",
+					String.format("this.%sService.get%s(parseInt(this.routeParams.get('id'))).subscribe(%s => this.%s = %s);",
 							this.domain.getSingularCamelcaseName(), this.domain.getSingularPascalcaseName(),
 							this.domain.getSingularCamelcaseName(), this.domain.getSingularCamelcaseName(),
 							this.domain.getSingularCamelcaseName()));
