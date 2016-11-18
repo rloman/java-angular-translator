@@ -43,6 +43,10 @@ public class DomainInterface extends Node implements Iterable<DomainInterfaceAtt
 		return this.getSingularCamelcaseName()+"s";
 	}
 	
+	public String getSingularLowercaseName() {
+		return this.getSingularCamelcaseName().toLowerCase();
+	}
+	
 	@Override
 	public Iterator<DomainInterfaceAttribute> iterator() {
 		

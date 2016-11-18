@@ -2,7 +2,12 @@ package eu.carpago.angularbuilder.visitor;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.PrintStream;
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -45,6 +50,8 @@ import eu.carpago.angularbuilder.utils.Utils;
 public class Angular2GeneratingVisitor implements Visitor {
 
 	private PrintStream currentOutputStream = System.out;
+	
+	private String currentPackageName = "";
 	
 	@Override
 	public void visit(DomainDrivenDevelopment domainDrivenDevelopment) {
@@ -223,18 +230,33 @@ public class Angular2GeneratingVisitor implements Visitor {
 	}
 
 	@Override
-	public void visit(ComponentList componentList) {
-		for (Component child : componentList) {
+	public void visit(ComponentList componentChildrenList) {
+		for (Component child : componentChildrenList) {
 			renderChildersImportRecursive(child);
-
 		}
 	}
 
-	private void renderChildersImportRecursive(Component child) {
-		System.out.println("import {" + child.getName() + "Component} from './"
-				+ Utils.convertUpperCamelCaseToAngularString(child.getName()) + ".component'");
-		for (Component subchild : child.getChildren()) {
-			renderChildersImportRecursive(subchild);
+	private void renderChildersImportRecursive(Component component) {
+//		System.err.println(component.getDomain().getSingularLowercaseName());
+//		System.err.println(component.getName());
+//		System.err.println(">"+this.currentPackageName+"<");
+		if(component.getDomain() != null) {
+			if( this.currentPackageName.equals(component.getDomain().getSingularLowercaseName())) {
+				System.out.println("import {" + component.getName() + "Component} from './"
+						+Utils.convertUpperCamelCaseToAngularString(component.getName()) + ".component'");
+			}
+			else {
+				System.out.println("import {" + component.getName() + "Component} from './"+component.getDomain().getSingularLowercaseName()
+						+ "/"+Utils.convertUpperCamelCaseToAngularString(component.getName()) + ".component'");
+			}
+		}
+		else {
+			System.out.println("import {" + component.getName() + "Component} from './"
+					+Utils.convertUpperCamelCaseToAngularString(component.getName()) + ".component'");
+		}
+		
+		for (Component child : component.getChildren()) {
+			renderChildersImportRecursive(child);
 		}
 	}
 
@@ -256,6 +278,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 		}
 	}
 
+	// rloman dit nog doen via directory structure
 	@Override
 	public void visit(DirectiveList directiveList) {
 
@@ -343,12 +366,17 @@ public class Angular2GeneratingVisitor implements Visitor {
 				component.containsInputProperty() ? ", Input" : "",
 				component.containsOutputProperty() ? ", Output, EventEmitter" : "");
 
+		if(component.getDomain() != null) {
+			this.currentPackageName = component.getDomain().getSingularLowercaseName();
+		}
+		
 		component.getChildren().accept(this);
 
 		component.getServices().accept(this);
 
 		component.getDirectives().accept(this);
 
+		// rloman dit ook nog in structure gieten
 		for (CustomPipe pipe : component.getPipes()) {
 			System.out.println("import {" + Utils.convertFirstCharacterToUppercase(
 					pipe.getName() + "Pipe} from './" + pipe.getName().toLowerCase() + ".pipe'"));
@@ -574,9 +602,10 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 	private void renderTemplate(Component component) {
 		if (component.getTemplate().isRenderTemplateFile()) {
+			String packageName = component.getDomain() != null ? component.getDomain().getSingularLowercaseName() + "/" : "";
 			System.out.printf("\ttemplateUrl: '%s' %n",
-					"app/" + Utils.convertUpperCamelCaseToAngularString(component.getName()) + ".component.html");
-			setOutputStreamForExternalTemplate(component.getName());
+					"app/" + packageName + Utils.convertUpperCamelCaseToAngularString(component.getName()) + ".component.html");
+			setOutputStreamForExternalTemplate(component);
 		} else {
 			System.out.println("\ttemplate: `\n\t\t");
 		}
@@ -955,7 +984,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 		try {
 			FileOutputStream outputStream = new FileOutputStream(
-					"app/" + Utils.convertFirstCharacterToLowercase(domainInterface.getSingularPascalcaseName()) + ".ts");
+					"app/" + domainInterface.getSingularLowercaseName()+"/"+Utils.convertFirstCharacterToLowercase(domainInterface.getSingularPascalcaseName()) + ".ts");
 			PrintStream ps = new PrintStream(outputStream);
 			System.setOut(ps);
 
@@ -980,13 +1009,31 @@ public class Angular2GeneratingVisitor implements Visitor {
 		}
 
 	}
-
-	private void setOutputStreamForExternalTemplate(String componentName) {
+	
+	private void setOutputStream(DomainService service) {
 		currentOutputStream = System.out;
 
 		try {
 			FileOutputStream outputStream = new FileOutputStream(
-					"app/" + Utils.convertUpperCamelCaseToAngularString(componentName) + ".component.html");
+					"app/" + service.getDomainInterface().getSingularLowercaseName()+"/"+service.getName().toLowerCase() + ".service.ts");
+			PrintStream ps = new PrintStream(outputStream);
+			System.setOut(ps);
+
+		} catch (FileNotFoundException e) {
+			// rloman nog try with resources doen.
+			e.printStackTrace();
+		}
+
+	}
+	
+	private void setOutputStreamForExternalTemplate(Component component) {
+		currentOutputStream = System.out;
+
+		String packageName = component.getDomain() != null ? component.getDomain().getSingularLowercaseName()+"/" : "";
+		
+		try {
+			FileOutputStream outputStream = new FileOutputStream(
+					"app/" + packageName +Utils.convertUpperCamelCaseToAngularString(component.getName()) + ".component.html");
 			PrintStream ps = new PrintStream(outputStream);
 			System.setOut(ps);
 
@@ -996,6 +1043,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 		}
 	}
 
+	// rloman dit ook nog doen dus
 	private void setOutputStream(Directive directive) {
 		currentOutputStream = System.out;
 
@@ -1012,6 +1060,7 @@ public class Angular2GeneratingVisitor implements Visitor {
 
 	}
 
+	// rloman dit ook nog doen dus
 	private void setOutputStream(CustomPipe customPipe) {
 		currentOutputStream = System.out;
 		try {
@@ -1030,14 +1079,29 @@ public class Angular2GeneratingVisitor implements Visitor {
 	// this methods set the output to the files where it should be
 	private void setOutputStream(Component component) {
 		currentOutputStream = System.out;
-
+		String packageName = "";
 		try {
+			if(component.getDomain() != null) {
+				packageName = component.getDomain().getSingularLowercaseName();
+				
+				Path dir = Paths.get("app/"+packageName, "");
+
+				try {
+					Files.createDirectory(dir);
+				}
+				catch(FileAlreadyExistsException faee) {
+					// rloman normal situation for now
+//					System.err.printf("Directory %s already exists %n", packageName);
+				}
+				packageName += "/";
+			}
+			 
 			FileOutputStream outputStream = new FileOutputStream(
-					"app/" + Utils.convertUpperCamelCaseToAngularString(component.getName()) + ".component.ts");
+					"app/" + packageName + Utils.convertUpperCamelCaseToAngularString(component.getName()) + ".component.ts");
 			PrintStream ps = new PrintStream(outputStream);
 			System.setOut(ps);
 
-		} catch (FileNotFoundException e) {
+		} catch (IOException e) {
 			// rloman nog try with resources doen.
 			e.printStackTrace();
 		}
