@@ -1,3 +1,17 @@
+v1.0.0
+      Add domain driven development (crud application) to the translator
+      Some refactoring. Move some to utils class
+      Change variable Component::enableRouting to Component::routingEnabled
+      Add more text in README.md
+      Fix the version number expectation
+      Should be working now without the questionmark using
+      Change 'id' string everywhere to static
+      Refactor keyValueBean for domainInterfaceAttr to Node and use the visitor to generate code
+      Implement router(ing) from create and delete to plural page which is more natural
+      Comply to package based structure
+      Create README.md for Github
+
+==========================================
 v0.3.0
       Cleanup release notes
       Add itag widget to the compiler. Refactor a lot of code

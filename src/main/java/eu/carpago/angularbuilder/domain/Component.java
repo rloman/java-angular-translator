@@ -25,7 +25,7 @@ public class Component extends Node {
 
 	private Constructor constructor;
 
-	private boolean enableRouting;// kan ik wellicht afleiden uit de
+	private boolean routingEnabled;// kan ik wellicht afleiden uit de
 									// aanwezigheid van subcomponenen maar dat
 									// is niet zeker volgens mij
 
@@ -34,6 +34,8 @@ public class Component extends Node {
 	private Crud[] crud;
 
 	private boolean defaultRoute;
+	
+	private DomainInterface domain;
 
 	/**
 	 * 
@@ -50,7 +52,7 @@ public class Component extends Node {
 		this.name = name;
 		this.selector = selector;
 		this.template = template;
-		this.enableRouting = false;
+		this.routingEnabled = false;
 	}
 
 	public void addDirective(Directive directive) {
@@ -145,12 +147,12 @@ public class Component extends Node {
 		return pipes;
 	}
 
-	public boolean isEnableRouting() {
-		return enableRouting;
+	public boolean isRoutingEnabled() {
+		return routingEnabled;
 	}
 
-	public void setEnableRouting(boolean enableRouting) {
-		this.enableRouting = enableRouting;
+	public void setRoutingEnabled(boolean routingEnabled) {
+		this.routingEnabled = routingEnabled;
 	}
 
 	public boolean isForSingularUse() {
@@ -175,5 +177,13 @@ public class Component extends Node {
 
 	public void setDefaultRoute(boolean defaultRoute) {
 		this.defaultRoute = defaultRoute;
+	}
+
+	public DomainInterface getDomain() {
+		return domain;
+	}
+
+	public void setDomain(DomainInterface domain) {
+		this.domain = domain;
 	}
 }

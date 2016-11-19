@@ -6,6 +6,8 @@ import eu.carpago.angularbuilder.domain.Constructor;
 import eu.carpago.angularbuilder.domain.Crud;
 import eu.carpago.angularbuilder.domain.Css;
 import eu.carpago.angularbuilder.domain.CustomPipe;
+import eu.carpago.angularbuilder.domain.DomainDrivenDevelopment;
+import eu.carpago.angularbuilder.domain.DomainDrivenDevelopment.DomainDrivenDevelopmentBuilder;
 import eu.carpago.angularbuilder.domain.DomainInterface;
 import eu.carpago.angularbuilder.domain.DomainService;
 import eu.carpago.angularbuilder.domain.Event;
@@ -24,8 +26,23 @@ import eu.carpago.angularbuilder.visitor.Angular2GeneratingVisitor;
 import eu.carpago.angularbuilder.visitor.Visitor;
 
 public class Application {
+	private static final String ID = "id";
+
 	public static void main(String[] args) {
-		restFullDomainServiceDemoWithHttp();
+		domainDrivenDevelopment();
+	}
+	
+	
+	public static void domainDrivenDevelopment() {
+		DomainInterface customerInterface = new DomainInterface("Customer");
+
+		// question mark means this instance var may be empty in the created
+		// instance
+		customerInterface.addInstanceVar("naam", "string", true);
+		customerInterface.addInstanceVar("debiteurennummer", "string", false);
+		
+		DomainDrivenDevelopment b = new DomainDrivenDevelopmentBuilder(customerInterface, "http://localhost:8081/api/klanten/").build();
+		b.accept(new Angular2GeneratingVisitor());
 	}
 
 	public static void restFullDomainServiceDemoWithHttp() {
@@ -33,7 +50,7 @@ public class Application {
 		Template template = new Template(
 				"<h1>:: Java to Angular2 Translator Demo ::</h1>", true);
 		Component appComponent = new Component("App", "my-app", template);
-		appComponent.setEnableRouting(true);
+		appComponent.setRoutingEnabled(true);
 
 		// customers
 		{
@@ -54,9 +71,9 @@ public class Application {
 
 			// question mark means this instance var may be empty in the created
 			// instance
-			customerInterface.addInstanceVar("id?", "number");
-			customerInterface.addInstanceVar("naam?", "string");
-			customerInterface.addInstanceVar("debiteurennummer?", "string");
+			customerInterface.addInstanceVar(ID, "number", false);
+			customerInterface.addInstanceVar("naam", "string", false);
+			customerInterface.addInstanceVar("debiteurennummer", "string", false);
 
 			RestDomainService restKlantService = new RestDomainService(
 					customerInterface, "http://localhost:8081/api/klanten/");
@@ -72,7 +89,6 @@ public class Application {
 			// temp to test if singular is easy to create
 			// suppose we always want to make a CustomerComponent for singular
 			// instances
-
 			String templateSingularString = "<h1>:: Customer ::</h1>\n<div>\n\t<pre>{{ customer | json }}</pre>\n</div>\n";
 			templateSingularString += "<div *ngIf='customer'>"
 					+ "<div class='input-group'>Naam: <input type='text' class='form-control' [(ngModel)]='customer.naam'><br>"
@@ -117,7 +133,7 @@ public class Application {
 			createComponent.addAttribute(naam);
 			createComponent.addAttribute(debiteurnnummer);
 			createComponent.addService(restKlantService);
-			createComponent.setEnableRouting(false);
+			createComponent.setRoutingEnabled(false);
 			createComponent.setCrud(Crud.CREATE);
 
 			customersComponent.addChildComponent(singularComponent);
@@ -127,40 +143,6 @@ public class Application {
 			appComponent.addChildComponent(customersComponent);
 			appComponent.addChildComponent(createComponent);
 		}
-
-		// adressen
-		/*
-		 * {
-		 * 
-		 * Template domainServiceTestTemplate = new Template(
-		 * "<h1>:: Addresses ::</h1>", true); Component
-		 * domainServiceTestComponent = new Component("Addresses", "addresses",
-		 * domainServiceTestTemplate); ComponentAttribute klanten = new
-		 * ComponentAttribute("addresses", "Address[]");
-		 * domainServiceTestComponent.addAttribute(klanten);
-		 * 
-		 * DomainInterface klantInterface = new DomainInterface("Address");
-		 * 
-		 * // question mark means this instance var may be empty in the created
-		 * // instance klantInterface.addInstanceVar("id?", "number");
-		 * klantInterface.addInstanceVar("straat?", "string");
-		 * klantInterface.addInstanceVar("huisnummer?", "string");
-		 * klantInterface.addInstanceVar("postcode?", "string");
-		 * klantInterface.addInstanceVar("plaats?", "string");
-		 * klantInterface.addInstanceVar("land?", "string");
-		 * 
-		 * RestDomainService restKlantService = new
-		 * RestDomainService(klantInterface,
-		 * "http://localhost:8081/api/adressen");
-		 * 
-		 * domainServiceTestComponent.addService(restKlantService); // refactor
-		 * this constructor to a default setting (since this is // possible)
-		 * Constructor constructor = new Constructor(
-		 * "\t\taddressService.getAddresss().subscribe(addresses => this.addresses = addresses);"
-		 * ); domainServiceTestComponent.setConstructor(constructor);
-		 * 
-		 * appComponent.addChildComponent(domainServiceTestComponent); }
-		 */
 
 		appComponent.accept(new Angular2GeneratingVisitor());
 	}
@@ -181,8 +163,8 @@ public class Application {
 
 		// question mark means this instance var may be empty in the created
 		// instance
-		postInterface.addInstanceVar("id?", "number");
-		postInterface.addInstanceVar("title?", "string");
+		postInterface.addInstanceVar(ID, "number", false);
+		postInterface.addInstanceVar("title", "string", false);
 		RestDomainService postService = new RestDomainService(postInterface,
 				"http://jsonplaceholder.typicode.com/posts");
 
@@ -214,8 +196,8 @@ public class Application {
 
 		// question mark means this instance var may be empty in the created
 		// instance
-		postInterface.addInstanceVar("id?", "number");
-		postInterface.addInstanceVar("title?", "string");
+		postInterface.addInstanceVar(ID, "number", false);
+		postInterface.addInstanceVar("title", "string", false);
 		DomainService postService = new DomainService(postInterface);
 
 		domainServiceTestComponent.addService(postService);

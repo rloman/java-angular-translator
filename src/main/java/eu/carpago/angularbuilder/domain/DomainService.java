@@ -7,7 +7,7 @@ public class DomainService extends Service  {
 	private DomainInterface domainInterface;
 
 	public DomainService(DomainInterface domainInterface) {
-		super(domainInterface.getName());
+		super(domainInterface.getSingularPascalcaseName());
 		this.domainInterface = domainInterface;
 	}
 
