@@ -11,5 +11,5 @@ With the application you can code a component based Java application and after r
 * Run the Application
   * Results in Angular2 application in de **app** folder 
 
-##To be continued here link:rloman to my http://dev.scaffolder.carpago.nl
+##To be continued here link:rloman to my http://dev.scaffolder.carpago.nl  (user: demo, pass: demo)
 In version 1.0.0 a full blown CRUD based application structure can be expected
